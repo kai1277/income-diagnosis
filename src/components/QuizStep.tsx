@@ -1,5 +1,3 @@
-"use client";
-
 type Props = {
   question: string;
   options: string[];
@@ -13,7 +11,6 @@ export default function QuizStep({ question, options, currentStep, totalSteps, o
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Progress */}
       <div className="bg-white px-4 pt-4 pb-2">
         <div className="flex justify-between text-sm text-gray-500 mb-1">
           <span>STEP {currentStep} / {totalSteps}</span>
@@ -26,7 +23,6 @@ export default function QuizStep({ question, options, currentStep, totalSteps, o
         </div>
       </div>
 
-      {/* Question */}
       <div className="flex-1 px-4 pt-8">
         <h2 className="text-xl font-bold text-gray-800 mb-8">{question}</h2>
         <div className="space-y-3">

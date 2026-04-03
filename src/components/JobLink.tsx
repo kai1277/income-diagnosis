@@ -1,11 +1,3 @@
-"use client";
-
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void;
-  }
-}
-
 type Props = {
   label: string;
   jobType: string;
@@ -15,12 +7,10 @@ type Props = {
 
 export default function JobLink({ label, jobType, url, variant = "primary" }: Props) {
   const handleClick = () => {
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("event", "job_link_click", {
-        job_type: jobType,
-        destination_url: url,
-      });
-    }
+    window.gtag?.("event", "job_link_click", {
+      job_type: jobType,
+      destination_url: url,
+    });
     window.open(url, "_blank");
   };
 

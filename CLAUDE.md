@@ -18,25 +18,32 @@
 
 ```
 /
-├── app/
-│   ├── page.tsx              # トップLP（診断開始）
-│   ├── quiz/
-│   │   └── page.tsx          # 診断画面（ステップ形式）
-│   └── result/
-│       └── page.tsx          # 結果画面（求人CTA）
-├── lib/
-│   └── diagnosis.ts          # 診断ロジック（ルールベース）
-├── components/
-│   ├── QuizStep.tsx          # 1問ずつ表示するUI
-│   ├── ResultCard.tsx        # 年収・職種表示
-│   └── JobLink.tsx           # 求人リンク（クリック計測付き）
+├── src/
+│   ├── main.tsx              # エントリーポイント（GA4初期化）
+│   ├── App.tsx               # ルーティング定義
+│   ├── index.css             # グローバルCSS（Tailwind）
+│   ├── vite-env.d.ts         # 型定義（gtag, import.meta.env）
+│   ├── pages/
+│   │   ├── Home.tsx          # トップLP（診断開始）
+│   │   ├── Quiz.tsx          # 診断画面（ステップ形式）
+│   │   └── Result.tsx        # 結果画面（求人CTA）
+│   ├── components/
+│   │   ├── QuizStep.tsx      # 1問ずつ表示するUI
+│   │   ├── ResultCard.tsx    # 年収・職種表示
+│   │   └── JobLink.tsx       # 求人リンク（クリック計測付き）
+│   └── lib/
+│       ├── diagnosis.ts      # 診断ロジック（ルールベース）
+│       └── jobLinks.ts       # 求人URL集約
+├── index.html
+├── vite.config.ts
 └── CLAUDE.md
 ```
 
 **技術スタック**
 
-- フレームワーク: **Next.js 14（App Router）**
-- スタイリング: **Tailwind CSS**
+- ビルドツール: **Vite**
+- フレームワーク: **React + React Router v7**
+- スタイリング: **Tailwind CSS v4**（`@tailwindcss/vite` プラグイン）
 - デプロイ: **Cloudflare Pages**（本番環境）／モック検証はローカルホストで完結
 - 計測: **Google Analytics 4**（gtag.js）
 
@@ -124,7 +131,7 @@ const handleClick = (jobType: string, url: string) => {
 };
 ```
 
-GA4の測定IDは `.env.local` に `NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX` として管理。
+GA4の測定IDは `.env.local` に `VITE_GA_ID=G-XXXXXXXXXX` として管理。コード内では `import.meta.env.VITE_GA_ID` で参照。
 
 ---
 
@@ -145,7 +152,7 @@ export const JOB_LINKS = {
 ## 🚫 やらないこと（絶対禁止）
 
 - ログイン・認証機能
-- DB・バックエンド・API Routes（Next.jsのAPI Routesも不要）
+- DB・バックエンド・API Routes
 - AIによる診断ロジック
 - マイページ・履歴保存
 - アニメーション・演出の作り込み
@@ -155,11 +162,10 @@ export const JOB_LINKS = {
 
 ## 🚀 デプロイ方針
 
-- **モック検証フェーズ**：`next dev` によるローカルホストで動作確認・KPI計測を行う
+- **モック検証フェーズ**：`npm run dev`（Vite）によるローカルホストで動作確認・KPI計測を行う
 - **本番公開フェーズ**：Cloudflare Pagesにデプロイ
-  - `next.config.js` に `output: 'export'` を設定（静的エクスポート）
-  - Server Componentsのサーバーサイド機能は使わない（全ページ静的で完結させる）
-  - GAの測定IDは Cloudflare Pages の環境変数で管理
+  - `npm run build` で `dist/` に静的ファイルを出力（Viteはデフォルト静的エクスポート）
+  - GAの測定IDは Cloudflare Pages の環境変数（`VITE_GA_ID`）で管理
 
 > ⚠️ Vercelは使わない
 

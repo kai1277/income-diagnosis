@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import QuizStep from "@/components/QuizStep";
 
 const QUESTIONS = [
@@ -34,8 +32,8 @@ const QUESTIONS = [
 
 type Answers = Record<string, string>;
 
-export default function QuizPage() {
-  const router = useRouter();
+export default function Quiz() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
 
@@ -48,11 +46,9 @@ export default function QuizPage() {
     if (step < QUESTIONS.length - 1) {
       setStep(step + 1);
     } else {
+      window.gtag?.("event", "quiz_complete");
       const params = new URLSearchParams(next);
-      if (typeof window !== "undefined" && window.gtag) {
-        window.gtag("event", "quiz_complete");
-      }
-      router.push(`/result?${params.toString()}`);
+      navigate(`/result?${params.toString()}`);
     }
   };
 

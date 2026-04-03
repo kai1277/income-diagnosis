@@ -1,14 +1,11 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { useSearchParams } from "react-router-dom";
 import ResultCard from "@/components/ResultCard";
 import JobLink from "@/components/JobLink";
 import { diagnose, type QuizAnswers } from "@/lib/diagnosis";
 import { JOB_LINKS } from "@/lib/jobLinks";
 
-function ResultContent() {
-  const params = useSearchParams();
+export default function Result() {
+  const [params] = useSearchParams();
 
   const answers: QuizAnswers = {
     ageRange: params.get("ageRange") ?? "30代",
@@ -49,13 +46,5 @@ function ResultContent() {
         />
       </div>
     </div>
-  );
-}
-
-export default function ResultPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-400">診断中...</div>}>
-      <ResultContent />
-    </Suspense>
   );
 }

@@ -9,7 +9,6 @@ type Props = {
 export default function ResultCard({ potentialIncome, incomeGap, suggestedJobs }: Props) {
   return (
     <div className="space-y-6">
-      {/* Income Display */}
       <div className="bg-blue-600 text-white rounded-2xl p-6 text-center">
         <p className="text-sm font-medium opacity-80 mb-1">あなたの潜在年収</p>
         <p className="text-5xl font-bold mb-2">{potentialIncome}<span className="text-2xl ml-1">万円</span></p>
@@ -18,7 +17,6 @@ export default function ResultCard({ potentialIncome, incomeGap, suggestedJobs }
         </p>
       </div>
 
-      {/* Suggested Jobs */}
       <div>
         <h3 className="text-base font-bold text-gray-700 mb-3">あなたに向いている職種</h3>
         <div className="space-y-3">

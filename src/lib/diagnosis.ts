@@ -52,7 +52,6 @@ export function diagnose(answers: QuizAnswers): DiagnosisResult {
     ];
   }
 
-  // 年齢補正
   if (answers.ageRange === "20代前半") multiplier += 0.05;
   if (answers.ageRange === "30代") multiplier -= 0.03;
 

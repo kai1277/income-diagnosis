@@ -1,21 +1,11 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void;
-  }
-}
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleStart = () => {
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("event", "quiz_start");
-    }
-    router.push("/quiz");
+    window.gtag?.("event", "quiz_start");
+    navigate("/quiz");
   };
 
   return (
