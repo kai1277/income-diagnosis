@@ -1,32 +1,55 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import QuizStep from "@/components/QuizStep";
+import { getTracking } from "@/lib/tracking";
 
 const QUESTIONS = [
   {
     key: "ageRange",
-    question: "Q1. あなたの年齢を教えてください",
-    options: ["20代前半", "20代後半", "30代", "40代以上"],
+    question: "いま何歳ですか？",
+    options: [
+      { label: "20代前半", emoji: "🌱" },
+      { label: "20代後半", emoji: "🌿" },
+      { label: "30代", emoji: "🌳" },
+      { label: "40代以上", emoji: "🏔️" },
+    ],
   },
   {
     key: "jobCategory",
-    question: "Q2. 現在の職種は？",
-    options: ["事務・営業", "製造・現場", "IT", "その他"],
+    question: "今の仕事のジャンルは？",
+    options: [
+      { label: "事務・営業", emoji: "📋" },
+      { label: "製造・現場", emoji: "🔨" },
+      { label: "IT", emoji: "💻" },
+      { label: "その他", emoji: "✨" },
+    ],
   },
   {
     key: "currentIncome",
-    question: "Q3. 現在の年収はどのくらいですか？",
-    options: ["〜300万", "300〜400万", "400〜500万", "500万〜"],
+    question: "今の年収はどのくらい？",
+    options: [
+      { label: "〜300万", emoji: "💴" },
+      { label: "300〜400万", emoji: "💰" },
+      { label: "400〜500万", emoji: "💎" },
+      { label: "500万〜", emoji: "👑" },
+    ],
   },
   {
     key: "workStyle",
-    question: "Q4. 働き方の志向は？",
-    options: ["安定重視", "成果・稼ぎ重視"],
+    question: "稼ぎへのスタンスは？",
+    options: [
+      { label: "安定重視", emoji: "🏠" },
+      { label: "成果・稼ぎ重視", emoji: "🔥" },
+    ],
   },
   {
     key: "manualWork",
-    question: "Q5. 手を動かす仕事への抵抗はありますか？",
-    options: ["全然ない", "少しある", "抵抗がある"],
+    question: "体を使う仕事は OK ですか？",
+    options: [
+      { label: "全然ない", emoji: "👍" },
+      { label: "少しある", emoji: "🤔" },
+      { label: "抵抗がある", emoji: "😓" },
+    ],
   },
 ] as const;
 
@@ -46,7 +69,7 @@ export default function Quiz() {
     if (step < QUESTIONS.length - 1) {
       setStep(step + 1);
     } else {
-      window.gtag?.("event", "quiz_complete");
+      window.gtag?.("event", "quiz_complete", getTracking());
       const params = new URLSearchParams(next);
       navigate(`/result?${params.toString()}`);
     }
@@ -54,10 +77,10 @@ export default function Quiz() {
 
   return (
     <QuizStep
+      step={step}
+      totalSteps={QUESTIONS.length}
       question={current.question}
       options={[...current.options]}
-      currentStep={step + 1}
-      totalSteps={QUESTIONS.length}
       onAnswer={handleAnswer}
     />
   );
