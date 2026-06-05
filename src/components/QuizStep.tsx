@@ -28,18 +28,18 @@ export default function QuizStep({
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#f0f2f5" }}>
       {/* Stats bar */}
-      <div style={{ backgroundColor: "#8fa3b1" }} className="text-white px-4 py-2.5">
+      <div style={{ backgroundColor: "#8fa3b1" }} className="text-white px-4 py-3">
         <div className="flex divide-x divide-white/20 text-center">
           <div className="flex-1 px-2">
-            <p className="text-[10px] text-white/70 mb-0.5">今日の診断者数</p>
+            <p className="text-xs text-white/70 mb-0.5">今日の診断者数</p>
             <p className="text-sm font-bold">1,284人</p>
           </div>
           <div className="flex-1 px-2">
-            <p className="text-[10px] text-white/70 mb-0.5">あなたの潜在年収（推定）</p>
+            <p className="text-xs text-white/70 mb-0.5">あなたの潜在年収（推定）</p>
             <p className="text-sm font-bold">——万円</p>
           </div>
           <div className="flex-1 px-2">
-            <p className="text-[10px] text-white/70 mb-0.5">提携求人件数</p>
+            <p className="text-xs text-white/70 mb-0.5">提携求人件数</p>
             <p className="text-sm font-bold">2.3万件</p>
           </div>
         </div>
@@ -82,45 +82,41 @@ export default function QuizStep({
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col items-center px-6 pt-8 pb-8">
+      <div className="flex-1 flex flex-col px-5 pt-6 pb-8">
         {/* Progress and back */}
-        <div className="w-full max-w-sm flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6">
           {onBack ? (
             <button
               onClick={onBack}
-              className="text-gray-400 text-sm flex items-center gap-1 active:text-gray-600 transition-colors"
+              className="text-gray-400 text-base flex items-center gap-1 active:text-gray-600 transition-colors py-2 pr-4"
             >
               ← 戻る
             </button>
           ) : (
             <div />
           )}
-          <p className="text-xs text-gray-400">
+          <p className="text-sm text-gray-400">
             {step + 1} / {totalSteps}
           </p>
         </div>
 
-        <h2 className={`text-xl font-bold text-gray-800 text-center ${subtitle ? "mb-2" : "mb-10"}`}>
+        <h2 className={`text-2xl font-bold text-gray-800 text-center ${subtitle ? "mb-2" : "mb-10"}`}>
           <span style={{ color: "#4dd0e1" }}>{highlight}</span>
           を教えてください
         </h2>
         {subtitle && (
-          <p className="text-xs text-gray-400 mb-8 text-center">{subtitle}</p>
+          <p className="text-sm text-gray-400 mb-8 text-center">{subtitle}</p>
         )}
 
-        <div
-          className={`w-full max-w-sm grid gap-3 ${
-            options.length <= 2 ? "grid-cols-2" : "grid-cols-2"
-          }`}
-        >
+        <div className="grid grid-cols-2 gap-3">
           {options.map((opt) => (
             <button
               key={opt.label}
               onClick={() => onAnswer(opt.label)}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 py-5 px-3 flex flex-col items-center gap-2 text-gray-700 font-medium active:bg-cyan-50 active:border-cyan-300 transition-all"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 py-6 px-3 flex flex-col items-center gap-3 text-gray-700 font-medium active:bg-cyan-50 active:border-cyan-300 transition-all"
             >
-              <span className="text-3xl select-none">{opt.emoji}</span>
-              <span className="text-center leading-tight text-xs">{opt.label}</span>
+              <span className="text-4xl select-none">{opt.emoji}</span>
+              <span className="text-center leading-snug text-sm">{opt.label}</span>
             </button>
           ))}
         </div>
