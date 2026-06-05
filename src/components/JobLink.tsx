@@ -25,7 +25,8 @@ export default function JobLink({ label, jobType, url, variant = "primary", posi
     return (
       <button
         onClick={handleClick}
-        className="w-full py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold text-base rounded-xl shadow-lg shadow-orange-500/20 active:scale-95 transition-transform"
+        className="w-full py-4 text-white font-bold text-base rounded-xl shadow-md active:scale-95 transition-transform"
+        style={{ backgroundColor: "#4dd0e1" }}
       >
         {label}
       </button>
@@ -35,7 +36,8 @@ export default function JobLink({ label, jobType, url, variant = "primary", posi
   return (
     <button
       onClick={handleClick}
-      className="w-full py-4 bg-white/5 border border-white/15 text-white/80 font-medium text-base rounded-xl active:scale-95 transition-transform"
+      className="w-full py-4 bg-white font-medium text-base rounded-xl border active:scale-95 transition-transform"
+      style={{ color: "#4dd0e1", borderColor: "#4dd0e1" }}
     >
       {label}
     </button>

@@ -15,61 +15,60 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-slate-900 via-purple-950 to-slate-900 px-5 relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
-        <span className="absolute top-16 left-8 text-4xl opacity-10 rotate-12">✨</span>
-        <span className="absolute top-28 right-6 text-3xl opacity-10 -rotate-12">💫</span>
-        <span className="absolute bottom-48 left-4 text-3xl opacity-10 rotate-6">⭐</span>
-        <span className="absolute bottom-36 right-8 text-2xl opacity-10 -rotate-6">✨</span>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="w-full max-w-sm text-center relative z-10">
-        {/* Character icon */}
-        <div className="mb-6">
-          <div className="text-7xl mb-4">🎯</div>
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-4 py-1.5">
-            <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-            <span className="text-white/60 text-xs font-medium">今日 1,284人が診断中</span>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#f0f2f5" }}>
+      {/* Stats bar */}
+      <div style={{ backgroundColor: "#8fa3b1" }} className="text-white px-4 py-2.5">
+        <div className="flex divide-x divide-white/20 text-center">
+          <div className="flex-1 px-2">
+            <p className="text-[10px] text-white/70 mb-0.5">今日の診断者数</p>
+            <p className="text-sm font-bold">1,284人</p>
+          </div>
+          <div className="flex-1 px-2">
+            <p className="text-[10px] text-white/70 mb-0.5">あなたの潜在年収（推定）</p>
+            <p className="text-sm font-bold">診断してみよう</p>
+          </div>
+          <div className="flex-1 px-2">
+            <p className="text-[10px] text-white/70 mb-0.5">提携求人件数</p>
+            <p className="text-sm font-bold">2.3万件</p>
           </div>
         </div>
+      </div>
 
-        {/* Headline */}
-        <h1 className="text-4xl font-extrabold text-white leading-tight mb-3">
-          あなたの
-          <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">
-            市場価値タイプ
-          </span>
+      {/* Main content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
+        <div className="text-6xl mb-8 select-none">💰</div>
+
+        <h1 className="text-3xl font-bold text-gray-800 leading-tight mb-4">
+          あなたの<span style={{ color: "#4dd0e1" }}>潜在年収</span>、
           <br />
           診断します
         </h1>
-        <p className="text-white/50 text-sm mb-8 leading-relaxed">
-          5問でわかる、あなたのキャリアの本当の価値
+        <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+          今の仕事より稼げる可能性を
+          <br />
+          5問で診断します
         </p>
 
-        {/* Feature pills */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {["診断1分", "登録不要・無料", "結果をシェア可"].map((f) => (
+        <div className="flex gap-2 flex-wrap justify-center mb-10">
+          {["5問・1分で完了", "登録不要", "完全無料"].map((f) => (
             <span
               key={f}
-              className="bg-white/8 text-white/60 text-xs font-medium px-3 py-1.5 rounded-full border border-white/10"
+              className="bg-white text-gray-500 text-xs px-3 py-1.5 rounded-full border border-gray-200 shadow-sm"
             >
               {f}
             </span>
           ))}
         </div>
 
-        {/* CTA */}
         <button
           onClick={handleStart}
-          className="w-full py-5 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xl font-bold rounded-2xl shadow-lg shadow-orange-500/25 active:scale-95 transition-transform"
+          className="w-full max-w-xs py-4 rounded-xl text-white font-bold text-lg shadow-md active:scale-95 transition-transform"
+          style={{ backgroundColor: "#4dd0e1" }}
         >
-          診断スタート →
+          無料で診断する
         </button>
-        <p className="text-white/25 text-xs mt-4">ログイン不要・完全無料</p>
+        <p className="text-gray-400 text-xs mt-3">ログイン不要・メールアドレス不要</p>
       </div>
-    </main>
+    </div>
   );
 }

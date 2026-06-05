@@ -6,7 +6,7 @@ import { getTracking } from "@/lib/tracking";
 const QUESTIONS = [
   {
     key: "ageRange",
-    question: "いま何歳ですか？",
+    highlight: "年齢",
     options: [
       { label: "20代前半", emoji: "🌱" },
       { label: "20代後半", emoji: "🌿" },
@@ -16,7 +16,7 @@ const QUESTIONS = [
   },
   {
     key: "jobCategory",
-    question: "今の仕事のジャンルは？",
+    highlight: "現在の職種",
     options: [
       { label: "事務・営業", emoji: "📋" },
       { label: "製造・現場", emoji: "🔨" },
@@ -26,7 +26,7 @@ const QUESTIONS = [
   },
   {
     key: "currentIncome",
-    question: "今の年収はどのくらい？",
+    highlight: "現在の年収",
     options: [
       { label: "〜300万", emoji: "💴" },
       { label: "300〜400万", emoji: "💰" },
@@ -36,7 +36,7 @@ const QUESTIONS = [
   },
   {
     key: "workStyle",
-    question: "稼ぎへのスタンスは？",
+    highlight: "働き方の志向",
     options: [
       { label: "安定重視", emoji: "🏠" },
       { label: "成果・稼ぎ重視", emoji: "🔥" },
@@ -44,7 +44,7 @@ const QUESTIONS = [
   },
   {
     key: "manualWork",
-    question: "体を使う仕事は OK ですか？",
+    highlight: "体を使う仕事への抵抗",
     options: [
       { label: "全然ない", emoji: "👍" },
       { label: "少しある", emoji: "🤔" },
@@ -79,7 +79,7 @@ export default function Quiz() {
     <QuizStep
       step={step}
       totalSteps={QUESTIONS.length}
-      question={current.question}
+      highlight={current.highlight}
       options={[...current.options]}
       onAnswer={handleAnswer}
     />
