@@ -3,15 +3,27 @@ type Option = { label: string; emoji: string };
 type Props = {
   step: number;
   totalSteps: number;
+  currentCategory: number;
+  stepLabels: string[];
   highlight: string;
+  subtitle?: string;
   options: Option[];
   onAnswer: (answer: string) => void;
+  onBack?: () => void;
 };
 
-const STEP_LABELS = ["年齢", "職種", "年収", "志向", "適性"];
-
-export default function QuizStep({ step, highlight, options, onAnswer }: Props) {
-  const total = STEP_LABELS.length;
+export default function QuizStep({
+  step,
+  totalSteps,
+  currentCategory,
+  stepLabels,
+  highlight,
+  subtitle,
+  options,
+  onAnswer,
+  onBack,
+}: Props) {
+  const total = stepLabels.length;
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#f0f2f5" }}>
@@ -35,9 +47,9 @@ export default function QuizStep({ step, highlight, options, onAnswer }: Props) 
 
       {/* Breadcrumb steps */}
       <div className="flex" style={{ backgroundColor: "#e0e5ea" }}>
-        {STEP_LABELS.map((label, i) => {
-          const isActive = i === step;
-          const isDone = i < step;
+        {stepLabels.map((label, i) => {
+          const isActive = i === currentCategory;
+          const isDone = i < currentCategory;
           const isFirst = i === 0;
           const isLast = i === total - 1;
 
@@ -70,29 +82,45 @@ export default function QuizStep({ step, highlight, options, onAnswer }: Props) 
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col items-center px-6 pt-12 pb-8">
-        <h2 className="text-xl font-bold text-gray-800 mb-10 text-center">
+      <div className="flex-1 flex flex-col items-center px-6 pt-8 pb-8">
+        {/* Progress and back */}
+        <div className="w-full max-w-sm flex items-center justify-between mb-6">
+          {onBack ? (
+            <button
+              onClick={onBack}
+              className="text-gray-400 text-sm flex items-center gap-1 active:text-gray-600 transition-colors"
+            >
+              ← 戻る
+            </button>
+          ) : (
+            <div />
+          )}
+          <p className="text-xs text-gray-400">
+            {step + 1} / {totalSteps}
+          </p>
+        </div>
+
+        <h2 className={`text-xl font-bold text-gray-800 text-center ${subtitle ? "mb-2" : "mb-10"}`}>
           <span style={{ color: "#4dd0e1" }}>{highlight}</span>
           を教えてください
         </h2>
+        {subtitle && (
+          <p className="text-xs text-gray-400 mb-8 text-center">{subtitle}</p>
+        )}
 
         <div
-          className={`w-full max-w-sm grid gap-4 ${
-            options.length <= 2
-              ? "grid-cols-2"
-              : options.length === 3
-              ? "grid-cols-3"
-              : "grid-cols-2"
+          className={`w-full max-w-sm grid gap-3 ${
+            options.length <= 2 ? "grid-cols-2" : "grid-cols-2"
           }`}
         >
           {options.map((opt) => (
             <button
               key={opt.label}
               onClick={() => onAnswer(opt.label)}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 py-6 px-3 flex flex-col items-center gap-3 text-gray-700 text-sm font-medium active:bg-cyan-50 active:border-cyan-300 transition-all"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 py-5 px-3 flex flex-col items-center gap-2 text-gray-700 font-medium active:bg-cyan-50 active:border-cyan-300 transition-all"
             >
-              <span className="text-4xl select-none">{opt.emoji}</span>
-              <span className="text-center leading-tight">{opt.label}</span>
+              <span className="text-3xl select-none">{opt.emoji}</span>
+              <span className="text-center leading-tight text-xs">{opt.label}</span>
             </button>
           ))}
         </div>

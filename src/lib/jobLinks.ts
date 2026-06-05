@@ -6,7 +6,6 @@ export const JOB_LINKS = {
 };
 
 export function getJobUrl(resultId: string): string {
-  if (resultId.includes("craft")) return JOB_LINKS.blueCollar;
-  if (resultId === "tech_free_agent" || resultId === "digital_craftsman") return JOB_LINKS.tech;
+  if (resultId === "high_potential" || resultId === "mid_senior") return JOB_LINKS.general;
   return JOB_LINKS.general;
 }
