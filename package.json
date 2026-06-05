@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@line/liff": "^2.29.0",
     "@vitejs/plugin-react": "^6.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
