@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import JobLink from "@/components/JobLink";
-import { diagnose, type QuizAnswers } from "@/lib/diagnosis";
+import { diagnose } from "@/lib/diagnosis";
 import { getJobUrl, JOB_LINKS } from "@/lib/jobLinks";
 import { getTracking } from "@/lib/tracking";
+import { STEP_CATEGORIES } from "@/lib/questions";
 
-const STEP_LABELS = ["年齢", "職種", "年収", "志向", "適性"];
+const STEP_LABELS = STEP_CATEGORIES;
 
 export default function Result() {
   const [searchParams] = useSearchParams();
   const [copyDone, setCopyDone] = useState(false);
 
-  const answers: QuizAnswers = {
-    ageRange: searchParams.get("ageRange") ?? "30代",
-    jobCategory: searchParams.get("jobCategory") ?? "その他",
-    currentIncome: searchParams.get("currentIncome") ?? "300〜400万",
-    workStyle: searchParams.get("workStyle") ?? "安定重視",
-    manualWork: searchParams.get("manualWork") ?? "少しある",
-  };
+  const answers = Object.fromEntries(searchParams.entries());
 
   const result = diagnose(answers);
   const tracking = getTracking();

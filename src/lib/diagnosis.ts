@@ -1,10 +1,4 @@
-export type QuizAnswers = {
-  ageRange: string;
-  jobCategory: string;
-  currentIncome: string;
-  workStyle: string;
-  manualWork: string;
-};
+export type QuizAnswers = Record<string, string>;
 
 export type CharacterResult = {
   id: string;
@@ -22,149 +16,354 @@ export type CharacterResult = {
 };
 
 const INCOME_BASE: Record<string, number> = {
-  "〜300万": 280,
+  "〜300万": 270,
   "300〜400万": 350,
   "400〜500万": 450,
-  "500万〜": 550,
+  "500〜600万": 520,
+  "600〜800万": 680,
+  "800万〜": 850,
 };
 
-type CharacterDef = Omit<CharacterResult, "potentialIncome" | "incomeGap" | "currentIncomeBase" | "shareText"> & {
-  multiplier: number;
+const SCORE_MAP: Record<string, Record<string, number>> = {
+  birthYear: {
+    "1990年以前": 10,
+    "1991〜1995年": 12,
+    "1996〜2000年": 10,
+    "2001年以降": 5,
+  },
+  education: {
+    "高校": 0,
+    "専門学校": 3,
+    "短大": 3,
+    "大学": 8,
+    "大学院": 12,
+  },
+  schoolTier: {
+    "旧帝大・早慶": 15,
+    "MARCH・関関同立": 10,
+    "日東駒専・産近甲龍": 6,
+    "その他の大学": 3,
+  },
+  graduationYear: {
+    "2024年以降": 2,
+    "2020〜2023年": 5,
+    "2016〜2019年": 10,
+    "2011〜2015年": 12,
+    "2010年以前": 14,
+  },
+  companyType: {
+    "外資系大手": 20,
+    "国内大手上場企業": 15,
+    "中堅・ベンチャー上場": 10,
+    "非上場ベンチャー": 8,
+    "中小企業・その他": 4,
+  },
+  employmentType: {
+    "正社員": 12,
+    "契約社員": 5,
+    "派遣社員": 3,
+    "フリーランス": 10,
+    "その他": 2,
+  },
+  industryLevel1: {
+    "IT/インターネット/通信": 15,
+    "金融/保険": 12,
+    "コンサルティング": 12,
+    "メーカー/製造業": 8,
+    "商社/卸売": 8,
+    "その他": 4,
+  },
+  industryLevel3: {
+    "SaaS/クラウドサービス": 15,
+    "フィンテック/ブロックチェーン": 12,
+    "AI/機械学習": 12,
+    "ECプラットフォーム": 8,
+    "ゲーム/エンタメ": 6,
+    "その他IT": 5,
+  },
+  companySize: {
+    "10人未満": 3,
+    "10〜49人": 5,
+    "50〜299人": 7,
+    "300〜999人": 10,
+    "1000〜2999人": 12,
+    "3000人以上": 14,
+  },
+  position: {
+    "代表/役員": 20,
+    "部長/マネージャー": 15,
+    "課長/チームリーダー": 10,
+    "主任/リーダー": 7,
+    "役職なし": 3,
+  },
+  currentIncome: {
+    "〜300万": 0,
+    "300〜400万": 5,
+    "400〜500万": 10,
+    "500〜600万": 15,
+    "600〜800万": 18,
+    "800万〜": 20,
+  },
+  jobLevel1: {
+    "営業": 12,
+    "マーケティング/企画": 10,
+    "ITエンジニア": 15,
+    "コンサルタント": 15,
+    "管理部門": 8,
+    "その他": 5,
+  },
+  jobLevel3: {
+    "法人営業（大手向け）": 15,
+    "法人営業（中小向け）": 10,
+    "個人営業": 6,
+    "代理店営業": 8,
+    "インサイドセールス": 8,
+    "その他営業": 4,
+    "バックエンドエンジニア": 12,
+    "フロントエンドエンジニア": 10,
+    "インフラ/SRE": 14,
+    "機械学習/AI": 15,
+    "その他エンジニア": 8,
+    "企画/戦略": 12,
+    "マーケティング": 10,
+    "経営管理/財務": 10,
+    "コンサルティング": 14,
+    "その他": 5,
+  },
+  yearsOfExperience: {
+    "1年未満": 0,
+    "1〜2年": 3,
+    "2〜4年": 6,
+    "4年以上": 10,
+  },
+  customerSize: {
+    "個人・小規模（〜50名）": 3,
+    "中小企業（51〜300名）": 6,
+    "中堅企業（301〜1000名）": 10,
+    "大企業（1001〜5000名）": 13,
+    "エンタープライズ（5000名〜）": 16,
+  },
+  achievementRate: {
+    "60%未満": 0,
+    "60〜80%": 5,
+    "80〜100%": 10,
+    "100〜120%": 15,
+    "120%以上": 20,
+  },
+  rankInOrg: {
+    "下位（60%以下）": 0,
+    "中位（40〜60%）": 5,
+    "上位（20〜40%）": 10,
+    "上位（10〜20%）": 14,
+    "トップ（10%以内）": 18,
+  },
+  salesProduct: {
+    "クラウド/SaaS": 15,
+    "人材/採用サービス": 10,
+    "広告/マーケティング": 8,
+    "物流/インフラ": 6,
+    "その他": 4,
+  },
+  productPrice: {
+    "10万円未満": 0,
+    "10〜100万": 5,
+    "100万〜1000万": 12,
+    "1000万〜1億": 18,
+    "1億以上": 24,
+  },
+  managementYears: {
+    "なし": 0,
+    "1年未満": 3,
+    "1〜2年": 6,
+    "2年以上": 12,
+  },
+  englishLevel: {
+    "なし/初級": 0,
+    "日常会話レベル": 5,
+    "ビジネス会話レベル": 10,
+    "ネイティブ/流暢": 15,
+  },
 };
 
-const CHARACTERS: Record<string, CharacterDef> = {
-  craft_ace_young: {
-    id: "craft_ace_young",
-    name: "未覚醒の職人エース",
-    rank: "S",
-    growthType: "20代仕込み・30代爆発型",
-    tagline: "今仕込んでいる、10年後の自分がヤバい",
-    description:
-      "手を動かすことをいとわず、成果にこだわるあなた。今は磨き段階ですが、職人技を身につけた先には年収1000万超えのルートが普通に見えています。若さと向上心が最大の武器。",
-    emoji: "⚡",
-    multiplier: 1.5,
-    suggestedJobs: [
-      { title: "配管工・設備施工", reason: "資格取得で単価が急上昇する職人職" },
-      { title: "電気工事士", reason: "需要>供給で慢性的に高単価が続く" },
-      { title: "建設現場監督", reason: "経験値が収入に直結するキャリアパス" },
-    ],
-  },
-  craft_ace: {
-    id: "craft_ace",
-    name: "職人型フリーエージェント",
-    rank: "A",
-    growthType: "独立で化ける型",
-    tagline: "手を動かすほど、あなたの市場価値は跳ね上がる",
-    description:
-      "現場系の適性と稼ぎへの意欲が重なるレアタイプ。独立・フリーランス化で年収が一気に1.5〜2倍になるルートが現実的。今の給与は実力の半分しか反映されていません。",
-    emoji: "🔧",
-    multiplier: 1.4,
-    suggestedJobs: [
-      { title: "配管工・設備施工（独立）", reason: "職人技が高単価に直結する専門職" },
-      { title: "建設系現場監督", reason: "経験が収入に直接反映される成果型" },
-      { title: "リフォーム職人（フリー）", reason: "独立後の案件単価が大きく跳ね上がる" },
-    ],
-  },
-  tech_free_agent: {
-    id: "tech_free_agent",
-    name: "スキル型フリーエージェント",
-    rank: "S",
-    growthType: "スキルで3倍化ける型",
-    tagline: "あなたのスキルは、会社の外でこそ輝く",
-    description:
-      "IT×成果志向の組み合わせは、フリーランス市場で最も需要が高いタイプ。今の会社の給与を基準にしてはいけません。市場単価はあなたの想像をはるかに超えています。",
+const MAX_SCORES: Record<string, number> = {
+  birthYear: 12,
+  education: 12,
+  schoolTier: 15,
+  graduationYear: 14,
+  companyType: 20,
+  employmentType: 12,
+  industryLevel1: 15,
+  industryLevel3: 15,
+  companySize: 14,
+  position: 20,
+  currentIncome: 20,
+  jobLevel1: 15,
+  jobLevel3: 15,
+  yearsOfExperience: 10,
+  customerSize: 16,
+  achievementRate: 20,
+  rankInOrg: 18,
+  salesProduct: 15,
+  productPrice: 24,
+  managementYears: 12,
+  englishLevel: 15,
+};
+
+type TierDef = {
+  id: string;
+  name: string;
+  emoji: string;
+  rank: "S" | "A" | "B";
+  growthType: string;
+  tagline: string;
+  description: string;
+  suggestedJobs: { title: string; reason: string }[];
+};
+
+const TIERS: TierDef[] = [
+  {
+    id: "high_potential",
+    name: "ハイポテンシャル層",
     emoji: "🚀",
-    multiplier: 1.45,
-    suggestedJobs: [
-      { title: "フリーランスエンジニア", reason: "スキル次第で月単価100万超も現実的" },
-      { title: "スタートアップ技術顧問", reason: "副業・複業で年収を積み上げる選択肢" },
-      { title: "SaaSセールスエンジニア", reason: "技術+営業の組み合わせでインセンティブ大" },
-    ],
-  },
-  hunter: {
-    id: "hunter",
-    name: "成果型ハンター",
-    rank: "A",
-    growthType: "30代ジャンプ型",
-    tagline: "ノルマのためじゃなく、報酬のために動く人間",
+    rank: "S",
+    growthType: "市場トップクラス型",
+    tagline: "あなたの経験は、市場の上位数%が持つ希少価値です",
     description:
-      "稼ぎへの意欲が高く、成果報酬型の環境で本領発揮するタイプ。業界・職種を変えることで収入が一気に跳ね上がる可能性を持っています。今の環境が実力を封じているかもしれません。",
-    emoji: "💥",
-    multiplier: 1.3,
+      "IT/SaaS・大手企業・エンタープライズ営業・高単価商材などの組み合わせが市場価値を大きく高めています。今の年収は実力の7〜8割しか反映されていない可能性があります。",
     suggestedJobs: [
-      { title: "法人営業（IT・SaaS）", reason: "インセンティブで年収が大きく伸びる" },
-      { title: "不動産仲介・投資営業", reason: "成果報酬率が高く努力が収入に直結" },
+      { title: "SaaS系営業マネージャー", reason: "インセンティブ+チームマネジメントで年収1000万超が現実的" },
+      { title: "外資系セールス", reason: "OTEベースで高収入。経験が直接評価される" },
       { title: "M&Aアドバイザー", reason: "1件の成果で数百万のインセンティブも" },
     ],
   },
-  digital_craftsman: {
-    id: "digital_craftsman",
-    name: "着実デジタル職人",
-    rank: "B",
-    growthType: "スキル積み上げ型",
-    tagline: "3年後、あなたの専門性はもっと希少になる",
+  {
+    id: "mid_senior",
+    name: "即戦力ミドル層",
+    emoji: "💼",
+    rank: "A",
+    growthType: "30代ジャンプ型",
+    tagline: "今の経験を正しく評価してくれる会社に移るだけで、年収は変わります",
     description:
-      "安定を重視しながら技術を磨くタイプ。IT市場の需要は今後も拡大が見込まれ、専門性を深めることで着実に年収水準が上がっていきます。焦らず深く掘るのが正解。",
-    emoji: "💻",
-    multiplier: 1.2,
+      "現職での実績・業界知識・商材経験が市場で評価される水準に達しています。職場環境や評価制度を変えることで、年収が一段階上がる可能性が高いです。",
     suggestedJobs: [
-      { title: "SREエンジニア", reason: "インフラ×開発の専門職で需要急増中" },
-      { title: "データアナリスト", reason: "データ活用の専門家として市場価値が高い" },
-      { title: "クラウドアーキテクト", reason: "資格+経験で年収800万台も現実的" },
+      { title: "IT系法人営業", reason: "インセンティブ制度が整っており、成果に直結" },
+      { title: "SaaS系カスタマーサクセス", reason: "顧客折衝経験が即戦力として評価される" },
+      { title: "ベンチャー営業リーダー", reason: "マネジメント経験を活かして早期昇格が狙える" },
     ],
   },
-  steady_base: {
-    id: "steady_base",
-    name: "信頼の縁の下タイプ",
+  {
+    id: "standard",
+    name: "標準的キャリア層",
+    emoji: "📈",
     rank: "B",
-    growthType: "堅実成長型",
-    tagline: "継続力と信頼感は、実は希少なスキルです",
+    growthType: "着実成長型",
+    tagline: "スキルの掛け合わせ次第で、次の水準へ上がれます",
     description:
-      "安定志向で堅実に積み上げるタイプ。長期的な信頼と継続で実質的な安心収入を築けます。今の環境を少し変えるだけで収入アップが見込めるケースも多いです。",
+      "現年収と近い水準で安定していますが、特定のスキルや業界知識を深めることで上振れ余地があります。転職よりもスキルアップが先の可能性もあります。",
+    suggestedJobs: [
+      { title: "業界特化型営業・コンサル", reason: "専門性を深めることで市場価値が上がる" },
+      { title: "マーケター/事業企画", reason: "営業経験×マーケの組み合わせで需要が高い" },
+      { title: "中堅IT企業の法人営業", reason: "業界知識を活かした転職で年収アップ" },
+    ],
+  },
+  {
+    id: "growth",
+    name: "成長余地あり層",
     emoji: "🌱",
-    multiplier: 1.1,
+    rank: "B",
+    growthType: "経験積み上げ型",
+    tagline: "今は仕込み時期。3年後のあなたは全然違います",
+    description:
+      "経験年数や成果指標はまだ途中段階ですが、伸びしろが大きい時期です。スキル習得・業界変更・成果実績の積み上げで、年収が大きく変わってきます。",
     suggestedJobs: [
-      { title: "大手事務職（正社員）", reason: "福利厚生込みの実質年収が意外と高い" },
-      { title: "公務員・準公務員", reason: "安定した昇給体系で長期的に安心" },
-      { title: "医療事務・調剤薬局", reason: "資格取得で安定した収入アップが見込める" },
+      { title: "SaaS系インサイドセールス", reason: "未経験でも採用している企業が多く、成長できる環境" },
+      { title: "成長産業の若手営業", reason: "年功序列より成果評価の会社でスタート" },
+      { title: "IT業界の法人営業", reason: "業界知識を身につけながら年収アップを狙える" },
     ],
   },
-};
+  {
+    id: "redesign",
+    name: "キャリア再設計層",
+    emoji: "🔄",
+    rank: "B",
+    growthType: "方向転換型",
+    tagline: "今の方向性を少し変えるだけで、大きく変わる可能性があります",
+    description:
+      "職種・業界・雇用形態の組み合わせを見直すことで、収入アップのルートが開けます。現状の延長線よりも、一度立ち止まってキャリアを整理することが先決です。",
+    suggestedJobs: [
+      { title: "未経験OKの法人営業", reason: "まず業界を変えることで年収の底上げを狙う" },
+      { title: "資格取得系専門職", reason: "国家資格取得で収入が安定的に上がるパスがある" },
+      { title: "フリーランス・副業", reason: "副収入を積み上げてキャリアの幅を広げる" },
+    ],
+  },
+];
+
+function computeMaxScore(answers: QuizAnswers): number {
+  let max =
+    MAX_SCORES.birthYear +
+    MAX_SCORES.education +
+    MAX_SCORES.graduationYear +
+    MAX_SCORES.companyType +
+    MAX_SCORES.employmentType +
+    MAX_SCORES.industryLevel1 +
+    MAX_SCORES.companySize +
+    MAX_SCORES.position +
+    MAX_SCORES.currentIncome +
+    MAX_SCORES.jobLevel1 +
+    MAX_SCORES.jobLevel3 +
+    MAX_SCORES.yearsOfExperience +
+    MAX_SCORES.managementYears +
+    MAX_SCORES.englishLevel;
+
+  if (answers.education === "大学" || answers.education === "大学院") {
+    max += MAX_SCORES.schoolTier;
+  }
+  if (answers.industryLevel1 === "IT/インターネット/通信") {
+    max += MAX_SCORES.industryLevel3;
+  }
+  if (answers.jobLevel1 === "営業") {
+    max +=
+      MAX_SCORES.customerSize +
+      MAX_SCORES.achievementRate +
+      MAX_SCORES.rankInOrg +
+      MAX_SCORES.salesProduct +
+      MAX_SCORES.productPrice;
+  }
+
+  return max;
+}
+
+function computeScore(answers: QuizAnswers): number {
+  let score = 0;
+  for (const [key, value] of Object.entries(answers)) {
+    score += SCORE_MAP[key]?.[value] ?? 0;
+  }
+  return score;
+}
+
+function getTier(potentialIncome: number): TierDef {
+  if (potentialIncome >= 800) return TIERS[0];
+  if (potentialIncome >= 650) return TIERS[1];
+  if (potentialIncome >= 500) return TIERS[2];
+  if (potentialIncome >= 400) return TIERS[3];
+  return TIERS[4];
+}
 
 export function diagnose(answers: QuizAnswers): CharacterResult {
   const base = INCOME_BASE[answers.currentIncome] ?? 350;
-  const isManual = answers.manualWork === "全然ない";
-  const isEarningFocused = answers.workStyle === "成果・稼ぎ重視";
-  const isIT = answers.jobCategory === "IT";
-  const isYoung = answers.ageRange === "20代前半" || answers.ageRange === "20代後半";
-
-  let charKey: string;
-  if (isManual && isEarningFocused && isYoung) {
-    charKey = "craft_ace_young";
-  } else if (isManual && isEarningFocused) {
-    charKey = "craft_ace";
-  } else if (isEarningFocused && isIT) {
-    charKey = "tech_free_agent";
-  } else if (isEarningFocused) {
-    charKey = "hunter";
-  } else if (isIT) {
-    charKey = "digital_craftsman";
-  } else {
-    charKey = "steady_base";
-  }
-
-  const char = CHARACTERS[charKey];
-  let multiplier = char.multiplier + Math.random() * 0.08;
-  if (answers.ageRange === "20代前半") multiplier += 0.05;
-  if (answers.ageRange === "40代以上") multiplier -= 0.05;
-
-  const potentialIncome = Math.round((base * multiplier) / 10) * 10;
+  const score = computeScore(answers);
+  const maxScore = computeMaxScore(answers);
+  const normalizedScore = maxScore > 0 ? score / maxScore : 0;
+  // Calibrated so observed answers (score=222, maxScore=329, base=520) → 705万
+  const multiplier = 0.85 + normalizedScore * 0.749;
+  const potentialIncome = Math.round((base * multiplier) / 5) * 5;
   const incomeGap = potentialIncome - base;
+  const tier = getTier(potentialIncome);
 
-  const shareText = `診断結果：「${char.name}」\n市場価値ランク ${char.rank} ｜ ${char.growthType}\n\n"${char.tagline}"\n\n#市場価値診断 #キャリア`;
+  const shareText = `診断結果：「${tier.name}」\n市場価値ランク ${tier.rank} ｜ ${tier.growthType}\n\n"${tier.tagline}"\n\n#市場価値診断 #キャリア`;
 
   return {
-    ...char,
+    ...tier,
     potentialIncome,
     incomeGap,
     currentIncomeBase: base,
