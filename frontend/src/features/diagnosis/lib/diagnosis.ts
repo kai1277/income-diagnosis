@@ -1,21 +1,4 @@
-import type { QuizAnswers, SuggestedJob } from "@/features/diagnosis/types";
-
-export type { QuizAnswers };
-
-export type CharacterResult = {
-  id: string;
-  name: string;
-  rank: "S" | "A" | "B";
-  growthType: string;
-  tagline: string;
-  description: string;
-  emoji: string;
-  potentialIncome: number;
-  incomeGap: number;
-  currentIncomeBase: number;
-  suggestedJobs: SuggestedJob[];
-  shareText: string;
-};
+import type { CharacterResult, QuizAnswers } from "@/features/diagnosis/types";
 
 const INCOME_BASE: Record<string, number> = {
   "〜300万": 270,

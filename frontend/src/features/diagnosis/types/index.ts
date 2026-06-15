@@ -17,6 +17,21 @@ export type QuizStepProps = {
 
 export type SuggestedJob = { title: string; reason: string };
 
+export type CharacterResult = {
+  id: string;
+  name: string;
+  rank: "S" | "A" | "B";
+  growthType: string;
+  tagline: string;
+  description: string;
+  emoji: string;
+  potentialIncome: number;
+  incomeGap: number;
+  currentIncomeBase: number;
+  suggestedJobs: SuggestedJob[];
+  shareText: string;
+};
+
 export type ResultCardProps = {
   potentialIncome: number;
   incomeGap: number;
