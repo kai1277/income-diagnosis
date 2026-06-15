@@ -1,4 +1,5 @@
-import { QUESTIONS, type QuizQuestion } from "@/features/diagnosis/lib/questions";
+import { QUESTIONS } from "@/features/diagnosis/constants/questions";
+import type { QuizQuestion } from "@/features/diagnosis/types/quiz";
 import type { Answers } from "@/features/diagnosis/types";
 
 export function getVisibleQuestions(answers: Answers): QuizQuestion[] {

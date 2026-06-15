@@ -1,7 +1,8 @@
 export type QuizAnswers = Record<string, string>;
 export type { QuizAnswers as Answers };
 
-export type QuizOption = { label: string; emoji: string };
+import type { QuizOption, QuizQuestion } from "./quiz";
+export type { QuizOption, QuizQuestion };
 
 export type QuizStepProps = {
   step: number;

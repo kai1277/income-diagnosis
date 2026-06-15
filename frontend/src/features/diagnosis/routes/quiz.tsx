@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import QuizStep from "@/features/diagnosis/components/quiz-step";
 import { getTracking } from "@/lib/tracking";
-import { STEP_CATEGORIES } from "@/features/diagnosis/lib/questions";
+import { STEP_CATEGORIES } from "@/features/diagnosis/constants/step-categories";
 import { getVisibleQuestions, resolveOptions } from "@/features/diagnosis/utils/quiz-helpers";
 import type { Answers } from "@/features/diagnosis/types";
 
