@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import JobLink from "@/components/JobLink";
-import { diagnose } from "@/lib/diagnosis";
-import { getJobUrl, JOB_LINKS } from "@/lib/jobLinks";
+import JobLink from "@/features/jobs/components/job-link";
+import { diagnose } from "@/features/diagnosis/lib/diagnosis";
+import { getJobUrl, JOB_LINKS } from "@/features/jobs/lib/job-links";
 import { getTracking } from "@/lib/tracking";
-import { STEP_CATEGORIES } from "@/lib/questions";
+import { STEP_CATEGORIES } from "@/features/diagnosis/lib/questions";
 
 const STEP_LABELS = STEP_CATEGORIES;
 

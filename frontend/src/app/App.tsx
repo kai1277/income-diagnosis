@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Quiz from "./pages/Quiz";
-import Result from "./pages/Result";
+import Home from "../features/home/routes/home";
+import Quiz from "../features/diagnosis/routes/quiz";
+import Result from "../features/diagnosis/routes/result";
 
 export default function App() {
   return (

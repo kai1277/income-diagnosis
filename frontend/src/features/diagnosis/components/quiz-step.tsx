@@ -1,16 +1,4 @@
-type Option = { label: string; emoji: string };
-
-type Props = {
-  step: number;
-  totalSteps: number;
-  currentCategory: number;
-  stepLabels: string[];
-  highlight: string;
-  subtitle?: string;
-  options: Option[];
-  onAnswer: (answer: string) => void;
-  onBack?: () => void;
-};
+import type { QuizStepProps } from "@/features/diagnosis/types";
 
 export default function QuizStep({
   step,
@@ -22,7 +10,7 @@ export default function QuizStep({
   options,
   onAnswer,
   onBack,
-}: Props) {
+}: QuizStepProps) {
   const total = stepLabels.length;
 
   return (

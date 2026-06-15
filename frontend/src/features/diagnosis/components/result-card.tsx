@@ -1,12 +1,6 @@
-type Job = { title: string; reason: string };
+import type { ResultCardProps } from "@/features/diagnosis/types";
 
-type Props = {
-  potentialIncome: number;
-  incomeGap: number;
-  suggestedJobs: Job[];
-};
-
-export default function ResultCard({ potentialIncome, incomeGap, suggestedJobs }: Props) {
+export default function ResultCard({ potentialIncome, incomeGap, suggestedJobs }: ResultCardProps) {
   return (
     <div className="space-y-6">
       <div className="bg-blue-600 text-white rounded-2xl p-6 text-center">

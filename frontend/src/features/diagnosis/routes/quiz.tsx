@@ -1,18 +1,10 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import QuizStep from "@/components/QuizStep";
+import QuizStep from "@/features/diagnosis/components/quiz-step";
 import { getTracking } from "@/lib/tracking";
-import { QUESTIONS, STEP_CATEGORIES, type QuizQuestion } from "@/lib/questions";
-
-type Answers = Record<string, string>;
-
-function getVisibleQuestions(answers: Answers): QuizQuestion[] {
-  return QUESTIONS.filter((q) => !q.showIf || q.showIf(answers));
-}
-
-function resolveOptions(q: QuizQuestion, answers: Answers) {
-  return typeof q.options === "function" ? q.options(answers) : q.options;
-}
+import { STEP_CATEGORIES } from "@/features/diagnosis/lib/questions";
+import { getVisibleQuestions, resolveOptions } from "@/features/diagnosis/utils/quiz-helpers";
+import type { Answers } from "@/features/diagnosis/types";
 
 export default function Quiz() {
   const navigate = useNavigate();

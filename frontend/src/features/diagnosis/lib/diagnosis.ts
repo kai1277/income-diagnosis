@@ -1,4 +1,6 @@
-export type QuizAnswers = Record<string, string>;
+import type { QuizAnswers, SuggestedJob } from "@/features/diagnosis/types";
+
+export type { QuizAnswers };
 
 export type CharacterResult = {
   id: string;
@@ -11,7 +13,7 @@ export type CharacterResult = {
   potentialIncome: number;
   incomeGap: number;
   currentIncomeBase: number;
-  suggestedJobs: { title: string; reason: string }[];
+  suggestedJobs: SuggestedJob[];
   shareText: string;
 };
 

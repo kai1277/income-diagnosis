@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import liff from "@line/liff";
 import "./index.css";
-import App from "./App";
+import App from "./app/App";
 
 const GA_ID = import.meta.env.VITE_GA_ID as string | undefined;
 const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
