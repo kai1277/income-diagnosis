@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import JobLink from "@/features/jobs/components/job-link";
-import { diagnose } from "@/features/diagnosis/lib/diagnosis";
+import { diagnose } from "@/features/diagnosis/utils/diagnose";
 import { getJobUrl, JOB_LINKS } from "@/features/jobs/lib/job-links";
 import { getTracking } from "@/lib/tracking";
 import { STEP_CATEGORIES } from "@/features/diagnosis/lib/questions";

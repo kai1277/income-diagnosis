@@ -1,6 +1,4 @@
-import type { CharacterResult, QuizAnswers } from "@/features/diagnosis/types";
-
-const INCOME_BASE: Record<string, number> = {
+export const INCOME_BASE: Record<string, number> = {
   "〜300万": 270,
   "300〜400万": 350,
   "400〜500万": 450,
@@ -9,7 +7,7 @@ const INCOME_BASE: Record<string, number> = {
   "800万〜": 850,
 };
 
-const SCORE_MAP: Record<string, Record<string, number>> = {
+export const SCORE_MAP: Record<string, Record<string, number>> = {
   birthYear: {
     "1990年以前": 10,
     "1991〜1995年": 12,
@@ -170,7 +168,7 @@ const SCORE_MAP: Record<string, Record<string, number>> = {
   },
 };
 
-const MAX_SCORES: Record<string, number> = {
+export const MAX_SCORES: Record<string, number> = {
   birthYear: 12,
   education: 12,
   schoolTier: 15,
@@ -194,7 +192,7 @@ const MAX_SCORES: Record<string, number> = {
   englishLevel: 15,
 };
 
-type TierDef = {
+export type TierDef = {
   id: string;
   name: string;
   emoji: string;
@@ -205,7 +203,7 @@ type TierDef = {
   suggestedJobs: { title: string; reason: string }[];
 };
 
-const TIERS: TierDef[] = [
+export const TIERS: TierDef[] = [
   {
     id: "high_potential",
     name: "ハイポテンシャル層",
@@ -283,75 +281,3 @@ const TIERS: TierDef[] = [
   },
 ];
 
-function computeMaxScore(answers: QuizAnswers): number {
-  let max =
-    MAX_SCORES.birthYear +
-    MAX_SCORES.education +
-    MAX_SCORES.graduationYear +
-    MAX_SCORES.companyType +
-    MAX_SCORES.employmentType +
-    MAX_SCORES.industryLevel1 +
-    MAX_SCORES.companySize +
-    MAX_SCORES.position +
-    MAX_SCORES.currentIncome +
-    MAX_SCORES.jobLevel1 +
-    MAX_SCORES.jobLevel3 +
-    MAX_SCORES.yearsOfExperience +
-    MAX_SCORES.managementYears +
-    MAX_SCORES.englishLevel;
-
-  if (answers.education === "大学" || answers.education === "大学院") {
-    max += MAX_SCORES.schoolTier;
-  }
-  if (answers.industryLevel1 === "IT/インターネット/通信") {
-    max += MAX_SCORES.industryLevel3;
-  }
-  if (answers.jobLevel1 === "営業") {
-    max +=
-      MAX_SCORES.customerSize +
-      MAX_SCORES.achievementRate +
-      MAX_SCORES.rankInOrg +
-      MAX_SCORES.salesProduct +
-      MAX_SCORES.productPrice;
-  }
-
-  return max;
-}
-
-function computeScore(answers: QuizAnswers): number {
-  let score = 0;
-  for (const [key, value] of Object.entries(answers)) {
-    score += SCORE_MAP[key]?.[value] ?? 0;
-  }
-  return score;
-}
-
-function getTier(potentialIncome: number): TierDef {
-  if (potentialIncome >= 800) return TIERS[0];
-  if (potentialIncome >= 650) return TIERS[1];
-  if (potentialIncome >= 500) return TIERS[2];
-  if (potentialIncome >= 400) return TIERS[3];
-  return TIERS[4];
-}
-
-export function diagnose(answers: QuizAnswers): CharacterResult {
-  const base = INCOME_BASE[answers.currentIncome] ?? 350;
-  const score = computeScore(answers);
-  const maxScore = computeMaxScore(answers);
-  const normalizedScore = maxScore > 0 ? score / maxScore : 0;
-  // Calibrated so observed answers (score=222, maxScore=329, base=520) → 705万
-  const multiplier = 0.85 + normalizedScore * 0.749;
-  const potentialIncome = Math.round((base * multiplier) / 5) * 5;
-  const incomeGap = potentialIncome - base;
-  const tier = getTier(potentialIncome);
-
-  const shareText = `診断結果：「${tier.name}」\n市場価値ランク ${tier.rank} ｜ ${tier.growthType}\n\n"${tier.tagline}"\n\n#市場価値診断 #キャリア`;
-
-  return {
-    ...tier,
-    potentialIncome,
-    incomeGap,
-    currentIncomeBase: base,
-    shareText,
-  };
-}
