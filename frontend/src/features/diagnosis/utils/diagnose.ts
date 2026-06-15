@@ -5,7 +5,7 @@ import {
   SCORE_MAP,
   TIERS,
   type TierDef,
-} from "@/features/diagnosis/lib/diagnosis";
+} from "@/features/diagnosis/constants/diagnosis-rules";
 
 function computeMaxScore(answers: QuizAnswers): number {
   let max =

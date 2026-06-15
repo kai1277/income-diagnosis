@@ -1,3 +1,7 @@
+import type { TierDef } from "@/features/diagnosis/types";
+
+export type { TierDef };
+
 export const INCOME_BASE: Record<string, number> = {
   "〜300万": 270,
   "300〜400万": 350,
@@ -192,17 +196,6 @@ export const MAX_SCORES: Record<string, number> = {
   englishLevel: 15,
 };
 
-export type TierDef = {
-  id: string;
-  name: string;
-  emoji: string;
-  rank: "S" | "A" | "B";
-  growthType: string;
-  tagline: string;
-  description: string;
-  suggestedJobs: { title: string; reason: string }[];
-};
-
 export const TIERS: TierDef[] = [
   {
     id: "high_potential",
@@ -280,4 +273,3 @@ export const TIERS: TierDef[] = [
     ],
   },
 ];
-

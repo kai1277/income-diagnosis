@@ -17,6 +17,17 @@ export type QuizStepProps = {
 
 export type SuggestedJob = { title: string; reason: string };
 
+export type TierDef = {
+  id: string;
+  name: string;
+  emoji: string;
+  rank: "S" | "A" | "B";
+  growthType: string;
+  tagline: string;
+  description: string;
+  suggestedJobs: SuggestedJob[];
+};
+
 export type CharacterResult = {
   id: string;
   name: string;
