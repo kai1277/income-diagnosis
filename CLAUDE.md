@@ -18,24 +18,41 @@
 
 ```
 /
-├── src/
-│   ├── main.tsx              # エントリーポイント（GA4初期化）
-│   ├── App.tsx               # ルーティング定義
-│   ├── index.css             # グローバルCSS（Tailwind）
-│   ├── vite-env.d.ts         # 型定義（gtag, import.meta.env）
-│   ├── pages/
-│   │   ├── Home.tsx          # トップLP（診断開始）
-│   │   ├── Quiz.tsx          # 診断画面（ステップ形式）
-│   │   └── Result.tsx        # 結果画面（求人CTA）
-│   ├── components/
-│   │   ├── QuizStep.tsx      # 1問ずつ表示するUI
-│   │   ├── ResultCard.tsx    # 年収・職種表示
-│   │   └── JobLink.tsx       # 求人リンク（クリック計測付き）
-│   └── lib/
-│       ├── diagnosis.ts      # 診断ロジック（ルールベース）
-│       └── jobLinks.ts       # 求人URL集約
-├── index.html
-├── vite.config.ts
+├── frontend/                          # Viteプロジェクトルート
+│   ├── src/
+│   │   ├── main.tsx                   # エントリーポイント（GA4初期化）
+│   │   ├── vite-env.d.ts              # 型定義（gtag, import.meta.env）
+│   │   ├── index.css                  # グローバルCSS（Tailwind）
+│   │   ├── app/
+│   │   │   └── App.tsx                # ルーティング定義（/, /quiz, /result）
+│   │   ├── features/
+│   │   │   ├── home/
+│   │   │   │   └── routes/home.tsx        # トップLP（診断開始）
+│   │   │   ├── diagnosis/
+│   │   │   │   ├── routes/
+│   │   │   │   │   ├── quiz.tsx           # 診断画面（ステップ形式）
+│   │   │   │   │   └── result.tsx         # 結果画面（求人CTA）
+│   │   │   │   ├── components/
+│   │   │   │   │   ├── quiz-step.tsx      # 1問ずつ表示するUI
+│   │   │   │   │   └── result-card.tsx    # 年収・職種表示
+│   │   │   │   ├── constants/
+│   │   │   │   │   ├── questions.ts       # 質問一覧
+│   │   │   │   │   ├── diagnosis-rules.ts # 診断ロジック（ルールベース）
+│   │   │   │   │   └── step-categories.ts
+│   │   │   │   ├── utils/
+│   │   │   │   │   ├── diagnose.ts        # 診断結果算出
+│   │   │   │   │   └── quiz-helpers.ts
+│   │   │   │   └── types/
+│   │   │   └── jobs/
+│   │   │       ├── components/job-link.tsx   # 求人リンク（クリック計測付き）
+│   │   │       └── lib/job-links.ts           # 求人URL集約
+│   │   └── lib/
+│   │       └── tracking.ts            # GA4イベント送信ヘルパー
+│   ├── index.html
+│   ├── vite.config.ts
+│   └── .env.local                     # VITE_GA_ID
+├── docs/
+│   └── diagnosis-tree/                # 診断ロジックの設計ドキュメント
 └── CLAUDE.md
 ```
 
@@ -86,7 +103,7 @@
 
 ---
 
-## 🧠 診断ロジック（`lib/diagnosis.ts`）
+## 🧠 診断ロジック（`features/diagnosis/constants/diagnosis-rules.ts`）
 
 シンプルなルールベース。正確性より**納得感**を優先。
 
@@ -106,7 +123,7 @@ if (働き方志向 === "安定重視") {
 // 仮数値でOK。ユーザーの納得感が重要
 ```
 
-職種候補テーブルは `lib/diagnosis.ts` にハードコードで定義する。DB不要。
+職種候補テーブルは `features/diagnosis/constants/diagnosis-rules.ts` にハードコードで定義する。DB不要。
 
 ---
 
@@ -121,9 +138,9 @@ Google Analytics 4 を使い、以下のカスタムイベントを計測する�
 | `job_link_click` | 求人CTAボタンクリック時            |
 
 ```typescript
-// JobLink.tsx での計測例
-const handleClick = (jobType: string, url: string) => {
-  gtag("event", "job_link_click", {
+// features/jobs/components/job-link.tsx での計測例
+const handleClick = () => {
+  window.gtag?.("event", "job_link_click", {
     job_type: jobType,
     destination_url: url,
   });
@@ -137,10 +154,10 @@ GA4の測定IDは `.env.local` に `VITE_GA_ID=G-XXXXXXXXXX` として管理。�
 
 ## 🔗 求人リンク
 
-現時点ではダミーURLで実装する。後から差し替えられるよう `lib/jobLinks.ts` に集約すること。
+現時点ではダミーURLで実装する。後から差し替えられるよう `features/jobs/lib/job-links.ts` に集約すること。
 
 ```typescript
-// lib/jobLinks.ts
+// features/jobs/lib/job-links.ts
 export const JOB_LINKS = {
   blueCollar: "https://www.indeed.com/jobs?q=...", // 後で差し替え
   general: "https://www.indeed.com/jobs?q=...",
