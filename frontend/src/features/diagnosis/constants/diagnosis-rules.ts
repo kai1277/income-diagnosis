@@ -1,7 +1,5 @@
 import type { TierDef } from "@/features/diagnosis/types";
 
-export type { TierDef };
-
 export const INCOME_BASE: Record<string, number> = {
   "〜300万": 270,
   "300〜400万": 350,

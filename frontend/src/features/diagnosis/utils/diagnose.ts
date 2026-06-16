@@ -1,10 +1,9 @@
-import type { CharacterResult, QuizAnswers } from "@/features/diagnosis/types";
+import type { CharacterResult, QuizAnswers, TierDef } from "@/features/diagnosis/types";
 import {
   INCOME_BASE,
   MAX_SCORES,
   SCORE_MAP,
   TIERS,
-  type TierDef,
 } from "@/features/diagnosis/constants/diagnosis-rules";
 
 function computeMaxScore(answers: QuizAnswers): number {
