@@ -6,11 +6,13 @@ import Result from "../features/diagnosis/routes/result";
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/quiz" element={<Quiz />} />
-        <Route path="/result" element={<Result />} />
-      </Routes>
+      <div className="max-w-sm mx-auto">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/quiz" element={<Quiz />} />
+          <Route path="/result" element={<Result />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }

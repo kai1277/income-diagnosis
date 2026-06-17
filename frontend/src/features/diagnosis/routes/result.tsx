@@ -145,7 +145,7 @@ export default function Result() {
 
       {/* Sticky CTA */}
       <div
-        className="fixed bottom-0 left-0 right-0 px-4 pt-4 space-y-2.5"
+        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 pt-4 space-y-2.5"
         style={{
           backgroundColor: "rgba(240, 242, 245, 0.97)",
           borderTop: "1px solid #dde3ea",
