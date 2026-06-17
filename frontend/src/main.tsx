@@ -24,7 +24,11 @@ if (GA_ID) {
 
 async function initApp() {
   if (LIFF_ID) {
-    await liff.init({ liffId: LIFF_ID });
+    try {
+      await liff.init({ liffId: LIFF_ID });
+    } catch {
+      // liff.init fails outside LINE environment — app still renders
+    }
   }
 
   createRoot(document.getElementById("root")!).render(
