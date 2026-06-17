@@ -22,20 +22,18 @@ if (GA_ID) {
   window.gtag = gtag;
 }
 
-async function initApp() {
-  if (LIFF_ID) {
-    try {
-      await liff.init({ liffId: LIFF_ID });
-    } catch {
-      // liff.init fails outside LINE environment — app still renders
-    }
-  }
-
+function initApp() {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <App />
     </StrictMode>
   );
+
+  if (LIFF_ID) {
+    liff.init({ liffId: LIFF_ID }).catch(() => {
+      // outside LINE — ignore
+    });
+  }
 }
 
-initApp().catch(console.error);
+initApp();
