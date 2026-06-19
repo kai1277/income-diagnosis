@@ -8,8 +8,10 @@ export type MockJob = {
   location: string;
   jobTypes: string[];
   jobId: string;
-  /** A8.net成果計測URL。未設定の場合は画像・詳細リンクを非表示 */
+  /** A8.netクリック計測URL。未設定の場合は画像・詳細リンクを非表示 */
   affiliateUrl?: string;
+  /** A8.netインプレッション計測ピクセルURL（0.gif）。カード表示時に読み込む */
+  impressionPixelUrl?: string;
 };
 
 export const MOCK_JOBS: MockJob[] = [
@@ -24,8 +26,8 @@ export const MOCK_JOBS: MockJob[] = [
     location: "東京都羽村市",
     jobTypes: ["検査", "組立・組付け", "加工", "マシンオペレーター", "ライン作業"],
     jobId: "45500-00",
-    // TODO: A8.netの管理画面で発行した成果計測URLに差し替える
-    affiliateUrl: "https://px.a8.net/svt/ejp?a8mat=4B5WGC%2B7O95GY%2B5S9S%2BBWGDT&a8ejpredirect=https%3A%2F%2Fkoujoukyujin.world%2Ftopic%2Fdetail%2F45500-00%2F",
+    affiliateUrl: "https://px.a8.net/svt/ejp?a8mat=4B5WGC+7O95GY+5S9S+BW8O2&a8ejpredirect=https%3A%2F%2Fkoujoukyujin.world%2Ftopic%2Fdetail%2F45500-00%2F",
+    impressionPixelUrl: "https://www13.a8.net/0.gif?a8mat=4B5WGC+7O95GY+5S9S+BW8O2",
   },
   {
     id: "job-2",

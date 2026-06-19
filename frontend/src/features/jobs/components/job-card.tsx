@@ -215,6 +215,17 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
           </button>
         </div>
       </div>
+
+      {/* A8.net インプレッション計測ピクセル */}
+      {job.impressionPixelUrl && (
+        <img
+          src={job.impressionPixelUrl}
+          width={1}
+          height={1}
+          alt=""
+          style={{ position: "absolute", bottom: 0, right: 0, opacity: 0, pointerEvents: "none" }}
+        />
+      )}
     </div>
   );
 }
