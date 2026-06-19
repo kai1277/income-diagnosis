@@ -2,9 +2,13 @@ import type { MockJob } from "@/features/jobs/lib/mock-jobs";
 
 type Props = {
   job: MockJob;
+  current: number;
+  total: number;
+  onKeep: () => void;
+  onReject: () => void;
 };
 
-export default function JobCard({ job }: Props) {
+export default function JobCard({ job, current, total, onKeep, onReject }: Props) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       {/* Image section */}
@@ -16,6 +20,9 @@ export default function JobCard({ job }: Props) {
         />
         <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
           {job.imageBadge}
+        </span>
+        <span className="absolute top-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
+          {current} / {total}
         </span>
       </div>
 
@@ -50,17 +57,20 @@ export default function JobCard({ job }: Props) {
           </div>
         </div>
 
-        <div className="flex gap-2 pt-1">
-          <button className="flex-1 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium active:bg-gray-50">
-            ☆ キープする
-          </button>
-          <a
-            href={job.detailUrl}
-            className="flex-1 py-2.5 rounded-lg border text-center text-sm font-medium active:opacity-80"
-            style={{ borderColor: "#0288d1", color: "#0288d1" }}
+        <div className="flex gap-3 pt-1">
+          <button
+            onClick={onReject}
+            className="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-400 text-xl font-bold active:bg-gray-50 transition-colors"
           >
-            詳細を見る
-          </a>
+            ❌
+          </button>
+          <button
+            onClick={onKeep}
+            className="flex-1 py-3 rounded-xl text-white text-sm font-bold active:opacity-80 transition-opacity"
+            style={{ backgroundColor: "#4dd0e1" }}
+          >
+            キープ ★
+          </button>
         </div>
       </div>
     </div>
