@@ -8,21 +8,24 @@ export type MockJob = {
   location: string;
   jobTypes: string[];
   jobId: string;
-  detailUrl: string;
+  /** A8.net成果計測URL。未設定の場合は画像・詳細リンクを非表示 */
+  affiliateUrl?: string;
 };
 
 export const MOCK_JOBS: MockJob[] = [
   {
     id: "job-1",
-    imageUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
+    // A8.net 商品リンク imu から取得
+    imageUrl: "https://koujoukyujin.world/userdata/images/00795265.webp",
     imageBadge: "7月入社募集中",
-    title: "【東京勤務】メーカー正社員登用率80%!!/月収例36万円以上/土日休み/未経験OK/寮費無料/駅チカ",
+    title: "7月入社【東京勤務】メーカー正社員登用率80%!!/月収例36万円以上/土日休み/未経験OK/寮費無料/駅チカ",
     monthlyIncome: 361637,
     monthlySalary: "255,000円〜",
     location: "東京都羽村市",
     jobTypes: ["検査", "組立・組付け", "加工", "マシンオペレーター", "ライン作業"],
     jobId: "45500-00",
-    detailUrl: "#",
+    // TODO: A8.netの管理画面で発行した成果計測URLに差し替える
+    affiliateUrl: "https://px.a8.net/svt/ejp?a8mat=4B5WGC%2B7O95GY%2B5S9S%2BBWGDT&a8ejpredirect=https%3A%2F%2Fkoujoukyujin.world%2Ftopic%2Fdetail%2F45500-00%2F",
   },
   {
     id: "job-2",
@@ -34,7 +37,6 @@ export const MOCK_JOBS: MockJob[] = [
     location: "神奈川県川崎市",
     jobTypes: ["配管工", "設備工事", "施工管理補助"],
     jobId: "38200-01",
-    detailUrl: "#",
   },
   {
     id: "job-3",
@@ -46,6 +48,5 @@ export const MOCK_JOBS: MockJob[] = [
     location: "大阪府堺市",
     jobTypes: ["フォークリフト", "倉庫管理", "仕分け"],
     jobId: "51100-03",
-    detailUrl: "#",
   },
 ];

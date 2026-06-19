@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import type { MockJob } from "@/features/jobs/lib/mock-jobs";
+import { getTracking } from "@/lib/tracking";
 
 const SWIPE_THRESHOLD = 80;
 const EXIT_X = 500;
@@ -11,6 +12,15 @@ type Props = {
   onKeep: () => void;
   onReject: () => void;
 };
+
+function trackJobLinkClick(clickType: "image" | "detail_button", job: MockJob) {
+  window.gtag?.("event", "job_link_click", {
+    click_type: clickType,
+    job_id: job.jobId,
+    destination_url: job.affiliateUrl,
+    ...getTracking(),
+  });
+}
 
 export default function JobCard({ job, current, total, onKeep, onReject }: Props) {
   const [dragX, setDragX] = useState(0);
@@ -112,14 +122,30 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
         </span>
       </div>
 
-      {/* Image section */}
+      {/* Image section — affiliateUrl があればタップで遷移 */}
       <div className="relative">
-        <img
-          src={job.imageUrl}
-          alt={job.title}
-          className="w-full h-40 object-cover"
-          draggable={false}
-        />
+        {job.affiliateUrl ? (
+          <a
+            href={job.affiliateUrl}
+            target="_blank"
+            rel="nofollow noopener noreferrer"
+            onClick={() => trackJobLinkClick("image", job)}
+          >
+            <img
+              src={job.imageUrl}
+              alt={job.title}
+              className="w-full h-40 object-cover"
+              draggable={false}
+            />
+          </a>
+        ) : (
+          <img
+            src={job.imageUrl}
+            alt={job.title}
+            className="w-full h-40 object-cover"
+            draggable={false}
+          />
+        )}
         <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
           {job.imageBadge}
         </span>
@@ -158,6 +184,20 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
             <span>{job.jobId}</span>
           </div>
         </div>
+
+        {/* 詳細リンク — affiliateUrl がある求人のみ表示 */}
+        {job.affiliateUrl && (
+          <a
+            href={job.affiliateUrl}
+            target="_blank"
+            rel="nofollow noopener noreferrer"
+            onClick={() => trackJobLinkClick("detail_button", job)}
+            className="block w-full py-2.5 text-center text-sm font-medium rounded-xl border"
+            style={{ color: "#0288d1", borderColor: "#0288d1" }}
+          >
+            詳細を見る →
+          </a>
+        )}
 
         <div className="flex gap-3 pt-1">
           <button
