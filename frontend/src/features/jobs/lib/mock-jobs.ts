@@ -41,14 +41,17 @@ export const MOCK_JOBS: MockJob[] = [
   {
     id: "job-2",
     imageUrl:
-      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80",
-    imageBadge: "急募",
-    title: "【神奈川・川崎】配管工/経験者優遇/日給2.5万円〜/社保完備/寮あり",
-    incomeExample: "420,000円",
-    incomeRange: "300,000円〜",
-    location: "神奈川県川崎市",
-    jobTypes: ["配管工", "設備工事", "施工管理補助"],
+      "https://www22.a8.net/svt/bgt?aid=260615821321&wid=001&eno=01&mid=s00000026324001008000&mc=1",
+    imageBadge: "在宅可！",
+    title: "ノンアダルトチャットレディー大募集！すぐにお仕事紹介！！",
+    incomeExample: "【月収】30万",
+    incomeRange: "【時給】7,500円〜",
+    location: "在宅/全国各地",
+    jobTypes: ["チャットレディー"],
     jobId: "38200-01",
+    affiliateUrl: "https://px.a8.net/svt/ejp?a8mat=4B5WGD+5B45YQ+5N48+601S1",
+    impressionPixelUrl:
+      "https://www12.a8.net/0.gif?a8mat=4B5WGD+5B45YQ+5N48+601S1",
   },
   {
     id: "job-3",

@@ -146,7 +146,7 @@ export default function JobCard({
             <img
               src={job.imageUrl}
               alt={job.title}
-              className="w-full h-40 object-cover"
+              className="w-full h-40 object-contain bg-gray-100"
               draggable={false}
             />
           </a>
@@ -154,7 +154,7 @@ export default function JobCard({
           <img
             src={job.imageUrl}
             alt={job.title}
-            className="w-full h-40 object-cover"
+            className="w-full h-40 object-contain bg-gray-100"
             draggable={false}
           />
         )}
