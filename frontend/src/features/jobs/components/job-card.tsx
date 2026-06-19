@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import type { MockJob } from "@/features/jobs/lib/mock-jobs";
+import { getTracking } from "@/lib/tracking";
 
 const SWIPE_THRESHOLD = 80;
 const EXIT_X = 500;
@@ -12,7 +13,22 @@ type Props = {
   onReject: () => void;
 };
 
-export default function JobCard({ job, current, total, onKeep, onReject }: Props) {
+function trackJobLinkClick(clickType: "image" | "detail_button", job: MockJob) {
+  window.gtag?.("event", "job_link_click", {
+    click_type: clickType,
+    job_id: job.id,
+    destination_url: job.affiliateUrl,
+    ...getTracking(),
+  });
+}
+
+export default function JobCard({
+  job,
+  current,
+  total,
+  onKeep,
+  onReject,
+}: Props) {
   const [dragX, setDragX] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const startX = useRef(0);
@@ -94,7 +110,10 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
           opacity: keepOpacity,
         }}
       >
-        <span className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[-20deg]" style={{ color: "#4dd0e1", borderColor: "#4dd0e1" }}>
+        <span
+          className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[-20deg]"
+          style={{ color: "#4dd0e1", borderColor: "#4dd0e1" }}
+        >
           キープ ★
         </span>
       </div>
@@ -107,19 +126,38 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
           opacity: rejectOpacity,
         }}
       >
-        <span className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[20deg]" style={{ color: "#ef4444", borderColor: "#ef4444" }}>
+        <span
+          className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[20deg]"
+          style={{ color: "#ef4444", borderColor: "#ef4444" }}
+        >
           スキップ ❌
         </span>
       </div>
 
-      {/* Image section */}
+      {/* Image section — affiliateUrl があればタップで遷移 */}
       <div className="relative">
-        <img
-          src={job.imageUrl}
-          alt={job.title}
-          className="w-full h-40 object-cover"
-          draggable={false}
-        />
+        {job.affiliateUrl ? (
+          <a
+            href={job.affiliateUrl}
+            target="_blank"
+            rel="nofollow noopener noreferrer"
+            onClick={() => trackJobLinkClick("image", job)}
+          >
+            <img
+              src={job.imageUrl}
+              alt={job.title}
+              className="w-full h-40 object-contain bg-gray-100"
+              draggable={false}
+            />
+          </a>
+        ) : (
+          <img
+            src={job.imageUrl}
+            alt={job.title}
+            className="w-full h-40 object-contain bg-gray-100"
+            draggable={false}
+          />
+        )}
         <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
           {job.imageBadge}
         </span>
@@ -130,21 +168,15 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
 
       {/* Info section */}
       <div className="p-4 space-y-3">
-        <p className="text-sm font-medium text-gray-800 leading-snug">{job.title}</p>
+        <p className="text-sm font-medium text-gray-800 leading-snug">
+          {job.title}
+        </p>
 
-        <div>
-          <p className="text-xs text-gray-400 mb-0.5">月収例</p>
-          <p className="text-xl font-black" style={{ color: "#0288d1" }}>
-            {job.monthlyIncome.toLocaleString()}
-            <span className="text-base font-bold ml-1">円</span>
-          </p>
-        </div>
+        <p className="text-xl font-black" style={{ color: "#0288d1" }}>
+          {job.incomeRange}
+        </p>
 
         <div className="space-y-1.5 text-xs text-gray-500">
-          <div className="flex items-center gap-2">
-            <span>¥</span>
-            <span>【月給】{job.monthlySalary}</span>
-          </div>
           <div className="flex items-center gap-2">
             <span>📍</span>
             <span>{job.location}</span>
@@ -153,11 +185,21 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
             <span>🔧</span>
             <span>{job.jobTypes.join("、")}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span>📋</span>
-            <span>{job.jobId}</span>
-          </div>
         </div>
+
+        {/* 詳細リンク — affiliateUrl がある求人のみ表示 */}
+        {job.affiliateUrl && (
+          <a
+            href={job.affiliateUrl}
+            target="_blank"
+            rel="nofollow noopener noreferrer"
+            onClick={() => trackJobLinkClick("detail_button", job)}
+            className="block w-full py-2.5 text-center text-sm font-medium rounded-xl border"
+            style={{ color: "#0288d1", borderColor: "#0288d1" }}
+          >
+            詳細を見る →
+          </a>
+        )}
 
         <div className="flex gap-3 pt-1">
           <button
@@ -175,6 +217,23 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
           </button>
         </div>
       </div>
+
+      {/* A8.net インプレッション計測ピクセル */}
+      {job.impressionPixelUrl && (
+        <img
+          src={job.impressionPixelUrl}
+          width={1}
+          height={1}
+          alt=""
+          style={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            opacity: 0,
+            pointerEvents: "none",
+          }}
+        />
+      )}
     </div>
   );
 }
