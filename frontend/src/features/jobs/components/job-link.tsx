@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { getTracking } from "@/lib/tracking";
 
 type Props = {
@@ -10,6 +11,8 @@ type Props = {
 };
 
 export default function JobLink({ label, jobType, url, variant = "primary", position, resultCardId }: Props) {
+  const navigate = useNavigate();
+
   const handleClick = () => {
     window.gtag?.("event", "job_link_click", {
       job_type: jobType,
@@ -18,7 +21,7 @@ export default function JobLink({ label, jobType, url, variant = "primary", posi
       result_card_id: resultCardId,
       ...getTracking(),
     });
-    window.open(url, "_blank");
+    navigate("/jobs");
   };
 
   if (variant === "primary") {
