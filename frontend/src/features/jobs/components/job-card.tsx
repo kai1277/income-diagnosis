@@ -16,7 +16,7 @@ type Props = {
 function trackJobLinkClick(clickType: "image" | "detail_button", job: MockJob) {
   window.gtag?.("event", "job_link_click", {
     click_type: clickType,
-    job_id: job.jobId,
+    job_id: job.id,
     destination_url: job.affiliateUrl,
     ...getTracking(),
   });
