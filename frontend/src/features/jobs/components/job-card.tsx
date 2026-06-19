@@ -172,18 +172,11 @@ export default function JobCard({
           {job.title}
         </p>
 
-        <div>
-          <p className="text-xs text-gray-400 mb-0.5">収入例</p>
-          <p className="text-xl font-black" style={{ color: "#0288d1" }}>
-            {job.incomeExample}
-          </p>
-        </div>
+        <p className="text-xl font-black" style={{ color: "#0288d1" }}>
+          {job.incomeRange}
+        </p>
 
         <div className="space-y-1.5 text-xs text-gray-500">
-          <div className="flex items-center gap-2">
-            <span>¥</span>
-            <span>{job.incomeRange}</span>
-          </div>
           <div className="flex items-center gap-2">
             <span>📍</span>
             <span>{job.location}</span>
@@ -191,10 +184,6 @@ export default function JobCard({
           <div className="flex items-center gap-2">
             <span>🔧</span>
             <span>{job.jobTypes.join("、")}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span>📋</span>
-            <span>{job.jobId}</span>
           </div>
         </div>
 
