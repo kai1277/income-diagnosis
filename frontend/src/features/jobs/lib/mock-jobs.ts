@@ -56,14 +56,33 @@ export const MOCK_JOBS: MockJob[] = [
   {
     id: "job-3",
     imageUrl:
-      "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&q=80",
-    imageBadge: "週払いOK",
-    title:
-      "【大阪】フォークリフトオペレーター/月収40万円可/残業少なめ/未経験歓迎",
-    incomeExample: "385,000円",
-    incomeRange: "270,000円〜",
-    location: "大阪府堺市",
-    jobTypes: ["フォークリフト", "倉庫管理", "仕分け"],
-    jobId: "51100-03",
+      "https://job-ticket.jp/wp-content/uploads/2026/06/%E5%90%8D%E7%A7%B0%E6%9C%AA%E8%A8%AD%E5%AE%9A%E3%81%AE%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3-2026-06-19T104035.291.png",
+    imageBadge: "住み込み",
+    title: "【高時給】小涌谷駅から徒歩13分　リゾートマンションの施設管理",
+    incomeExample: "【時給】1500円",
+    incomeRange: "【時給】1500円",
+    location: "神奈川県箱根町",
+    jobTypes: ["裏方", "施設管理"],
+    jobId: "100126",
+    affiliateUrl:
+      "https://px.a8.net/svt/ejp?a8mat=4B5WGC+DRCO36+5OUQ+BW8O2&a8ejpredirect=https%3A%2F%2Fjob-ticket.jp%2Fjobs%2F100126%2F",
+    impressionPixelUrl:
+      "https://www15.a8.net/0.gif?a8mat=4B5WGC+DRCO36+5OUQ+BW8O2",
+  },
+  {
+    id: "job-4",
+    imageUrl:
+      "https://job-ticket.jp/wp-content/uploads/2026/06/%E5%90%8D%E7%A7%B0%E6%9C%AA%E8%A8%AD%E5%AE%9A%E3%81%AE%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3-2026-06-19T104035.291.png",
+    imageBadge: "住み込み",
+    title: "【高時給】小涌谷駅から徒歩13分　リゾートマンションの施設管理",
+    incomeExample: "【時給】1500円",
+    incomeRange: "【時給】1500円",
+    location: "神奈川県箱根町",
+    jobTypes: ["裏方", "施設管理"],
+    jobId: "100126",
+    affiliateUrl:
+      "https://px.a8.net/svt/ejp?a8mat=4B5WGC+DRCO36+5OUQ+BW8O2&a8ejpredirect=https%3A%2F%2Fjob-ticket.jp%2Fjobs%2F100126%2F",
+    impressionPixelUrl:
+      "https://www15.a8.net/0.gif?a8mat=4B5WGC+DRCO36+5OUQ+BW8O2",
   },
 ];
