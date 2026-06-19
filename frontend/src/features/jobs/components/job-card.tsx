@@ -1,4 +1,8 @@
+import { useState, useRef } from "react";
 import type { MockJob } from "@/features/jobs/lib/mock-jobs";
+
+const SWIPE_THRESHOLD = 80;
+const EXIT_X = 500;
 
 type Props = {
   job: MockJob;
@@ -9,14 +13,112 @@ type Props = {
 };
 
 export default function JobCard({ job, current, total, onKeep, onReject }: Props) {
+  const [dragX, setDragX] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const startX = useRef(0);
+  const startY = useRef(0);
+  const dragging = useRef(false);
+  const horizontalLocked = useRef(false);
+
+  const exit = (direction: "keep" | "reject") => {
+    setIsAnimating(true);
+    setDragX(direction === "keep" ? EXIT_X : -EXIT_X);
+    setTimeout(() => {
+      if (direction === "keep") onKeep();
+      else onReject();
+    }, 250);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isAnimating) return;
+    startX.current = e.touches[0].clientX;
+    startY.current = e.touches[0].clientY;
+    dragging.current = true;
+    horizontalLocked.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!dragging.current || isAnimating) return;
+    const deltaX = e.touches[0].clientX - startX.current;
+    const deltaY = e.touches[0].clientY - startY.current;
+
+    if (!horizontalLocked.current) {
+      if (Math.abs(deltaX) > Math.abs(deltaY) + 5) {
+        horizontalLocked.current = true;
+      } else if (Math.abs(deltaY) > Math.abs(deltaX) + 5) {
+        dragging.current = false;
+        return;
+      } else {
+        return;
+      }
+    }
+
+    e.preventDefault();
+    setDragX(deltaX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!dragging.current) return;
+    dragging.current = false;
+    if (dragX > SWIPE_THRESHOLD) {
+      exit("keep");
+    } else if (dragX < -SWIPE_THRESHOLD) {
+      exit("reject");
+    } else {
+      setDragX(0);
+    }
+  };
+
+  const rotation = dragX * 0.04;
+  const keepOpacity = Math.min(Math.max(dragX / SWIPE_THRESHOLD, 0), 1);
+  const rejectOpacity = Math.min(Math.max(-dragX / SWIPE_THRESHOLD, 0), 1);
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      style={{
+        transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
+        transition: dragging.current ? "none" : "transform 0.25s ease",
+        touchAction: "pan-y",
+        userSelect: "none",
+      }}
+      className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative"
+    >
+      {/* Keep overlay */}
+      <div
+        className="absolute inset-0 z-10 flex items-center justify-center rounded-xl pointer-events-none"
+        style={{
+          backgroundColor: `rgba(77, 208, 225, ${keepOpacity * 0.25})`,
+          opacity: keepOpacity,
+        }}
+      >
+        <span className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[-20deg]" style={{ color: "#4dd0e1", borderColor: "#4dd0e1" }}>
+          キープ ★
+        </span>
+      </div>
+
+      {/* Reject overlay */}
+      <div
+        className="absolute inset-0 z-10 flex items-center justify-center rounded-xl pointer-events-none"
+        style={{
+          backgroundColor: `rgba(239, 68, 68, ${rejectOpacity * 0.25})`,
+          opacity: rejectOpacity,
+        }}
+      >
+        <span className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[20deg]" style={{ color: "#ef4444", borderColor: "#ef4444" }}>
+          スキップ ❌
+        </span>
+      </div>
+
       {/* Image section */}
       <div className="relative">
         <img
           src={job.imageUrl}
           alt={job.title}
           className="w-full h-40 object-cover"
+          draggable={false}
         />
         <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
           {job.imageBadge}
@@ -59,13 +161,13 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
 
         <div className="flex gap-3 pt-1">
           <button
-            onClick={onReject}
+            onClick={() => exit("reject")}
             className="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-400 text-xl font-bold active:bg-gray-50 transition-colors"
           >
             ❌
           </button>
           <button
-            onClick={onKeep}
+            onClick={() => exit("keep")}
             className="flex-1 py-3 rounded-xl text-white text-sm font-bold active:opacity-80 transition-opacity"
             style={{ backgroundColor: "#4dd0e1" }}
           >

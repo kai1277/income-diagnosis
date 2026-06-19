@@ -47,6 +47,7 @@ export default function Jobs() {
           </div>
         ) : (
           <JobCard
+            key={MOCK_JOBS[index].id}
             job={MOCK_JOBS[index]}
             current={index + 1}
             total={total}
