@@ -22,7 +22,13 @@ function trackJobLinkClick(clickType: "image" | "detail_button", job: MockJob) {
   });
 }
 
-export default function JobCard({ job, current, total, onKeep, onReject }: Props) {
+export default function JobCard({
+  job,
+  current,
+  total,
+  onKeep,
+  onReject,
+}: Props) {
   const [dragX, setDragX] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const startX = useRef(0);
@@ -104,7 +110,10 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
           opacity: keepOpacity,
         }}
       >
-        <span className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[-20deg]" style={{ color: "#4dd0e1", borderColor: "#4dd0e1" }}>
+        <span
+          className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[-20deg]"
+          style={{ color: "#4dd0e1", borderColor: "#4dd0e1" }}
+        >
           キープ ★
         </span>
       </div>
@@ -117,7 +126,10 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
           opacity: rejectOpacity,
         }}
       >
-        <span className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[20deg]" style={{ color: "#ef4444", borderColor: "#ef4444" }}>
+        <span
+          className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[20deg]"
+          style={{ color: "#ef4444", borderColor: "#ef4444" }}
+        >
           スキップ ❌
         </span>
       </div>
@@ -156,20 +168,21 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
 
       {/* Info section */}
       <div className="p-4 space-y-3">
-        <p className="text-sm font-medium text-gray-800 leading-snug">{job.title}</p>
+        <p className="text-sm font-medium text-gray-800 leading-snug">
+          {job.title}
+        </p>
 
         <div>
-          <p className="text-xs text-gray-400 mb-0.5">月収例</p>
+          <p className="text-xs text-gray-400 mb-0.5">収入例</p>
           <p className="text-xl font-black" style={{ color: "#0288d1" }}>
-            {job.monthlyIncome.toLocaleString()}
-            <span className="text-base font-bold ml-1">円</span>
+            {job.incomeExample}
           </p>
         </div>
 
         <div className="space-y-1.5 text-xs text-gray-500">
           <div className="flex items-center gap-2">
             <span>¥</span>
-            <span>【月給】{job.monthlySalary}</span>
+            <span>{job.incomeRange}</span>
           </div>
           <div className="flex items-center gap-2">
             <span>📍</span>
@@ -223,7 +236,13 @@ export default function JobCard({ job, current, total, onKeep, onReject }: Props
           width={1}
           height={1}
           alt=""
-          style={{ position: "absolute", bottom: 0, right: 0, opacity: 0, pointerEvents: "none" }}
+          style={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            opacity: 0,
+            pointerEvents: "none",
+          }}
         />
       )}
     </div>
