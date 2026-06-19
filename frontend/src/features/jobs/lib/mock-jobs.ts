@@ -71,18 +71,17 @@ export const MOCK_JOBS: MockJob[] = [
   },
   {
     id: "job-4",
-    imageUrl:
-      "https://job-ticket.jp/wp-content/uploads/2026/06/%E5%90%8D%E7%A7%B0%E6%9C%AA%E8%A8%AD%E5%AE%9A%E3%81%AE%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3-2026-06-19T104035.291.png",
-    imageBadge: "住み込み",
-    title: "【高時給】小涌谷駅から徒歩13分　リゾートマンションの施設管理",
-    incomeExample: "【時給】1500円",
-    incomeRange: "【時給】1500円",
-    location: "神奈川県箱根町",
-    jobTypes: ["裏方", "施設管理"],
-    jobId: "100126",
+    imageUrl: "https://3aaa-s.co.jp/kubota-fc-a/img/mainTX.png",
+    imageBadge: "寮・食費付き",
+    title: "【高収入】月収34万円~寮・食費付き",
+    incomeExample: "【年収】500万円",
+    incomeRange: "【月収】34万円~",
+    location: "茨城県つくば市",
+    jobTypes: ["期間工"],
+    jobId: "kubota-fc-a",
     affiliateUrl:
-      "https://px.a8.net/svt/ejp?a8mat=4B5WGC+DRCO36+5OUQ+BW8O2&a8ejpredirect=https%3A%2F%2Fjob-ticket.jp%2Fjobs%2F100126%2F",
+      "https://px.a8.net/svt/ejp?a8mat=4B5X8G+DQ5SVM+5UOG+BW8O2&a8ejpredirect=https%3A%2F%2F3aaa-s.co.jp%2Fkubota-fc-a%2F",
     impressionPixelUrl:
-      "https://www15.a8.net/0.gif?a8mat=4B5WGC+DRCO36+5OUQ+BW8O2",
+      "https://www11.a8.net/0.gif?a8mat=4B5X8G+DQ5SVM+5UOG+BW8O2",
   },
 ];
