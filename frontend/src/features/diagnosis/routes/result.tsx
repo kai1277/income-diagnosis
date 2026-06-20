@@ -35,24 +35,6 @@ export default function Result() {
 
   return (
     <div className="min-h-screen pb-44" style={{ backgroundColor: "#f0f2f5" }}>
-      {/* Stats bar */}
-      <div style={{ backgroundColor: "#8fa3b1" }} className="text-white px-4 py-3">
-        <div className="flex divide-x divide-white/20 text-center">
-          <div className="flex-1 px-2">
-            <p className="text-xs text-white/70 mb-0.5">今日の診断者数</p>
-            <p className="text-sm font-bold">1,284人</p>
-          </div>
-          <div className="flex-1 px-2">
-            <p className="text-xs text-white/70 mb-0.5">あなたの潜在年収（推定）</p>
-            <p className="text-sm font-bold">{result.potentialIncome}万円</p>
-          </div>
-          <div className="flex-1 px-2">
-            <p className="text-xs text-white/70 mb-0.5">提携求人件数</p>
-            <p className="text-sm font-bold">2.3万件</p>
-          </div>
-        </div>
-      </div>
-
       {/* All steps complete */}
       <div className="flex" style={{ backgroundColor: "#e0e5ea" }}>
         {STEP_LABELS.map((label, i) => {
