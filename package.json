@@ -2,7 +2,7 @@
   "name": "income-diagnosis",
   "private": true,
   "scripts": {
-    "build": "cd frontend && npm install && npm run build",
+    "build": "cd frontend/user-web && npm install && npm run build",
     "deploy": "wrangler deploy",
     "preview": "wrangler dev"
   },
