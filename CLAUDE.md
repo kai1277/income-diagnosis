@@ -18,39 +18,41 @@
 
 ```
 /
-├── frontend/                          # Viteプロジェクトルート
-│   ├── src/
-│   │   ├── main.tsx                   # エントリーポイント（GA4初期化）
-│   │   ├── vite-env.d.ts              # 型定義（gtag, import.meta.env）
-│   │   ├── index.css                  # グローバルCSS（Tailwind）
-│   │   ├── app/
-│   │   │   └── App.tsx                # ルーティング定義（/, /quiz, /result）
-│   │   ├── features/
-│   │   │   ├── home/
-│   │   │   │   └── routes/home.tsx        # トップLP（診断開始）
-│   │   │   ├── diagnosis/
-│   │   │   │   ├── routes/
-│   │   │   │   │   ├── quiz.tsx           # 診断画面（ステップ形式）
-│   │   │   │   │   └── result.tsx         # 結果画面（求人CTA）
-│   │   │   │   ├── components/
-│   │   │   │   │   ├── quiz-step.tsx      # 1問ずつ表示するUI
-│   │   │   │   │   └── result-card.tsx    # 年収・職種表示
-│   │   │   │   ├── constants/
-│   │   │   │   │   ├── questions.ts       # 質問一覧
-│   │   │   │   │   ├── diagnosis-rules.ts # 診断ロジック（ルールベース）
-│   │   │   │   │   └── step-categories.ts
-│   │   │   │   ├── utils/
-│   │   │   │   │   ├── diagnose.ts        # 診断結果算出
-│   │   │   │   │   └── quiz-helpers.ts
-│   │   │   │   └── types/
-│   │   │   └── jobs/
-│   │   │       ├── components/job-link.tsx   # 求人リンク（クリック計測付き）
-│   │   │       └── lib/job-links.ts           # 求人URL集約
-│   │   └── lib/
-│   │       └── tracking.ts            # GA4イベント送信ヘルパー
-│   ├── index.html
-│   ├── vite.config.ts
-│   └── .env.local                     # VITE_GA_ID
+├── frontend/
+│   ├── user-web/                      # Viteプロジェクトルート（ユーザー向け）
+│   │   ├── src/
+│   │   │   ├── main.tsx                   # エントリーポイント（GA4初期化）
+│   │   │   ├── vite-env.d.ts              # 型定義（gtag, import.meta.env）
+│   │   │   ├── index.css                  # グローバルCSS（Tailwind）
+│   │   │   ├── app/
+│   │   │   │   └── App.tsx                # ルーティング定義（/, /quiz, /result）
+│   │   │   ├── features/
+│   │   │   │   ├── home/
+│   │   │   │   │   └── routes/home.tsx        # トップLP（診断開始）
+│   │   │   │   ├── diagnosis/
+│   │   │   │   │   ├── routes/
+│   │   │   │   │   │   ├── quiz.tsx           # 診断画面（ステップ形式）
+│   │   │   │   │   │   └── result.tsx         # 結果画面（求人CTA）
+│   │   │   │   │   ├── components/
+│   │   │   │   │   │   ├── quiz-step.tsx      # 1問ずつ表示するUI
+│   │   │   │   │   │   └── result-card.tsx    # 年収・職種表示
+│   │   │   │   │   ├── constants/
+│   │   │   │   │   │   ├── questions.ts       # 質問一覧
+│   │   │   │   │   │   ├── diagnosis-rules.ts # 診断ロジック（ルールベース）
+│   │   │   │   │   │   └── step-categories.ts
+│   │   │   │   │   ├── utils/
+│   │   │   │   │   │   ├── diagnose.ts        # 診断結果算出
+│   │   │   │   │   │   └── quiz-helpers.ts
+│   │   │   │   │   └── types/
+│   │   │   │   └── jobs/
+│   │   │   │       ├── components/job-link.tsx   # 求人リンク（クリック計測付き）
+│   │   │   │       └── lib/job-links.ts           # 求人URL集約
+│   │   │   └── lib/
+│   │   │       └── tracking.ts            # GA4イベント送信ヘルパー
+│   │   ├── index.html
+│   │   ├── vite.config.ts
+│   │   └── .env.local                     # VITE_GA_ID
+│   └── admin-web/                     # 管理画面用（今後実装）
 ├── docs/
 │   └── diagnosis-tree/                # 診断ロジックの設計ドキュメント
 └── CLAUDE.md
