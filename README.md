@@ -54,19 +54,28 @@
 │   │   └── .env.local                     # VITE_GA_ID
 │   └── admin-web/                     # 管理画面用（今後実装）
 ├── backend/
-│   ├── api/                           # APIエンドポイント
+│   ├── api/                           # NestJS APIサーバー（ポート3000）
+│   │   ├── prisma/                    # Prismaスキーマ・マイグレーション
+│   │   │   ├── schema.prisma          # DBスキーマ定義
+│   │   │   └── migrations/            # マイグレーション履歴（Git管理）
 │   │   └── src/
 │   │       ├── main.ts                # エントリーポイント
-│   │       ├── app/                   # アプリケーション設定
-│   │       ├── config/                # 環境変数・設定管理
-│   │       ├── db/                    # DB接続・マイグレーション
-│   │       ├── features/              # 機能ごとのモジュール
-│   │       │   ├── admin/             # 管理者向け機能
-│   │       │   └── user/              # ユーザー向け機能
-│   │       ├── lib/                   # 共通ライブラリ
-│   │       ├── middleware/            # ミドルウェア
-│   │       ├── repositories/          # DBアクセス層
-│   │       └── shared/                # 複数機能で共有するコード
+│   │       ├── app/
+│   │       │   └── app.module.ts      # ルートNestJSモジュール
+│   │       ├── db/
+│   │       │   ├── prisma.service.ts  # PrismaClient DI用サービス
+│   │       │   └── database.module.ts # @Global()モジュール
+│   │       ├── features/
+│   │       │   └── admin/
+│   │       │       └── jobs/
+│   │       │           ├── admin-jobs.controller.ts  # HTTPハンドラ
+│   │       │           ├── admin-jobs.service.ts     # ビジネスロジック
+│   │       │           ├── admin-jobs.schema.ts      # DTOクラス
+│   │       │           └── admin-jobs.routes.ts      # NestJSモジュール定義
+│   │       ├── middleware/
+│   │       │   └── error-handler.ts
+│   │       └── repositories/
+│   │           └── admin-jobs.repositories.ts  # DBアクセス層
 │   ├── batch/                         # バッチ処理
 │   ├── scripts/                       # 手動で実行するスクリプト
 │   └── worker/                        # 重い処理や非同期通信を裏でやる
@@ -75,7 +84,7 @@
 └── CLAUDE.md
 ```
 
-**技術スタック**
+**フロントエンド技術スタック**
 
 - ビルドツール: **Vite**
 - フレームワーク: **React + React Router v7**
@@ -83,9 +92,19 @@
 - デプロイ: **Cloudflare Pages**（本番環境）／モック検証はローカルホストで完結
 - 計測: **Google Analytics 4**（gtag.js）
 
+**バックエンド技術スタック**
+
+- フレームワーク: **NestJS**
+- ORM: **Prisma v7**（`prisma-client` generator / カスタム出力）
+- DB接続: **@prisma/adapter-pg**（PgDriverアダプター経由）
+- バリデーション: **class-validator / class-transformer**
+- DB: **Supabase PostgreSQL**
+
 ---
 
 ## 🚀 開発サーバーの起動
+
+### フロントエンド（ユーザー向け）
 
 ```bash
 cd frontend/user-web
@@ -97,6 +116,36 @@ npm run dev
 
 ```
 VITE_GA_ID=G-XXXXXXXXXX
+```
+
+### バックエンド API
+
+```bash
+cd backend/api
+npm install
+npm run start:dev   # ts-node でホットリロードなし起動（ポート3000）
+```
+
+初回は `.env` を作成してDBの接続URLを設定：
+
+```env
+DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<db>?pgbouncer=true
+DIRECT_URL=postgresql://<user>:<password>@<host>:5432/<db>
+```
+
+Prismaクライアントの生成（スキーマ変更時も必要）：
+
+```bash
+cd backend/api
+npx prisma generate
+```
+
+### 管理画面フロントエンド
+
+```bash
+cd frontend/admin-web
+npm install
+npm run dev
 ```
 
 ---
@@ -213,12 +262,35 @@ export const JOB_LINKS = {
 
 ## 🚀 デプロイ方針
 
+### フロントエンド（Cloudflare Pages）
+
 - **モック検証フェーズ**：`npm run dev`（Vite）によるローカルホストで動作確認・KPI計測を行う
 - **本番公開フェーズ**：Cloudflare Pagesにデプロイ
   - `npm run build` で `dist/` に静的ファイルを出力（Viteはデフォルト静的エクスポート）
   - GAの測定IDは Cloudflare Pages の環境変数（`VITE_GA_ID`）で管理
 
 > ⚠️ Vercelは使わない
+
+### バックエンド（Render）
+
+バックエンドAPIは **Render** にデプロイする。
+
+| 設定項目 | 値 |
+|---|---|
+| Root Directory | `backend/api` |
+| Build Command | `npm install && npm run build && npx prisma generate` |
+| Start Command | `npm run start` |
+| Environment | Node |
+
+Renderのダッシュボードで以下の環境変数を設定する：
+
+| 変数名 | 説明 |
+|---|---|
+| `DATABASE_URL` | Supabase の接続URL（pgbouncer経由） |
+| `DIRECT_URL` | Supabase の直接接続URL（マイグレーション用） |
+| `NODE_ENV` | `production` |
+
+> ⚠️ マイグレーションは Render のデプロイ時に自動実行しない。本番マイグレーションは手動で `npx prisma migrate deploy` を実行すること（CLAUDE.mdのDBルール参照）。
 
 ---
 
@@ -252,6 +324,49 @@ export const JOB_LINKS = {
 1. **これはKPI計測に必要か？** → 必要なら作る
 2. **スマホで3秒で理解できるか？** → できなければシンプルにする
 3. **求人CTAクリックに近づくか？** → 近づかなければ作らない
+
+---
+
+## 🗄 バックエンドアーキテクチャ
+
+### 3層構造（NestJS）
+
+```
+HTTP Request
+    ↓
+Controller  (features/admin/<機能>/<機能>.controller.ts)  — ルーティング・レスポンス
+    ↓
+Service     (features/admin/<機能>/<機能>.service.ts)     — ビジネスロジック
+    ↓
+Repository  (repositories/<機能>.repositories.ts)         — DBアクセス（Prismaクエリ）
+    ↓
+Supabase PostgreSQL
+```
+
+| ファイル | 役割 |
+|---|---|
+| `*.controller.ts` | HTTP リクエスト受付、デコレーター（`@Get` `@Post` 等）で定義 |
+| `*.service.ts` | ビジネスロジック。Repositoryを注入して呼び出す |
+| `repositories/*.repositories.ts` | Prismaクエリを記述。DBアクセスはここに集約 |
+| `*.schema.ts` | DTOクラス（class-validatorデコレーター） |
+| `*.routes.ts` | NestJS Module（Controller/Service/Repositoryをproviders登録） |
+
+### 実装済みAPIエンドポイント
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| `GET` | `/api/admin/jobs` | 求人一覧取得（job_requirements含む） |
+| `POST` | `/api/admin/jobs` | 求人追加（job_requirements同時作成可） |
+
+### 新機能の追加パターン
+
+1. `features/admin/<機能>/` にフォルダを作成
+2. `<機能>.schema.ts` → DTOをclass-validatorで定義
+3. `repositories/<機能>.repositories.ts` → Prismaクエリを記述
+4. `<機能>.service.ts` → Repositoryを注入してロジックを実装
+5. `<機能>.controller.ts` → Serviceを注入してエンドポイントを定義
+6. `<機能>.routes.ts` → NestJS Moduleとして `providers` と `controllers` を登録
+7. `app/app.module.ts` の `imports` に追加
 
 ---
 
