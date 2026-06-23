@@ -53,6 +53,23 @@
 │   │   ├── vite.config.ts
 │   │   └── .env.local                     # VITE_GA_ID
 │   └── admin-web/                     # 管理画面用（今後実装）
+├── backend/
+│   ├── api/                           # APIエンドポイント
+│   │   └── src/
+│   │       ├── main.ts                # エントリーポイント
+│   │       ├── app/                   # アプリケーション設定
+│   │       ├── config/                # 環境変数・設定管理
+│   │       ├── db/                    # DB接続・マイグレーション
+│   │       ├── features/              # 機能ごとのモジュール
+│   │       │   ├── admin/             # 管理者向け機能
+│   │       │   └── user/              # ユーザー向け機能
+│   │       ├── lib/                   # 共通ライブラリ
+│   │       ├── middleware/            # ミドルウェア
+│   │       ├── repositories/          # DBアクセス層
+│   │       └── shared/                # 複数機能で共有するコード
+│   ├── batch/                         # バッチ処理
+│   ├── scripts/                       # 手動で実行するスクリプト
+│   └── worker/                        # 重い処理や非同期通信を裏でやる
 ├── docs/
 │   └── diagnosis-tree/                # 診断ロジックの設計ドキュメント
 └── CLAUDE.md
