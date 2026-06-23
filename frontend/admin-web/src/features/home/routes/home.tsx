@@ -6,6 +6,11 @@ const MENU_ITEMS = [
     description: "登録済みの求人を確認・管理する",
     path: "/jobs",
   },
+  {
+    label: "条件コード一覧",
+    description: "求人条件の種類（マスタ）を管理する",
+    path: "/requirement-codes",
+  },
 ];
 
 export default function AdminHome() {

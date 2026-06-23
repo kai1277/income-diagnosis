@@ -2,13 +2,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminJobCard from "@/features/jobs/components/admin-job-card";
 import { useJobs } from "@/features/jobs/lib/jobs-store";
-import type { Job } from "@/features/jobs/types";
+import type { Job, JobRequirementRow } from "@/features/jobs/types";
 import {
   SALARY_TYPES,
   SALARY_RANGE_TYPES,
   AFFILIATE_NETWORKS,
   OCCUPATION_TYPES,
 } from "@/features/jobs/types";
+import {
+  MOCK_REQUIREMENT_CODES,
+  CATEGORY_LABELS,
+  OPERATOR_LABELS,
+} from "@/features/jobs/lib/mock-requirement-codes";
 
 // ── Form state ────────────────────────────────────────────────────────────────
 
@@ -29,6 +34,7 @@ type FormState = {
   affiliate_network: string;
   is_active: boolean;
   expires_at: string;
+  requirements: JobRequirementRow[];
 };
 
 const EMPTY: FormState = {
@@ -48,6 +54,7 @@ const EMPTY: FormState = {
   affiliate_network: AFFILIATE_NETWORKS[0],
   is_active: true,
   expires_at: "",
+  requirements: [],
 };
 
 // ── Shared UI helpers ─────────────────────────────────────────────────────────
@@ -80,6 +87,162 @@ function SectionHeader({ title }: { title: string }) {
     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-4">
       {title}
     </h3>
+  );
+}
+
+// ── Requirements Editor ───────────────────────────────────────────────────────
+
+const GROUPED_CODES = MOCK_REQUIREMENT_CODES.reduce<Record<string, typeof MOCK_REQUIREMENT_CODES>>(
+  (acc, code) => {
+    (acc[code.category] ??= []).push(code);
+    return acc;
+  },
+  {},
+);
+
+function RequirementsEditor({
+  requirements,
+  onChange,
+}: {
+  requirements: JobRequirementRow[];
+  onChange: (reqs: JobRequirementRow[]) => void;
+}) {
+  const addRow = () => {
+    const first = MOCK_REQUIREMENT_CODES[0];
+    onChange([
+      ...requirements,
+      {
+        requirement_code_id: first.id,
+        level: "required",
+        operator: first.allowed_operators[0],
+        value: "",
+      },
+    ]);
+  };
+
+  const update = (index: number, patch: Partial<JobRequirementRow>) => {
+    onChange(requirements.map((r, i) => (i === index ? { ...r, ...patch } : r)));
+  };
+
+  const remove = (index: number) => {
+    onChange(requirements.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div>
+      <SectionHeader title="求人条件（ターゲット設定）" />
+
+      {requirements.length > 0 && (
+        <div className="mb-2 hidden sm:grid grid-cols-[2fr_1fr_1fr_1.5fr_auto] gap-2 px-1">
+          {["条件", "レベル", "比較方法", "値", ""].map((h, i) => (
+            <span key={i} className="text-xs text-gray-400 font-medium">{h}</span>
+          ))}
+        </div>
+      )}
+
+      <div className="space-y-2">
+        {requirements.map((req, i) => {
+          const code = MOCK_REQUIREMENT_CODES.find((c) => c.id === req.requirement_code_id);
+          const needsValue = req.operator !== "exists";
+
+          return (
+            <div key={i} className="grid grid-cols-[2fr_1fr_1fr_1.5fr_auto] gap-2 items-center">
+              {/* 条件コード */}
+              <select
+                value={req.requirement_code_id}
+                onChange={(e) => {
+                  const next = MOCK_REQUIREMENT_CODES.find((c) => c.id === e.target.value)!;
+                  update(i, {
+                    requirement_code_id: e.target.value,
+                    operator: next.allowed_operators[0],
+                    value: "",
+                  });
+                }}
+                className={selectCls()}
+              >
+                {Object.entries(GROUPED_CODES).map(([cat, codes]) => (
+                  <optgroup key={cat} label={CATEGORY_LABELS[cat] ?? cat}>
+                    {codes.map((c) => (
+                      <option key={c.id} value={c.id}>{c.label}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+
+              {/* レベル */}
+              <select
+                value={req.level}
+                onChange={(e) => update(i, { level: e.target.value as "required" | "preferred" })}
+                className={selectCls()}
+              >
+                <option value="required">必須</option>
+                <option value="preferred">歓迎</option>
+              </select>
+
+              {/* 比較方法 */}
+              <select
+                value={req.operator}
+                onChange={(e) => update(i, { operator: e.target.value, value: "" })}
+                className={selectCls()}
+              >
+                {code?.allowed_operators.map((op) => (
+                  <option key={op} value={op}>{OPERATOR_LABELS[op] ?? op}</option>
+                ))}
+              </select>
+
+              {/* 値 */}
+              {needsValue && code ? (
+                code.value_type === "number" ? (
+                  <input
+                    type="number"
+                    value={req.value}
+                    onChange={(e) => update(i, { value: e.target.value })}
+                    placeholder="数値"
+                    className={inputCls(false)}
+                  />
+                ) : code.value_type === "boolean" ? (
+                  <select
+                    value={req.value || "true"}
+                    onChange={(e) => update(i, { value: e.target.value })}
+                    className={selectCls()}
+                  >
+                    <option value="true">あり</option>
+                    <option value="false">なし</option>
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={req.value}
+                    onChange={(e) => update(i, { value: e.target.value })}
+                    placeholder={code.value_type === "text_array" ? "カンマ区切り" : "値を入力"}
+                    className={inputCls(false)}
+                  />
+                )
+              ) : (
+                <div />
+              )}
+
+              {/* 削除 */}
+              <button
+                type="button"
+                onClick={() => remove(i)}
+                className="text-gray-300 hover:text-red-400 transition-colors text-lg leading-none"
+              >
+                ✕
+              </button>
+            </div>
+          );
+        })}
+      </div>
+
+      <button
+        type="button"
+        onClick={addRow}
+        className="mt-3 text-sm text-blue-500 hover:text-blue-700 transition-colors"
+      >
+        + 条件を追加
+      </button>
+    </div>
   );
 }
 
@@ -128,6 +291,7 @@ function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Job
       created_at: now,
       updated_at: now,
       expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
+      requirements: form.requirements,
     };
   };
 
@@ -158,7 +322,7 @@ function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Job
 
         {/* Body — scrollable */}
         <div className="overflow-y-auto flex-1 px-8 py-6">
-          <div className="grid grid-cols-2 gap-x-8">
+          <div className="grid grid-cols-2 gap-x-8 mb-6">
 
             {/* ── 左カラム ─────────────────────────── */}
             <div className="space-y-6">
@@ -380,6 +544,14 @@ function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Job
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* 求人条件セクション — 全幅 */}
+          <div className="border-t border-gray-100 pt-6">
+            <RequirementsEditor
+              requirements={form.requirements}
+              onChange={(reqs) => setForm((prev) => ({ ...prev, requirements: reqs }))}
+            />
           </div>
         </div>
 
