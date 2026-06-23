@@ -54,19 +54,28 @@
 │   │   └── .env.local                     # VITE_GA_ID
 │   └── admin-web/                     # 管理画面用（今後実装）
 ├── backend/
-│   ├── api/                           # APIエンドポイント
+│   ├── api/                           # NestJS APIサーバー（ポート3000）
+│   │   ├── prisma/
+│   │   │   ├── schema.prisma          # DBスキーマ定義
+│   │   │   └── migrations/            # マイグレーション履歴（Git管理）
 │   │   └── src/
-│   │       ├── main.ts                # エントリーポイント
-│   │       ├── app/                   # アプリケーション設定
-│   │       ├── config/                # 環境変数・設定管理
-│   │       ├── db/                    # DB接続・マイグレーション
-│   │       ├── features/              # 機能ごとのモジュール
-│   │       │   ├── admin/             # 管理者向け機能
-│   │       │   └── user/              # ユーザー向け機能
-│   │       ├── lib/                   # 共通ライブラリ
-│   │       ├── middleware/            # ミドルウェア
-│   │       ├── repositories/          # DBアクセス層
-│   │       └── shared/                # 複数機能で共有するコード
+│   │       ├── main.ts                # エントリーポイント（グローバルPrefix: /api）
+│   │       ├── app/
+│   │       │   └── app.module.ts      # ルートNestJSモジュール
+│   │       ├── db/
+│   │       │   ├── prisma.service.ts  # PrismaClient DI用サービス（@Global）
+│   │       │   └── database.module.ts # DatabaseModule（全モジュールにPrismaを提供）
+│   │       ├── features/
+│   │       │   └── admin/
+│   │       │       └── jobs/
+│   │       │           ├── admin-jobs.controller.ts  # GET/POST /api/admin/jobs
+│   │       │           ├── admin-jobs.service.ts     # ビジネスロジック
+│   │       │           ├── admin-jobs.schema.ts      # DTO（class-validator）
+│   │       │           └── admin-jobs.routes.ts      # AdminJobsModule定義
+│   │       ├── middleware/
+│   │       │   └── error-handler.ts
+│   │       └── repositories/
+│   │           └── admin-jobs.repositories.ts  # Prismaクエリ（DBアクセス層）
 │   ├── batch/                         # バッチ処理
 │   ├── scripts/                       # 手動で実行するスクリプト
 │   └── worker/                        # 重い処理や非同期通信を裏でやる
@@ -75,13 +84,21 @@
 └── CLAUDE.md
 ```
 
-**技術スタック**
+**フロントエンド技術スタック**
 
 - ビルドツール: **Vite**
 - フレームワーク: **React + React Router v7**
 - スタイリング: **Tailwind CSS v4**（`@tailwindcss/vite` プラグイン）
 - デプロイ: **Cloudflare Pages**（本番環境）／モック検証はローカルホストで完結
 - 計測: **Google Analytics 4**（gtag.js）
+
+**バックエンド技術スタック**
+
+- フレームワーク: **NestJS**
+- ORM: **Prisma v7**（`prisma-client` generator / 出力先: `src/generated/prisma/`）
+- DB接続: **@prisma/adapter-pg**（PgDriverアダプター経由）
+- バリデーション: **class-validator / class-transformer**
+- DB: **Supabase PostgreSQL**
 
 ---
 
@@ -236,6 +253,91 @@ export const JOB_LINKS = {
 1. **これはKPI計測に必要か？** → 必要なら作る
 2. **スマホで3秒で理解できるか？** → できなければシンプルにする
 3. **求人CTAクリックに近づくか？** → 近づかなければ作らない
+
+---
+
+# NestJS バックエンド開発ルール
+
+## バックエンドの起動
+
+```bash
+cd backend/api
+npm run start:dev   # ポート3000で起動（ts-node）
+```
+
+初回セットアップは `backend/api/.env` を作成：
+
+```env
+DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<db>?pgbouncer=true
+DIRECT_URL=postgresql://<user>:<password>@<host>:5432/<db>
+```
+
+Prismaクライアント生成（スキーマ変更後も必要）：
+
+```bash
+cd backend/api
+npx prisma generate
+```
+
+## 3層アーキテクチャのルール
+
+バックエンドは必ず以下の3層構造で実装する。
+
+```
+Controller → Service → Repository → Supabase PostgreSQL
+```
+
+| 層 | ファイル | やること | やらないこと |
+|---|---|---|---|
+| Controller | `*.controller.ts` | HTTPルーティング、DTOでリクエスト受付 | ビジネスロジック・DBアクセス |
+| Service | `*.service.ts` | ビジネスロジック、Repositoryの呼び出し | Prismaクエリを直接書く |
+| Repository | `repositories/*.repositories.ts` | Prismaクエリ、DBアクセスの集約 | HTTPの概念を持ち込む |
+
+DTOは `*.schema.ts` にclass-validatorデコレーターで定義する。
+NestJSモジュールの定義（providers/controllersの登録）は `*.routes.ts` に書く。
+
+## 新機能の追加パターン
+
+新しいAPIエンドポイントを追加する際は以下の手順に従う。
+
+1. `src/features/admin/<機能>/` にフォルダを作成
+2. `<機能>.schema.ts` → class-validatorで DTOクラスを定義（必須フィールドには `!`）
+3. `src/repositories/<機能>.repositories.ts` → `@Injectable()` クラス、Prismaクエリを記述
+4. `<機能>.service.ts` → Repositoryをコンストラクタ注入してロジックを実装
+5. `<機能>.controller.ts` → Serviceをコンストラクタ注入してエンドポイントを定義
+6. `<機能>.routes.ts` → `@Module({ controllers: [...], providers: [...] })` で登録
+7. `src/app/app.module.ts` の `imports` にモジュールを追加
+
+## PrismaServiceの使い方
+
+`DatabaseModule` が `@Global()` のため、各モジュールでimportせずにPrismaServiceをそのまま注入できる。
+
+```typescript
+// repositories 内での使い方
+@Injectable()
+export class SomeRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
+  findAll() {
+    return this.prisma.job.findMany(); // モデル名はスキーマのmodel名をcamelCaseにしたもの
+  }
+}
+```
+
+## 実装済みAPIエンドポイント
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| `GET` | `/api/admin/jobs` | 求人一覧取得（job_requirements含む） |
+| `POST` | `/api/admin/jobs` | 求人追加（job_requirements同時作成可） |
+
+## Prisma v7 特有の注意点
+
+- **クライアント生成先**: `src/generated/prisma/`（`index.ts` なし）
+  - importは `'../generated/prisma/client'` と `/client` まで指定すること
+- **DB接続**: `@prisma/adapter-pg` を使う（Prisma v7はDriverAdapterが必須）
+- **`PrismaClient` は extends不可**: `PrismaService` は extends ではなく compositionパターンで実装
+  - モデルアクセサは `get job()` 等のgetterで公開する
 
 ---
 
