@@ -325,10 +325,12 @@ CIやデプロイ時にマイグレーションを自動実行してはいけな
 
 ### スキーマ変更の手順
 
+マイグレーションは「ローカルで作成 → GitHub に push → 本番で適用」の3ステップで行う。
+
+**Step 1: ローカルでマイグレーションを作成する**
+
 1. `backend/api/prisma/schema.prisma` を編集する
 2. `backend/api` ディレクトリで以下を実行する
-
-**開発環境（マイグレーションファイルを新規作成して適用）**
 
 ```bash
 cd backend/api
@@ -337,7 +339,23 @@ npx prisma migrate dev --name <変更内容を表す名前>
 
 例：`npx prisma migrate dev --name add_jobs_table`
 
-**本番環境（既存のマイグレーションファイルを適用）**
+これにより `backend/api/prisma/migrations/` にマイグレーションファイルが生成される。
+
+**Step 2: GitHub に push する**
+
+生成されたマイグレーションファイルを Git にコミットして GitHub に push する。
+
+```bash
+git add backend/api/prisma/
+git commit -m "add migration: <変更内容>"
+git push
+```
+
+> ⚠️ マイグレーションファイルを push してからでないと、本番環境で `migrate deploy` を実行できない。
+
+**Step 3: 本番環境でマイグレーションを適用する**
+
+本番サーバー上で以下を実行する。
 
 ```bash
 cd backend/api
