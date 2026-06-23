@@ -262,12 +262,35 @@ export const JOB_LINKS = {
 
 ## 🚀 デプロイ方針
 
+### フロントエンド（Cloudflare Pages）
+
 - **モック検証フェーズ**：`npm run dev`（Vite）によるローカルホストで動作確認・KPI計測を行う
 - **本番公開フェーズ**：Cloudflare Pagesにデプロイ
   - `npm run build` で `dist/` に静的ファイルを出力（Viteはデフォルト静的エクスポート）
   - GAの測定IDは Cloudflare Pages の環境変数（`VITE_GA_ID`）で管理
 
 > ⚠️ Vercelは使わない
+
+### バックエンド（Render）
+
+バックエンドAPIは **Render** にデプロイする。
+
+| 設定項目 | 値 |
+|---|---|
+| Root Directory | `backend/api` |
+| Build Command | `npm install && npm run build && npx prisma generate` |
+| Start Command | `npm run start` |
+| Environment | Node |
+
+Renderのダッシュボードで以下の環境変数を設定する：
+
+| 変数名 | 説明 |
+|---|---|
+| `DATABASE_URL` | Supabase の接続URL（pgbouncer経由） |
+| `DIRECT_URL` | Supabase の直接接続URL（マイグレーション用） |
+| `NODE_ENV` | `production` |
+
+> ⚠️ マイグレーションは Render のデプロイ時に自動実行しない。本番マイグレーションは手動で `npx prisma migrate deploy` を実行すること（CLAUDE.mdのDBルール参照）。
 
 ---
 

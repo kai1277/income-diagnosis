@@ -258,7 +258,7 @@ export const JOB_LINKS = {
 
 # NestJS バックエンド開発ルール
 
-## バックエンドの起動
+## バックエンドの起動（ローカル開発）
 
 ```bash
 cd backend/api
@@ -278,6 +278,40 @@ Prismaクライアント生成（スキーマ変更後も必要）：
 cd backend/api
 npx prisma generate
 ```
+
+## バックエンドのデプロイ（Render）
+
+バックエンドAPIは **Render** にデプロイする。
+
+### Renderの設定値
+
+| 設定項目 | 値 |
+|---|---|
+| Root Directory | `backend/api` |
+| Build Command | `npm install && npm run build && npx prisma generate` |
+| Start Command | `npm run start` |
+| Environment | Node |
+
+### Renderで設定する環境変数
+
+| 変数名 | 説明 |
+|---|---|
+| `DATABASE_URL` | Supabase の接続URL（pgbouncer経由） |
+| `DIRECT_URL` | Supabase の直接接続URL（マイグレーション用） |
+| `NODE_ENV` | `production` |
+
+### デプロイ時の注意
+
+- **マイグレーションは Render のビルドコマンドに含めない**（CLAUDE.mdのDBルール参照）
+- 本番マイグレーションはデプロイ後に手動で実行する：
+
+```bash
+# Render の Shell または ローカルから DIRECT_URL を使って実行
+cd backend/api
+npx prisma migrate deploy
+```
+
+- スキーマ変更時は `npx prisma generate` がビルドコマンドに含まれているため、生成済みクライアント（`src/generated/prisma/`）は `.gitignore` に追加して Git 管理しない。
 
 ## 3層アーキテクチャのルール
 
