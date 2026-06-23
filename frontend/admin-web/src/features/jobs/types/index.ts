@@ -1,0 +1,34 @@
+export type Job = {
+  id: string;
+  title: string;
+  occupation_type: string;
+  image_url: string | null;
+  badge_text: string | null;
+  salary_type: string;
+  salary_min: number | null;
+  salary_max: number | null;
+  salary_range_type: string;
+  salary_text: string;
+  job_location: string;
+  job_types: string[];
+  affiliate_url: string;
+  impression_pixel_url: string;
+  affiliate_network: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  expires_at: string | null;
+};
+
+export const SALARY_TYPES = ["月給", "時給", "日給", "年俸"] as const;
+export const SALARY_RANGE_TYPES = ["固定", "幅あり"] as const;
+export const AFFILIATE_NETWORKS = ["A8.net", "その他"] as const;
+export const OCCUPATION_TYPES = [
+  "製造・現場",
+  "IT・エンジニア",
+  "事務・営業",
+  "サービス・飲食",
+  "医療・介護",
+  "運輸・物流",
+  "その他",
+] as const;
