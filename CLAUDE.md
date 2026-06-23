@@ -188,7 +188,6 @@ export const JOB_LINKS = {
 ## 🚫 やらないこと（絶対禁止）
 
 - ログイン・認証機能
-- DB・バックエンド・API Routes
 - AIによる診断ロジック
 - マイページ・履歴保存
 - アニメーション・演出の作り込み
@@ -237,3 +236,123 @@ export const JOB_LINKS = {
 1. **これはKPI計測に必要か？** → 必要なら作る
 2. **スマホで3秒で理解できるか？** → できなければシンプルにする
 3. **求人CTAクリックに近づくか？** → 近づかなければ作らない
+
+---
+
+# Supabase / Database 開発ルール
+
+このプロジェクトでは、Database として Supabase PostgreSQL を使用する。
+
+## 現在の Supabase Security 設定
+
+Supabase の Security 設定は以下とする。
+
+```text
+Enable Data API: OFF
+Automatically expose new tables: OFF
+Enable automatic RLS: ON
+```
+
+## 重要なアーキテクチャ方針
+
+フロントエンドから Supabase に直接アクセスしてはいけない。
+
+DBアクセスは必ず以下の経路で行う。
+
+```text
+frontend/user-web
+frontend/admin-web
+↓
+backend/api
+↓
+Supabase PostgreSQL
+```
+
+## フロントエンドで Supabase Client を使わない
+
+以下のフロントエンドアプリに Supabase Client の処理を追加してはいけない。
+
+```text
+frontend/user-web
+frontend/admin-web
+```
+
+以下の値をフロントエンドへ公開してはいけない。
+
+```text
+SUPABASE_SERVICE_ROLE_KEY
+DATABASE_URL
+DIRECT_URL
+```
+
+特に `SUPABASE_SERVICE_ROLE_KEY` は強い権限を持つため、絶対にブラウザへ公開してはいけない。
+
+## Prisma の利用方針
+
+バックエンドでは Prisma を使用して Supabase PostgreSQL に接続する。
+
+Prisma 関連ファイルは以下に配置する。
+
+```text
+backend/api/prisma/
+```
+
+環境変数ファイルは以下に配置する。
+
+```text
+backend/api/.env
+```
+
+想定する環境変数は以下。
+
+```env
+DATABASE_URL=""
+DIRECT_URL=""
+```
+
+`DATABASE_URL` は、アプリケーション実行時のDB接続に使用する。
+`DIRECT_URL` は、Prisma migration 実行時のDB接続に使用する。
+
+`.env` は Git 管理してはいけない。
+共有用には `.env.example` を使用する。
+
+## RLS の方針
+
+Supabase では automatic RLS を有効にしている。
+
+そのため、新規テーブル作成時に Row Level Security が自動的に有効になる可能性がある。
+ただし、このプロジェクトでは、主な認証・認可は `backend/api` 側で実装する。
+
+管理者APIでは、必ずバックエンド側で管理者認証・権限チェックを行う。
+
+対象例：
+
+```text
+/api/admin/jobs
+/api/admin/job-requirements
+/api/admin/diagnosis-logs
+/api/admin/click-logs
+```
+
+これらのAPIは、フロントエンド側の画面制御だけに依存してはいけない。
+
+## Data API の方針
+
+このプロジェクトでは Supabase Data API を使用しない。
+
+新規テーブルが Supabase の REST API として自動公開されることを前提にしてはいけない。
+機能実装時は、必ず `backend/api` にエンドポイントを作成し、そこから Prisma 経由でDBにアクセスする。
+
+将来的に Supabase Data API を直接利用する方針に変更する場合は、このドキュメントを更新し、RLSポリシーを明示的に定義してから実装する。
+
+## セキュリティルール
+
+* フロントエンドから Supabase に直接アクセスしない。
+* フロントエンドで Supabase Client を使わない。
+* `SUPABASE_SERVICE_ROLE_KEY` をブラウザに公開しない。
+* `DATABASE_URL` や `DIRECT_URL` をブラウザに公開しない。
+* `.env` ファイルを GitHub にコミットしない。
+* 管理者操作は必ず `backend/api` 経由で行う。
+* ユーザーの診断回答・診断結果・クリックログの保存も `backend/api` 経由で行う。
+* DBアクセスは Prisma を通して行う。
+* DB操作は Repository / Domain 層に集約し、Single Source of Truth を保つ。
