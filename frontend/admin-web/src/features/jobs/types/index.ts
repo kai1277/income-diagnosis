@@ -1,3 +1,21 @@
+export type RequirementCode = {
+  id: string;
+  category: string;
+  code: string;
+  label: string;
+  value_type: "number" | "boolean" | "text" | "text_array";
+  allowed_operators: string[];
+  is_active: boolean;
+  sort_order: number | null;
+};
+
+export type JobRequirementRow = {
+  requirement_code_id: string;
+  level: "required" | "preferred";
+  operator: string;
+  value: string;
+};
+
 export type Job = {
   id: string;
   title: string;
@@ -18,6 +36,7 @@ export type Job = {
   created_at: string;
   updated_at: string;
   expires_at: string | null;
+  requirements?: JobRequirementRow[];
 };
 
 export const SALARY_TYPES = ["月給", "時給", "日給", "年俸"] as const;
