@@ -307,6 +307,56 @@ DIRECT_URL=""
 `.env` は Git 管理しない。
 共有用には `.env.example` を使用する。
 
+---
+
+## データベース運用
+
+### マイグレーションは必ず手動で実行する
+
+CIやデプロイ時にマイグレーションを自動実行しない。
+スキーマ変更は必ず開発者が手動でコマンドを実行して反映する。
+
+### スキーマ変更の手順
+
+1. `backend/api/prisma/schema.prisma` を編集する
+2. `backend/api` ディレクトリでマイグレーションを実行する
+
+**開発環境**
+
+```bash
+cd backend/api
+npx prisma migrate dev --name <変更内容を表す名前>
+```
+
+例：`npx prisma migrate dev --name add_jobs_table`
+
+**本番環境**
+
+```bash
+cd backend/api
+npx prisma migrate deploy
+```
+
+### Prisma Client の再生成
+
+`migrate dev` を実行すると自動で再生成されるが、手動で行う場合は以下。
+
+```bash
+cd backend/api
+npx prisma generate
+```
+
+### マイグレーションファイルの管理
+
+`backend/api/prisma/migrations/` 以下に生成されるマイグレーションファイルは Git で管理する。
+このファイルが本番環境への変更履歴となるため、削除・改ざんをしてはいけない。
+
+### 本番マイグレーション前の確認事項
+
+* マイグレーション内容をレビューしてから実行する
+* 破壊的変更（カラム削除・型変更）の場合はデータのバックアップを取ってから実行する
+* `prisma migrate deploy` は適用済みマイグレーションをスキップするため、冪等に実行できる
+
 ## RLSについて
 
 Supabaseでは automatic RLS を有効にしている。
