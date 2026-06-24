@@ -23,6 +23,9 @@ let RequirementCodesService = class RequirementCodesService {
     createRequirementCode(dto) {
         return this.repo.create(dto);
     }
+    updateRequirementCode(id, dto) {
+        return this.repo.updateById(id, dto);
+    }
     deleteRequirementCode(id) {
         return this.repo.deleteById(id);
     }

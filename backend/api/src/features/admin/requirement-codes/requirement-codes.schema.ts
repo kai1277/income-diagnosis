@@ -38,3 +38,8 @@ export class CreateRequirementCodeDto {
   @Type(() => Number)
   sort_order?: number | null;
 }
+
+export class UpdateRequirementCodeDto {
+  @IsBoolean()
+  is_active!: boolean;
+}

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateRequirementCodeDto = void 0;
+exports.UpdateRequirementCodeDto = exports.CreateRequirementCodeDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 class CreateRequirementCodeDto {
@@ -58,3 +58,11 @@ __decorate([
     (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Object)
 ], CreateRequirementCodeDto.prototype, "sort_order", void 0);
+class UpdateRequirementCodeDto {
+    is_active;
+}
+exports.UpdateRequirementCodeDto = UpdateRequirementCodeDto;
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], UpdateRequirementCodeDto.prototype, "is_active", void 0);

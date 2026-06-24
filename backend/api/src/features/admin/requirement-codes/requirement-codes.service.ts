@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RequirementCodesRepository } from '../../../repositories/requirement-codes.repository';
-import { CreateRequirementCodeDto } from './requirement-codes.schema';
+import { CreateRequirementCodeDto, UpdateRequirementCodeDto } from './requirement-codes.schema';
 
 @Injectable()
 export class RequirementCodesService {
@@ -12,6 +12,10 @@ export class RequirementCodesService {
 
   createRequirementCode(dto: CreateRequirementCodeDto) {
     return this.repo.create(dto);
+  }
+
+  updateRequirementCode(id: string, dto: UpdateRequirementCodeDto) {
+    return this.repo.updateById(id, dto);
   }
 
   deleteRequirementCode(id: string) {

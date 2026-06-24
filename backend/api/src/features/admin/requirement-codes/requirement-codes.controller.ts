@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
 import { RequirementCodesService } from './requirement-codes.service';
-import { CreateRequirementCodeDto } from './requirement-codes.schema';
+import { CreateRequirementCodeDto, UpdateRequirementCodeDto } from './requirement-codes.schema';
 
 @Controller('admin/requirement-codes')
 export class RequirementCodesController {
@@ -15,6 +15,11 @@ export class RequirementCodesController {
   @HttpCode(201)
   createRequirementCode(@Body() dto: CreateRequirementCodeDto) {
     return this.service.createRequirementCode(dto);
+  }
+
+  @Patch(':id')
+  updateRequirementCode(@Param('id') id: string, @Body() dto: UpdateRequirementCodeDto) {
+    return this.service.updateRequirementCode(id, dto);
   }
 
   @Delete(':id')

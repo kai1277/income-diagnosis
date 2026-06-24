@@ -27,6 +27,9 @@ let RequirementCodesController = class RequirementCodesController {
     createRequirementCode(dto) {
         return this.service.createRequirementCode(dto);
     }
+    updateRequirementCode(id, dto) {
+        return this.service.updateRequirementCode(id, dto);
+    }
     deleteRequirementCode(id) {
         return this.service.deleteRequirementCode(id);
     }
@@ -46,6 +49,14 @@ __decorate([
     __metadata("design:paramtypes", [requirement_codes_schema_1.CreateRequirementCodeDto]),
     __metadata("design:returntype", void 0)
 ], RequirementCodesController.prototype, "createRequirementCode", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, requirement_codes_schema_1.UpdateRequirementCodeDto]),
+    __metadata("design:returntype", void 0)
+], RequirementCodesController.prototype, "updateRequirementCode", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, common_1.HttpCode)(204),

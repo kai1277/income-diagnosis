@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
-import { CreateRequirementCodeDto } from '../features/admin/requirement-codes/requirement-codes.schema';
+import {
+  CreateRequirementCodeDto,
+  UpdateRequirementCodeDto,
+} from '../features/admin/requirement-codes/requirement-codes.schema';
 
 @Injectable()
 export class RequirementCodesRepository {
@@ -23,6 +26,13 @@ export class RequirementCodesRepository {
         is_active: dto.is_active ?? true,
         sort_order: dto.sort_order ?? null,
       },
+    });
+  }
+
+  async updateById(id: string, dto: UpdateRequirementCodeDto) {
+    return this.prisma.requirementCode.update({
+      where: { id },
+      data: { is_active: dto.is_active },
     });
   }
 

@@ -35,6 +35,12 @@ let RequirementCodesRepository = class RequirementCodesRepository {
             },
         });
     }
+    async updateById(id, dto) {
+        return this.prisma.requirementCode.update({
+            where: { id },
+            data: { is_active: dto.is_active },
+        });
+    }
     async deleteById(id) {
         return this.prisma.requirementCode.delete({ where: { id } });
     }

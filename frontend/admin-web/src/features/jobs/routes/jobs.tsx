@@ -9,11 +9,11 @@ import {
   AFFILIATE_NETWORKS,
   OCCUPATION_TYPES,
 } from "@/features/jobs/types";
+import { useRequirementCodes } from "@/features/requirement-codes/lib/requirement-codes-store";
 import {
-  MOCK_REQUIREMENT_CODES,
   CATEGORY_LABELS,
   OPERATOR_LABELS,
-} from "@/features/jobs/lib/mock-requirement-codes";
+} from "@/features/requirement-codes/lib/requirement-codes-constants";
 
 // ── Form state ────────────────────────────────────────────────────────────────
 
@@ -92,14 +92,6 @@ function SectionHeader({ title }: { title: string }) {
 
 // ── Requirements Editor ───────────────────────────────────────────────────────
 
-const GROUPED_CODES = MOCK_REQUIREMENT_CODES.reduce<Record<string, typeof MOCK_REQUIREMENT_CODES>>(
-  (acc, code) => {
-    (acc[code.category] ??= []).push(code);
-    return acc;
-  },
-  {},
-);
-
 function RequirementsEditor({
   requirements,
   onChange,
@@ -107,8 +99,16 @@ function RequirementsEditor({
   requirements: JobRequirementRow[];
   onChange: (reqs: JobRequirementRow[]) => void;
 }) {
+  const { codes } = useRequirementCodes();
+
+  const grouped = codes.reduce<Record<string, typeof codes>>((acc, code) => {
+    (acc[code.category] ??= []).push(code);
+    return acc;
+  }, {});
+
   const addRow = () => {
-    const first = MOCK_REQUIREMENT_CODES[0];
+    const first = codes[0];
+    if (!first) return;
     onChange([
       ...requirements,
       {
@@ -142,7 +142,7 @@ function RequirementsEditor({
 
       <div className="space-y-2">
         {requirements.map((req, i) => {
-          const code = MOCK_REQUIREMENT_CODES.find((c) => c.id === req.requirement_code_id);
+          const code = codes.find((c) => c.id === req.requirement_code_id);
           const needsValue = req.operator !== "exists";
 
           return (
@@ -151,7 +151,8 @@ function RequirementsEditor({
               <select
                 value={req.requirement_code_id}
                 onChange={(e) => {
-                  const next = MOCK_REQUIREMENT_CODES.find((c) => c.id === e.target.value)!;
+                  const next = codes.find((c) => c.id === e.target.value);
+                  if (!next) return;
                   update(i, {
                     requirement_code_id: e.target.value,
                     operator: next.allowed_operators[0],
@@ -160,9 +161,9 @@ function RequirementsEditor({
                 }}
                 className={selectCls()}
               >
-                {Object.entries(GROUPED_CODES).map(([cat, codes]) => (
+                {Object.entries(grouped).map(([cat, items]) => (
                   <optgroup key={cat} label={CATEGORY_LABELS[cat] ?? cat}>
-                    {codes.map((c) => (
+                    {items.map((c) => (
                       <option key={c.id} value={c.id}>{c.label}</option>
                     ))}
                   </optgroup>
