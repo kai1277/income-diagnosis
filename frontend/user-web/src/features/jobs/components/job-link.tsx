@@ -4,19 +4,17 @@ import { getTracking } from "@/lib/tracking";
 type Props = {
   label: string;
   jobType: string;
-  url: string;
   variant?: "primary" | "secondary";
   position: number;
   resultCardId: string;
 };
 
-export default function JobLink({ label, jobType, url, variant = "primary", position, resultCardId }: Props) {
+export default function JobLink({ label, jobType, variant = "primary", position, resultCardId }: Props) {
   const navigate = useNavigate();
 
   const handleClick = () => {
     window.gtag?.("event", "job_link_click", {
       job_type: jobType,
-      destination_url: url,
       position,
       result_card_id: resultCardId,
       ...getTracking(),
