@@ -14,6 +14,7 @@ import {
   CATEGORY_LABELS,
   OPERATOR_LABELS,
 } from "@/features/requirement-codes/lib/requirement-codes-constants";
+import { AddReqCodeModal } from "@/features/requirement-codes/routes/requirement-codes";
 
 // ── Form state ────────────────────────────────────────────────────────────────
 
@@ -99,7 +100,8 @@ function RequirementsEditor({
   requirements: JobRequirementRow[];
   onChange: (reqs: JobRequirementRow[]) => void;
 }) {
-  const { codes } = useRequirementCodes();
+  const { codes, addCode } = useRequirementCodes();
+  const [showCodeModal, setShowCodeModal] = useState(false);
 
   const grouped = codes.reduce<Record<string, typeof codes>>((acc, code) => {
     (acc[code.category] ??= []).push(code);
@@ -236,13 +238,30 @@ function RequirementsEditor({
         })}
       </div>
 
-      <button
-        type="button"
-        onClick={addRow}
-        className="mt-3 text-sm text-blue-500 hover:text-blue-700 transition-colors"
-      >
-        + 条件を追加
-      </button>
+      <div className="mt-3 flex items-center gap-4">
+        <button
+          type="button"
+          onClick={addRow}
+          className="text-sm text-blue-500 hover:text-blue-700 transition-colors"
+        >
+          + 条件を追加
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowCodeModal(true)}
+          className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          + 条件コードを作成
+        </button>
+      </div>
+
+      {showCodeModal && (
+        <AddReqCodeModal
+          onClose={() => setShowCodeModal(false)}
+          onAdd={addCode}
+          overlayClassName="z-[60]"
+        />
+      )}
     </div>
   );
 }
