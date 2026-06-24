@@ -10,7 +10,7 @@ type JobsContextValue = {
   loading: boolean;
   error: string | null;
   addJob: (job: CreateJobPayload) => Promise<void>;
-  deleteJob: (id: string) => void;
+  deleteJob: (id: string) => Promise<void>;
 };
 
 const JobsContext = createContext<JobsContextValue | null>(null);
@@ -42,7 +42,11 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
     setJobs((prev) => [...prev, created]);
   };
 
-  const deleteJob = (id: string) => setJobs((prev) => prev.filter((j) => j.id !== id));
+  const deleteJob = async (id: string) => {
+    const res = await fetch(`${API_BASE}/api/admin/jobs/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error("求人の削除に失敗しました");
+    setJobs((prev) => prev.filter((j) => j.id !== id));
+  };
 
   return (
     <JobsContext.Provider value={{ jobs, loading, error, addJob, deleteJob }}>
