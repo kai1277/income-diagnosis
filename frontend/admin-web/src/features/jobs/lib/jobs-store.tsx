@@ -11,6 +11,7 @@ type JobsContextValue = {
   error: string | null;
   addJob: (job: CreateJobPayload) => Promise<void>;
   deleteJob: (id: string) => Promise<void>;
+  retry: () => void;
 };
 
 const JobsContext = createContext<JobsContextValue | null>(null);
@@ -20,15 +21,28 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchJobs = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/jobs`);
+      if (!res.ok) throw new Error("求人の取得に失敗しました");
+      const contentType = res.headers.get("content-type") ?? "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("サーバーが起動中です。しばらく待ってから再試行してください。");
+      }
+      const data: Job[] = await res.json();
+      setJobs(data);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "求人の取得に失敗しました";
+      setError(msg.includes("<!DOCTYPE") ? "サーバーが起動中です。しばらく待ってから再試行してください。" : msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetch(`${API_BASE}/api/admin/jobs`)
-      .then((res) => {
-        if (!res.ok) throw new Error("求人の取得に失敗しました");
-        return res.json();
-      })
-      .then((data: Job[]) => setJobs(data))
-      .catch((e: Error) => setError(e.message))
-      .finally(() => setLoading(false));
+    fetchJobs();
   }, []);
 
   const addJob = async (jobData: CreateJobPayload) => {
@@ -49,7 +63,7 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <JobsContext.Provider value={{ jobs, loading, error, addJob, deleteJob }}>
+    <JobsContext.Provider value={{ jobs, loading, error, addJob, deleteJob, retry: fetchJobs }}>
       {children}
     </JobsContext.Provider>
   );
