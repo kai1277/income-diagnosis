@@ -52,7 +52,7 @@
 │   │   ├── index.html
 │   │   ├── vite.config.ts
 │   │   └── .env.local                     # VITE_GA_ID
-│   └── admin-web/                     # 管理画面用（今後実装）
+│   └── admin-web/                     # 管理画面（Viteプロジェクト・実装済み）
 ├── backend/
 │   ├── api/                           # NestJS APIサーバー（ポート3000）
 │   │   ├── prisma/                    # Prismaスキーマ・マイグレーション
@@ -147,6 +147,14 @@ cd frontend/admin-web
 npm install
 npm run dev
 ```
+
+`.env.local` にバックエンドAPIのURLを設定（必須）：
+
+```
+VITE_API_URL=https://<render-service-name>.onrender.com
+```
+
+> ⚠️ この変数が未設定だとリクエストが相対パス `/api/admin/jobs` に飛び、HTMLが返ってJSONエラーになる。
 
 ---
 
@@ -291,6 +299,24 @@ Renderのダッシュボードで以下の環境変数を設定する：
 | `NODE_ENV` | `production` |
 
 > ⚠️ マイグレーションは Render のデプロイ時に自動実行しない。本番マイグレーションは手動で `npx prisma migrate deploy` を実行すること（CLAUDE.mdのDBルール参照）。
+
+> ⚠️ **Render 無料プランのスリープ**: 一定時間アクセスがないとサービスがスリープし、最初のリクエスト時にHTMLを返す（JSONエラーの原因）。admin-web はエラーメッセージと「再試行」ボタンで対処済み。継続利用する場合は有料プランへのアップグレードを検討すること。
+
+### フロントエンド（Cloudflare Pages）
+
+`frontend/user-web` および `frontend/admin-web` はともに **Cloudflare Pages** にデプロイする。
+GitHub の main ブランチへの push で自動デプロイされる。
+
+**⚠️ 環境変数は Cloudflare Pages のダッシュボードで設定が必要**
+
+Vite の `import.meta.env.VITE_*` 変数はビルド時に埋め込まれる。`.env.local` は git 管理外のため、Cloudflare Pages のビルドには渡されない。
+
+各プロジェクトの Settings → Environment variables で以下を設定し、リデプロイすること：
+
+| プロジェクト | 変数名 | 説明 |
+|---|---|---|
+| `user-web` | `VITE_GA_ID` | GA4 測定ID |
+| `admin-web` | `VITE_API_URL` | バックエンドAPIのURL（`https://<render-service>.onrender.com`） |
 
 ---
 

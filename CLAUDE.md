@@ -52,7 +52,7 @@
 │   │   ├── index.html
 │   │   ├── vite.config.ts
 │   │   └── .env.local                     # VITE_GA_ID
-│   └── admin-web/                     # 管理画面用（今後実装）
+│   └── admin-web/                     # 管理画面（Viteプロジェクト・実装済み）
 ├── backend/
 │   ├── api/                           # NestJS APIサーバー（ポート3000）
 │   │   ├── prisma/
@@ -221,6 +221,19 @@ export const JOB_LINKS = {
 
 > ⚠️ Vercelは使わない
 
+### Cloudflare Pages の環境変数設定（必須）
+
+`frontend/user-web` と `frontend/admin-web` はともに Cloudflare Pages にデプロイし、GitHub main ブランチへの push で自動デプロイされる。
+
+Vite の `import.meta.env.VITE_*` 変数は**ビルド時に埋め込まれる**。`.env.local` は `.gitignore` で除外されているため、Cloudflare Pages のビルドには渡されない。必ず Cloudflare Dashboard の Settings → Environment variables で設定し、リデプロイすること。
+
+| プロジェクト | 変数名 | 内容 |
+|---|---|---|
+| `user-web` | `VITE_GA_ID` | GA4 測定ID |
+| `admin-web` | `VITE_API_URL` | バックエンドAPIのURL |
+
+> ⚠️ `VITE_API_URL` が未設定の場合、`API_BASE` が空文字になりリクエストが相対パス（`/api/admin/jobs`）に飛ぶ。Cloudflare Pages はその URL に対してHTMLを返すため、`Unexpected token '<', "<!DOCTYPE "...` エラーになる。
+
 ---
 
 ## ✅ KPI目標（判断基準）
@@ -303,6 +316,7 @@ npx prisma generate
 ### デプロイ時の注意
 
 - **マイグレーションは Render のビルドコマンドに含めない**（CLAUDE.mdのDBルール参照）
+- **Render 無料プランはスリープする**: 一定時間アクセスがないとサービスがスリープし、復帰時の最初のリクエストにHTMLを返す。フロントエンドでJSON以外のレスポンスが来た場合は「サーバーが起動中です」と表示して再試行ボタンを出す実装で対処済み。継続利用時は有料プランへのアップグレードを検討すること。
 - 本番マイグレーションはデプロイ後に手動で実行する：
 
 ```bash
