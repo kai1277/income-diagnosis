@@ -2,7 +2,7 @@ import type { Job } from "@/features/jobs/types";
 
 type Props = {
   job: Job;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
 };
 
 export default function AdminJobCard({ job, onDelete }: Props) {
@@ -72,7 +72,9 @@ export default function AdminJobCard({ job, onDelete }: Props) {
 
         <button
           onClick={() => {
-            if (confirm(`「${job.title}」を削除しますか？`)) onDelete(job.id);
+            if (confirm(`「${job.title}」を削除しますか？`)) {
+              onDelete(job.id).catch(() => alert("削除に失敗しました。もう一度お試しください。"));
+            }
           }}
           className="w-full py-2 rounded-lg text-sm font-medium text-red-500 border border-red-200 hover:bg-red-50 transition-colors"
         >

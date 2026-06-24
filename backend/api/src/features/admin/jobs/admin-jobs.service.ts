@@ -13,4 +13,8 @@ export class AdminJobsService {
   createJob(dto: CreateJobDto) {
     return this.repo.create(dto);
   }
+
+  deleteJob(id: string) {
+    return this.repo.deleteById(id);
+  }
 }

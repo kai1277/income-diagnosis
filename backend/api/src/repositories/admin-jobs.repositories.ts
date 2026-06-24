@@ -13,6 +13,10 @@ export class AdminJobsRepository {
     });
   }
 
+  async deleteById(id: string) {
+    return this.prisma.job.delete({ where: { id } });
+  }
+
   async create(dto: CreateJobDto) {
     const { requirements, expires_at, ...jobFields } = dto;
 

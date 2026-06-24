@@ -248,7 +248,7 @@ function RequirementsEditor({
 
 // ── Add Job Modal ─────────────────────────────────────────────────────────────
 
-function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Job) => void }) {
+function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Omit<Job, "id" | "created_at" | "updated_at">) => Promise<void> }) {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
 
@@ -269,36 +269,41 @@ function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Job
     return Object.keys(next).length === 0;
   };
 
-  const buildJob = (): Job => {
-    const now = new Date().toISOString();
-    return {
-      id: `job-${Date.now()}`,
-      title: form.title.trim(),
-      occupation_type: form.occupation_type,
-      image_url: form.image_url.trim() || null,
-      badge_text: form.badge_text.trim() || null,
-      salary_type: form.salary_type,
-      salary_min: form.salary_min ? parseInt(form.salary_min, 10) : null,
-      salary_max: form.salary_max ? parseInt(form.salary_max, 10) : null,
-      salary_range_type: form.salary_range_type,
-      salary_text: form.salary_text.trim(),
-      job_location: form.job_location.trim(),
-      job_types: form.job_types.split(/[,、]/).map((s) => s.trim()).filter(Boolean),
-      affiliate_url: form.affiliate_url.trim(),
-      impression_pixel_url: form.impression_pixel_url.trim(),
-      affiliate_network: form.affiliate_network,
-      is_active: form.is_active,
-      created_at: now,
-      updated_at: now,
-      expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
-      requirements: form.requirements,
-    };
-  };
+  const buildJob = (): Omit<Job, "id" | "created_at" | "updated_at"> => ({
+    title: form.title.trim(),
+    occupation_type: form.occupation_type,
+    image_url: form.image_url.trim() || null,
+    badge_text: form.badge_text.trim() || null,
+    salary_type: form.salary_type,
+    salary_min: form.salary_min ? parseInt(form.salary_min, 10) : null,
+    salary_max: form.salary_max ? parseInt(form.salary_max, 10) : null,
+    salary_range_type: form.salary_range_type,
+    salary_text: form.salary_text.trim(),
+    job_location: form.job_location.trim(),
+    job_types: form.job_types.split(/[,、]/).map((s) => s.trim()).filter(Boolean),
+    affiliate_url: form.affiliate_url.trim(),
+    impression_pixel_url: form.impression_pixel_url.trim(),
+    affiliate_network: form.affiliate_network,
+    is_active: form.is_active,
+    expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
+    requirements: form.requirements,
+  });
 
-  const handleSubmit = () => {
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const handleSubmit = async () => {
     if (!validate()) return;
-    onAdd(buildJob());
-    onClose();
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      await onAdd(buildJob());
+      onClose();
+    } catch {
+      setSubmitError("求人の追加に失敗しました。もう一度お試しください。");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -557,20 +562,23 @@ function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Job
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-8 py-5 bg-white rounded-b-2xl border-t border-gray-200">
+          {submitError && <p className="text-sm text-red-500 mr-auto">{submitError}</p>}
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+            disabled={submitting}
+            className="px-6 py-2.5 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             キャンセル
           </button>
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-6 py-2.5 rounded-lg text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            disabled={submitting}
+            className="px-6 py-2.5 rounded-lg text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
             style={{ backgroundColor: "#0288d1" }}
           >
-            追加する
+            {submitting ? "追加中..." : "追加する"}
           </button>
         </div>
       </div>
@@ -582,8 +590,11 @@ function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Job
 
 export default function AdminJobs() {
   const navigate = useNavigate();
-  const { jobs, addJob, deleteJob } = useJobs();
+  const { jobs, loading, error, addJob, deleteJob } = useJobs();
   const [showModal, setShowModal] = useState(false);
+
+  if (loading) return <div className="flex items-center justify-center min-h-screen text-gray-400 text-sm">読み込み中...</div>;
+  if (error) return <div className="flex items-center justify-center min-h-screen text-red-400 text-sm">{error}</div>;
 
   return (
     <div className="min-h-screen bg-gray-50">
