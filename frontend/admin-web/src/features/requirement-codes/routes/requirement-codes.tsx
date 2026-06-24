@@ -5,7 +5,7 @@ import { useRequirementCodes } from "@/features/requirement-codes/lib/requiremen
 import {
   CATEGORY_LABELS,
   OPERATOR_LABELS,
-} from "@/features/jobs/lib/mock-requirement-codes";
+} from "@/features/requirement-codes/lib/requirement-codes-constants";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -107,10 +107,12 @@ function AddReqCodeModal({
   onAdd,
 }: {
   onClose: () => void;
-  onAdd: (code: RequirementCode) => void;
+  onAdd: (payload: Omit<RequirementCode, "id">) => Promise<void>;
 }) {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const validate = (): boolean => {
     const next: Partial<Record<keyof FormState, string>> = {};
@@ -131,19 +133,26 @@ function AddReqCodeModal({
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validate()) return;
-    onAdd({
-      id: `rc-${Date.now()}`,
-      category: form.category.trim(),
-      code: form.code.trim(),
-      label: form.label.trim(),
-      value_type: form.value_type,
-      allowed_operators: form.allowed_operators,
-      is_active: form.is_active,
-      sort_order: form.sort_order ? parseInt(form.sort_order, 10) : null,
-    });
-    onClose();
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      await onAdd({
+        category: form.category.trim(),
+        code: form.code.trim(),
+        label: form.label.trim(),
+        value_type: form.value_type,
+        allowed_operators: form.allowed_operators,
+        is_active: form.is_active,
+        sort_order: form.sort_order ? parseInt(form.sort_order, 10) : null,
+      });
+      onClose();
+    } catch {
+      setSubmitError("条件コードの追加に失敗しました。もう一度お試しください。");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -304,20 +313,23 @@ function AddReqCodeModal({
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-8 py-5 bg-white rounded-b-2xl border-t border-gray-200">
+          {submitError && <p className="text-sm text-red-500 mr-auto">{submitError}</p>}
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+            disabled={submitting}
+            className="px-6 py-2.5 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             キャンセル
           </button>
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-6 py-2.5 rounded-lg text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            disabled={submitting}
+            className="px-6 py-2.5 rounded-lg text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
             style={{ backgroundColor: "#0288d1" }}
           >
-            追加する
+            {submitting ? "追加中..." : "追加する"}
           </button>
         </div>
       </div>
@@ -329,8 +341,16 @@ function AddReqCodeModal({
 
 export default function RequirementCodesPage() {
   const navigate = useNavigate();
-  const { codes, addCode, toggleActive, deleteCode } = useRequirementCodes();
+  const { codes, loading, error, addCode, toggleActive, deleteCode, retry } = useRequirementCodes();
   const [showModal, setShowModal] = useState(false);
+
+  if (loading) return <div className="flex items-center justify-center min-h-screen text-gray-400 text-sm">読み込み中...</div>;
+  if (error) return (
+    <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-red-400 text-sm">
+      <p>{error}</p>
+      <button onClick={retry} className="px-4 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: "#0288d1" }}>再試行</button>
+    </div>
+  );
 
   // カテゴリでグループ化して sort_order 順に並べる
   const grouped = codes.reduce<Record<string, RequirementCode[]>>((acc, c) => {

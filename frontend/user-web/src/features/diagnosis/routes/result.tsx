@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import JobLink from "@/features/jobs/components/job-link";
 import { diagnose } from "@/features/diagnosis/utils/diagnose";
-import { getJobUrl, JOB_LINKS } from "@/features/jobs/lib/job-links";
 import { getTracking } from "@/lib/tracking";
 import { STEP_CATEGORIES } from "@/features/diagnosis/constants/step-categories";
 
@@ -137,7 +136,6 @@ export default function Result() {
         <JobLink
           label="この条件の求人を見る"
           jobType={result.id}
-          url={getJobUrl(result.id)}
           variant="primary"
           position={1}
           resultCardId={result.id}
@@ -145,7 +143,6 @@ export default function Result() {
         <JobLink
           label={`年収${result.potentialIncome}万円以上の求人`}
           jobType="high_income"
-          url={JOB_LINKS.highIncome}
           variant="secondary"
           position={2}
           resultCardId={result.id}
