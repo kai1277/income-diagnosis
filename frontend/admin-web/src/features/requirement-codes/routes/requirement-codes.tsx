@@ -102,12 +102,14 @@ const EMPTY: FormState = {
   is_active: true,
 };
 
-function AddReqCodeModal({
+export function AddReqCodeModal({
   onClose,
   onAdd,
+  overlayClassName,
 }: {
   onClose: () => void;
   onAdd: (payload: Omit<RequirementCode, "id">) => Promise<void>;
+  overlayClassName?: string;
 }) {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
@@ -157,7 +159,7 @@ function AddReqCodeModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-6"
+      className={`fixed inset-0 flex items-center justify-center p-6 ${overlayClassName ?? "z-50"}`}
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
