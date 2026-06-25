@@ -244,20 +244,6 @@ GA4の測定IDは `.env.local` に `VITE_GA_ID=G-XXXXXXXXXX` として管理。�
 
 ---
 
-## 🔗 求人リンク
-
-現時点ではダミーURLで実装する。後から差し替えられるよう `features/jobs/lib/job-links.ts` に集約すること。
-
-```typescript
-// features/jobs/lib/job-links.ts
-export const JOB_LINKS = {
-  blueCollar: "https://www.indeed.com/jobs?q=...", // 後で差し替え
-  general: "https://www.indeed.com/jobs?q=...",
-};
-```
-
----
-
 ## 🚫 やらないこと（絶対禁止）
 
 - ログイン・認証機能
@@ -283,20 +269,20 @@ export const JOB_LINKS = {
 
 バックエンドAPIは **Render** にデプロイする。
 
-| 設定項目 | 値 |
-|---|---|
-| Root Directory | `backend/api` |
-| Build Command | `npm install && npm run build && npx prisma generate` |
-| Start Command | `npm run start` |
-| Environment | Node |
+| 設定項目       | 値                                                    |
+| -------------- | ----------------------------------------------------- |
+| Root Directory | `backend/api`                                         |
+| Build Command  | `npm install && npm run build && npx prisma generate` |
+| Start Command  | `npm run start`                                       |
+| Environment    | Node                                                  |
 
 Renderのダッシュボードで以下の環境変数を設定する：
 
-| 変数名 | 説明 |
-|---|---|
-| `DATABASE_URL` | Supabase の接続URL（pgbouncer経由） |
-| `DIRECT_URL` | Supabase の直接接続URL（マイグレーション用） |
-| `NODE_ENV` | `production` |
+| 変数名         | 説明                                         |
+| -------------- | -------------------------------------------- |
+| `DATABASE_URL` | Supabase の接続URL（pgbouncer経由）          |
+| `DIRECT_URL`   | Supabase の直接接続URL（マイグレーション用） |
+| `NODE_ENV`     | `production`                                 |
 
 > ⚠️ マイグレーションは Render のデプロイ時に自動実行しない。本番マイグレーションは手動で `npx prisma migrate deploy` を実行すること（CLAUDE.mdのDBルール参照）。
 
@@ -313,10 +299,10 @@ Vite の `import.meta.env.VITE_*` 変数はビルド時に埋め込まれる。`
 
 各プロジェクトの Settings → Environment variables で以下を設定し、リデプロイすること：
 
-| プロジェクト | 変数名 | 説明 |
-|---|---|---|
-| `user-web` | `VITE_GA_ID` | GA4 測定ID |
-| `admin-web` | `VITE_API_URL` | バックエンドAPIのURL（`https://<render-service>.onrender.com`） |
+| プロジェクト | 変数名         | 説明                                                            |
+| ------------ | -------------- | --------------------------------------------------------------- |
+| `user-web`   | `VITE_GA_ID`   | GA4 測定ID                                                      |
+| `admin-web`  | `VITE_API_URL` | バックエンドAPIのURL（`https://<render-service>.onrender.com`） |
 
 ---
 
@@ -329,17 +315,6 @@ Vite の `import.meta.env.VITE_*` 変数はビルド時に埋め込まれる。`
 
 - クリック率20%未満 → 即ピボット
 - 診断完了率50%未満 → 質問数・選択肢を見直す
-
----
-
-## 🗓 開発スケジュール
-
-| Day     | タスク                           |
-| ------- | -------------------------------- |
-| Day 1-2 | LP・診断UIの実装                 |
-| Day 3-4 | 結果ロジック実装・求人リンク設置 |
-| Day 5   | GA4計測設定・動作確認            |
-| Day 6-7 | SNS流入テスト・KPI計測開始       |
 
 ---
 
@@ -369,20 +344,20 @@ Repository  (repositories/<機能>.repositories.ts)         — DBアクセス�
 Supabase PostgreSQL
 ```
 
-| ファイル | 役割 |
-|---|---|
-| `*.controller.ts` | HTTP リクエスト受付、デコレーター（`@Get` `@Post` 等）で定義 |
-| `*.service.ts` | ビジネスロジック。Repositoryを注入して呼び出す |
-| `repositories/*.repositories.ts` | Prismaクエリを記述。DBアクセスはここに集約 |
-| `*.schema.ts` | DTOクラス（class-validatorデコレーター） |
-| `*.routes.ts` | NestJS Module（Controller/Service/Repositoryをproviders登録） |
+| ファイル                         | 役割                                                          |
+| -------------------------------- | ------------------------------------------------------------- |
+| `*.controller.ts`                | HTTP リクエスト受付、デコレーター（`@Get` `@Post` 等）で定義  |
+| `*.service.ts`                   | ビジネスロジック。Repositoryを注入して呼び出す                |
+| `repositories/*.repositories.ts` | Prismaクエリを記述。DBアクセスはここに集約                    |
+| `*.schema.ts`                    | DTOクラス（class-validatorデコレーター）                      |
+| `*.routes.ts`                    | NestJS Module（Controller/Service/Repositoryをproviders登録） |
 
 ### 実装済みAPIエンドポイント
 
-| メソッド | パス | 説明 |
-|---|---|---|
-| `GET` | `/api/admin/jobs` | 求人一覧取得（job_requirements含む） |
-| `POST` | `/api/admin/jobs` | 求人追加（job_requirements同時作成可） |
+| メソッド | パス              | 説明                                   |
+| -------- | ----------------- | -------------------------------------- |
+| `GET`    | `/api/admin/jobs` | 求人一覧取得（job_requirements含む）   |
+| `POST`   | `/api/admin/jobs` | 求人追加（job_requirements同時作成可） |
 
 ### 新機能の追加パターン
 
@@ -402,10 +377,10 @@ Supabase PostgreSQL
 
 現在の Supabase Security 設定は以下とする。
 
-| Setting                         | Value | 理由                                         |
-| ------------------------------- | ----- | ------------------------------------------ |
-| Enable Data API                 | OFF   | フロントエンドから Supabase Data API を直接利用しないため     |
-| Automatically expose new tables | OFF   | 新規テーブルが意図せず外部APIに公開されることを防ぐため              |
+| Setting                         | Value | 理由                                                             |
+| ------------------------------- | ----- | ---------------------------------------------------------------- |
+| Enable Data API                 | OFF   | フロントエンドから Supabase Data API を直接利用しないため        |
+| Automatically expose new tables | OFF   | 新規テーブルが意図せず外部APIに公開されることを防ぐため          |
 | Enable automatic RLS            | ON    | 新規テーブルに Row Level Security を自動適用し、安全側に倒すため |
 
 ## DB Access Policy
@@ -512,9 +487,9 @@ npx prisma generate
 
 ### 本番マイグレーション前の確認事項
 
-* マイグレーション内容をレビューしてから実行する
-* 破壊的変更（カラム削除・型変更）の場合はデータのバックアップを取ってから実行する
-* `prisma migrate deploy` は適用済みマイグレーションをスキップするため、冪等に実行できる
+- マイグレーション内容をレビューしてから実行する
+- 破壊的変更（カラム削除・型変更）の場合はデータのバックアップを取ってから実行する
+- `prisma migrate deploy` は適用済みマイグレーションをスキップするため、冪等に実行できる
 
 ## RLSについて
 
@@ -527,8 +502,8 @@ Supabaseでは automatic RLS を有効にしている。
 
 ## 注意点
 
-* 新規テーブルを作成しても、Data API に自動公開されない。
-* フロントエンドから Supabase Data API を直接叩く設計に変更してはいけない。
-* 管理者用機能は必ず `backend/api` 経由で実装する。
-* Supabaseの `service_role key` はサーバーサイドでのみ使用可能。
-* `.env`、DB接続URL、SupabaseキーはGitHubにコミットしない。
+- 新規テーブルを作成しても、Data API に自動公開されない。
+- フロントエンドから Supabase Data API を直接叩く設計に変更してはいけない。
+- 管理者用機能は必ず `backend/api` 経由で実装する。
+- Supabaseの `service_role key` はサーバーサイドでのみ使用可能。
+- `.env`、DB接続URL、SupabaseキーはGitHubにコミットしない。

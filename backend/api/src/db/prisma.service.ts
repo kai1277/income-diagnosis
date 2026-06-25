@@ -25,6 +25,10 @@ export class PrismaService implements OnModuleInit {
     return this.client.requirementCode;
   }
 
+  get occupationType() {
+    return this.client.occupationType;
+  }
+
   async onModuleInit() {
     await this.client.$connect();
   }
