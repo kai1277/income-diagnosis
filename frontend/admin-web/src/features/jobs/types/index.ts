@@ -16,10 +16,19 @@ export type JobRequirementRow = {
   value: string;
 };
 
+export type OccupationType = {
+  id: string;
+  code: string;
+  label: string;
+  is_active: boolean;
+  sort_order: number | null;
+};
+
 export type Job = {
   id: string;
   title: string;
-  occupation_type: string;
+  occupation_type_id: string;
+  occupation_type?: { id: string; label: string };
   image_url: string | null;
   badge_text: string | null;
   salary_type: string;
@@ -42,12 +51,3 @@ export type Job = {
 export const SALARY_TYPES = ["月給", "時給", "日給", "年俸"] as const;
 export const SALARY_RANGE_TYPES = ["固定", "幅あり"] as const;
 export const AFFILIATE_NETWORKS = ["A8.net", "その他"] as const;
-export const OCCUPATION_TYPES = [
-  "製造・現場",
-  "IT・エンジニア",
-  "事務・営業",
-  "サービス・飲食",
-  "医療・介護",
-  "運輸・物流",
-  "その他",
-] as const;

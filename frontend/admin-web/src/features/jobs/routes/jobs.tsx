@@ -7,8 +7,8 @@ import {
   SALARY_TYPES,
   SALARY_RANGE_TYPES,
   AFFILIATE_NETWORKS,
-  OCCUPATION_TYPES,
 } from "@/features/jobs/types";
+import { useOccupationTypes } from "@/features/occupation-types/lib/occupation-types-store";
 import { useRequirementCodes } from "@/features/requirement-codes/lib/requirement-codes-store";
 import {
   CATEGORY_LABELS,
@@ -20,7 +20,7 @@ import { AddReqCodeModal } from "@/features/requirement-codes/routes/requirement
 
 type FormState = {
   title: string;
-  occupation_type: string;
+  occupation_type_id: string;
   image_url: string;
   badge_text: string;
   salary_type: string;
@@ -40,7 +40,7 @@ type FormState = {
 
 const EMPTY: FormState = {
   title: "",
-  occupation_type: OCCUPATION_TYPES[0],
+  occupation_type_id: "",
   image_url: "",
   badge_text: "",
   salary_type: SALARY_TYPES[0],
@@ -269,6 +269,7 @@ function RequirementsEditor({
 // ── Add Job Modal ─────────────────────────────────────────────────────────────
 
 function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Omit<Job, "id" | "created_at" | "updated_at">) => Promise<void> }) {
+  const { occupationTypes } = useOccupationTypes();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
 
@@ -291,7 +292,7 @@ function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Omi
 
   const buildJob = (): Omit<Job, "id" | "created_at" | "updated_at"> => ({
     title: form.title.trim(),
-    occupation_type: form.occupation_type,
+    occupation_type_id: form.occupation_type_id,
     image_url: form.image_url.trim() || null,
     badge_text: form.badge_text.trim() || null,
     salary_type: form.salary_type,
@@ -368,8 +369,9 @@ function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Omi
 
                   <div>
                     <Label text="職種カテゴリ" required />
-                    <select value={form.occupation_type} onChange={setText("occupation_type")} className={selectCls()}>
-                      {OCCUPATION_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+                    <select value={form.occupation_type_id} onChange={setText("occupation_type_id")} className={selectCls()}>
+                      <option value="">選択してください</option>
+                      {occupationTypes.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
                     </select>
                   </div>
 

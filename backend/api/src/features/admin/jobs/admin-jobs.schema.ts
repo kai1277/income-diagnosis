@@ -33,9 +33,8 @@ export class CreateJobDto {
   @IsNotEmpty()
   title!: string;
 
-  @IsString()
-  @IsNotEmpty()
-  occupation_type!: string;
+  @IsUUID()
+  occupation_type_id!: string;
 
   @IsOptional()
   @IsString()

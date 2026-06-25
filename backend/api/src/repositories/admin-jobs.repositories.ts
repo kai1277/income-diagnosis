@@ -8,7 +8,7 @@ export class AdminJobsRepository {
 
   async findAll() {
     return this.prisma.job.findMany({
-      include: { job_requirements: true },
+      include: { job_requirements: true, occupation_type: true },
       orderBy: { created_at: 'desc' },
     });
   }
