@@ -7,6 +7,11 @@ const MENU_ITEMS = [
     path: "/jobs",
   },
   {
+    label: "職種カテゴリ一覧",
+    description: "求人の職種カテゴリ（マスタ）を管理する",
+    path: "/occupation-types",
+  },
+  {
     label: "条件コード一覧",
     description: "求人条件の種類（マスタ）を管理する",
     path: "/requirement-codes",
