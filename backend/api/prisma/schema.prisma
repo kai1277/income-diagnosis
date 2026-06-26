@@ -21,7 +21,8 @@ model OccupationType {
   created_at  DateTime  @default(now()) @db.Timestamp(6)
   updated_at  DateTime  @default(now()) @updatedAt @db.Timestamp(6)
 
-  jobs        Job[]
+  jobs                Job[]
+  job_occupation_types JobOccupationType[]
 
   @@map("occupation_types")
 }
@@ -47,10 +48,24 @@ model Job {
   updated_at          DateTime  @default(now()) @updatedAt @db.Timestamp(6)
   expires_at          DateTime? @db.Timestamp(6)
 
-  occupation_type     OccupationType    @relation(fields: [occupation_type_id], references: [id])
-  job_requirements    JobRequirement[]
+  occupation_type      OccupationType     @relation(fields: [occupation_type_id], references: [id])
+  job_requirements     JobRequirement[]
+  job_occupation_types JobOccupationType[]
 
   @@map("jobs")
+}
+
+model JobOccupationType {
+  job_id              String    @db.Uuid
+  occupation_type_id  String    @db.Uuid
+  created_at          DateTime  @default(now()) @db.Timestamp(6)
+  updated_at          DateTime  @default(now()) @updatedAt @db.Timestamp(6)
+
+  job                 Job            @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  occupation_type     OccupationType @relation(fields: [occupation_type_id], references: [id])
+
+  @@id([job_id, occupation_type_id])
+  @@map("job_occupation_types")
 }
 
 model JobRequirement {
