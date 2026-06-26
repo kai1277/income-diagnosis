@@ -74,7 +74,7 @@ function RequirementsEditor({
         requirement_code_id: first.id,
         level: "required",
         operator: first.allowed_operators[0],
-        value: "",
+        value: first.value_type === "boolean" ? "true" : "",
       },
     ]);
   };
@@ -114,7 +114,7 @@ function RequirementsEditor({
                   update(i, {
                     requirement_code_id: e.target.value,
                     operator: next.allowed_operators[0],
-                    value: "",
+                    value: next.value_type === "boolean" ? "true" : "",
                   });
                 }}
                 className={selectCls()}
