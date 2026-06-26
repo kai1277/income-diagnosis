@@ -60,13 +60,12 @@ function RequirementsEditor({
   const { codes, addCode } = useRequirementCodes();
   const [showCodeModal, setShowCodeModal] = useState(false);
 
-  const grouped = codes.reduce<Record<string, typeof codes>>((acc, code) => {
-    (acc[code.category] ??= []).push(code);
-    return acc;
-  }, {});
+  const categories = [...new Set(codes.map((c) => c.category))];
 
   const addRow = () => {
-    const first = codes[0];
+    const firstCat = categories[0];
+    if (!firstCat) return;
+    const first = codes.find((c) => c.category === firstCat);
     if (!first) return;
     onChange([
       ...requirements,
@@ -92,8 +91,8 @@ function RequirementsEditor({
       <SectionHeader title="求人条件（ターゲット設定）" />
 
       {requirements.length > 0 && (
-        <div className="mb-2 hidden sm:grid grid-cols-[2fr_1fr_1fr_1.5fr_auto] gap-2 px-1">
-          {["条件", "レベル", "比較方法", "値", ""].map((h, i) => (
+        <div className="mb-2 hidden sm:grid grid-cols-[1.5fr_1.5fr_1fr_1fr_1.5fr_auto] gap-2 px-1">
+          {["条件カテゴリ", "条件", "レベル", "比較方法", "値", ""].map((h, i) => (
             <span key={i} className="text-xs text-gray-400 font-medium">{h}</span>
           ))}
         </div>
@@ -102,10 +101,31 @@ function RequirementsEditor({
       <div className="space-y-2">
         {requirements.map((req, i) => {
           const code = codes.find((c) => c.id === req.requirement_code_id);
+          const selectedCategory = code?.category ?? categories[0] ?? "";
+          const filteredCodes = codes.filter((c) => c.category === selectedCategory);
           const needsValue = req.operator !== "exists";
 
           return (
-            <div key={i} className="grid grid-cols-[2fr_1fr_1fr_1.5fr_auto] gap-2 items-center">
+            <div key={i} className="grid grid-cols-[1.5fr_1.5fr_1fr_1fr_1.5fr_auto] gap-2 items-center">
+              <select
+                value={selectedCategory}
+                onChange={(e) => {
+                  const cat = e.target.value;
+                  const firstInCat = codes.find((c) => c.category === cat);
+                  if (!firstInCat) return;
+                  update(i, {
+                    requirement_code_id: firstInCat.id,
+                    operator: firstInCat.allowed_operators[0],
+                    value: firstInCat.value_type === "boolean" ? "true" : "",
+                  });
+                }}
+                className={selectCls()}
+              >
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{CATEGORY_LABELS[cat] ?? cat}</option>
+                ))}
+              </select>
+
               <select
                 value={req.requirement_code_id}
                 onChange={(e) => {
@@ -119,12 +139,8 @@ function RequirementsEditor({
                 }}
                 className={selectCls()}
               >
-                {Object.entries(grouped).map(([cat, items]) => (
-                  <optgroup key={cat} label={CATEGORY_LABELS[cat] ?? cat}>
-                    {items.map((c) => (
-                      <option key={c.id} value={c.id}>{c.label}</option>
-                    ))}
-                  </optgroup>
+                {filteredCodes.map((c) => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
                 ))}
               </select>
 
