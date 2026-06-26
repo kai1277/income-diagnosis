@@ -12,4 +12,8 @@ export class PrefecturesService {
   getCitiesByPrefectureId(prefectureId: string) {
     return this.repo.findCitiesByPrefectureId(prefectureId);
   }
+
+  createCity(prefectureId: string, name: string) {
+    return this.repo.createCity(prefectureId, name);
+  }
 }
