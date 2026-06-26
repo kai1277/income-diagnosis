@@ -14,7 +14,7 @@ import {
   OPERATOR_LABELS,
 } from "@/features/requirement-codes/lib/requirement-codes-constants";
 import { AddReqCodeModal } from "@/features/requirement-codes/routes/requirement-codes";
-import { usePrefectures, useCities } from "@/features/prefectures/lib/prefectures-store";
+import { usePrefectures, useCities, AddCityModal } from "@/features/prefectures/lib/prefectures-store";
 
 // ── Shared UI helpers ─────────────────────────────────────────────────────────
 
@@ -309,7 +309,8 @@ export default function JobDetail() {
   const [saved, setSaved] = useState(false);
 
   const { prefectures } = usePrefectures();
-  const { cities } = useCities(form?.prefecture_id || null);
+  const { cities, addCity } = useCities(form?.prefecture_id || null);
+  const [showAddCityModal, setShowAddCityModal] = useState(false);
 
   if (!job || !form) {
     return (
@@ -489,17 +490,28 @@ export default function JobDetail() {
 
                 <div>
                   <Label text="市区町村" />
-                  <select
-                    value={form.city_id}
-                    onChange={(e) => setForm((prev) => prev ? { ...prev, city_id: e.target.value } : prev)}
-                    className={selectCls()}
-                    disabled={!form.prefecture_id || cities.length === 0}
-                  >
-                    <option value="">選択してください</option>
-                    {cities.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={form.city_id}
+                      onChange={(e) => setForm((prev) => prev ? { ...prev, city_id: e.target.value } : prev)}
+                      className={selectCls()}
+                      disabled={!form.prefecture_id}
+                    >
+                      <option value="">選択してください</option>
+                      {cities.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                    {form.prefecture_id && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAddCityModal(true)}
+                        className="shrink-0 text-sm text-blue-500 hover:text-blue-700 transition-colors whitespace-nowrap"
+                      >
+                        + 追加
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -732,6 +744,17 @@ export default function JobDetail() {
           </button>
         </div>
       </div>
+
+      {showAddCityModal && (
+        <AddCityModal
+          onClose={() => setShowAddCityModal(false)}
+          onAdd={async (name) => {
+            const city = await addCity(name);
+            setForm((prev) => prev ? { ...prev, city_id: city.id } : prev);
+            return city;
+          }}
+        />
+      )}
     </div>
   );
 }

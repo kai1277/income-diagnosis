@@ -15,4 +15,15 @@ export class PrefecturesRepository {
       orderBy: { sort_order: 'asc' },
     });
   }
+
+  async createCity(prefectureId: string, name: string) {
+    const agg = await this.prisma.city.aggregate({
+      where: { prefecture_id: prefectureId },
+      _max: { sort_order: true },
+    });
+    const nextOrder = (agg._max.sort_order ?? 0) + 1;
+    return this.prisma.city.create({
+      data: { prefecture_id: prefectureId, name, sort_order: nextOrder },
+    });
+  }
 }

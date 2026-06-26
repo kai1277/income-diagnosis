@@ -1,5 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { PrefecturesService } from './admin-prefectures.service';
+import { CreateCityDto } from './admin-prefectures.schema';
 
 @Controller('admin/prefectures')
 export class PrefecturesController {
@@ -13,5 +14,10 @@ export class PrefecturesController {
   @Get(':id/cities')
   getCitiesByPrefectureId(@Param('id') id: string) {
     return this.service.getCitiesByPrefectureId(id);
+  }
+
+  @Post(':id/cities')
+  createCity(@Param('id') id: string, @Body() dto: CreateCityDto) {
+    return this.service.createCity(id, dto.name);
   }
 }
