@@ -4,12 +4,14 @@ import type { Job } from "@/features/jobs/types";
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
 type CreateJobPayload = Omit<Job, "id" | "created_at" | "updated_at">;
+type UpdateJobPayload = Partial<CreateJobPayload>;
 
 type JobsContextValue = {
   jobs: Job[];
   loading: boolean;
   error: string | null;
   addJob: (job: CreateJobPayload) => Promise<void>;
+  updateJob: (id: string, job: UpdateJobPayload) => Promise<Job>;
   deleteJob: (id: string) => Promise<void>;
   retry: () => void;
 };
@@ -56,6 +58,18 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
     setJobs((prev) => [...prev, created]);
   };
 
+  const updateJob = async (id: string, jobData: UpdateJobPayload): Promise<Job> => {
+    const res = await fetch(`${API_BASE}/api/admin/jobs/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(jobData),
+    });
+    if (!res.ok) throw new Error("求人の更新に失敗しました");
+    const updated: Job = await res.json();
+    setJobs((prev) => prev.map((j) => (j.id === id ? updated : j)));
+    return updated;
+  };
+
   const deleteJob = async (id: string) => {
     const res = await fetch(`${API_BASE}/api/admin/jobs/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error("求人の削除に失敗しました");
@@ -63,7 +77,7 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <JobsContext.Provider value={{ jobs, loading, error, addJob, deleteJob, retry: fetchJobs }}>
+    <JobsContext.Provider value={{ jobs, loading, error, addJob, updateJob, deleteJob, retry: fetchJobs }}>
       {children}
     </JobsContext.Provider>
   );

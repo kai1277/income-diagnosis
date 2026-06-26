@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import type { Job } from "@/features/jobs/types";
 
 type Props = {
@@ -6,8 +7,13 @@ type Props = {
 };
 
 export default function AdminJobCard({ job, onDelete }: Props) {
+  const navigate = useNavigate();
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+    <div
+      className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col cursor-pointer hover:shadow-md hover:border-gray-200 transition-all"
+      onClick={() => navigate(`/jobs/${job.id}`)}
+    >
       {/* Image */}
       <div className="relative">
         {job.image_url ? (
@@ -71,7 +77,8 @@ export default function AdminJobCard({ job, onDelete }: Props) {
         <div className="flex-1" />
 
         <button
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             if (confirm(`「${job.title}」を削除しますか？`)) {
               onDelete(job.id).catch(() => alert("削除に失敗しました。もう一度お試しください。"));
             }

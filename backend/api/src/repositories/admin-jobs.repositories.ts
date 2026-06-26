@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
-import { CreateJobDto } from '../features/admin/jobs/admin-jobs.schema';
+import { CreateJobDto, UpdateJobDto } from '../features/admin/jobs/admin-jobs.schema';
 
 @Injectable()
 export class AdminJobsRepository {
@@ -10,6 +10,39 @@ export class AdminJobsRepository {
     return this.prisma.job.findMany({
       include: { job_requirements: true, occupation_type: true },
       orderBy: { created_at: 'desc' },
+    });
+  }
+
+  async findById(id: string) {
+    return this.prisma.job.findUnique({
+      where: { id },
+      include: { job_requirements: true, occupation_type: true },
+    });
+  }
+
+  async update(id: string, dto: UpdateJobDto) {
+    const { requirements, expires_at, ...jobFields } = dto;
+
+    return this.prisma.job.update({
+      where: { id },
+      data: {
+        ...jobFields,
+        expires_at: expires_at !== undefined
+          ? (expires_at ? new Date(expires_at) : null)
+          : undefined,
+        ...(requirements !== undefined && {
+          job_requirements: {
+            deleteMany: {},
+            create: requirements.map((r) => ({
+              requirement_code_id: r.requirement_code_id,
+              level: r.level,
+              operator: r.operator,
+              value: r.value ?? null,
+            })),
+          },
+        }),
+      },
+      include: { job_requirements: true, occupation_type: true },
     });
   }
 
