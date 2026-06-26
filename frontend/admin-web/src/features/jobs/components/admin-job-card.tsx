@@ -44,7 +44,7 @@ export default function AdminJobCard({ job, onDelete }: Props) {
       {/* Info */}
       <div className="p-4 space-y-2 flex-1 flex flex-col">
         <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded w-fit">
-          {job.occupation_type?.label ?? "—"}
+          {job.occupation_types?.map((t) => t.label).join("、") || "—"}
         </span>
 
         <p className="text-sm font-medium text-gray-800 leading-snug line-clamp-2">{job.title}</p>
