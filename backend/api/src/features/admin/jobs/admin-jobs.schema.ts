@@ -35,8 +35,9 @@ export class UpdateJobDto {
   title?: string;
 
   @IsOptional()
-  @IsUUID()
-  occupation_type_id?: string;
+  @IsArray()
+  @IsUUID(undefined, { each: true })
+  occupation_type_ids?: string[];
 
   @IsOptional()
   @IsString()
@@ -111,8 +112,9 @@ export class CreateJobDto {
   @IsNotEmpty()
   title!: string;
 
-  @IsUUID()
-  occupation_type_id!: string;
+  @IsArray()
+  @IsUUID(undefined, { each: true })
+  occupation_type_ids!: string[];
 
   @IsOptional()
   @IsString()

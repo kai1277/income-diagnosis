@@ -20,7 +20,7 @@ import { AddReqCodeModal } from "@/features/requirement-codes/routes/requirement
 
 type FormState = {
   title: string;
-  occupation_type_id: string;
+  occupation_type_ids: string[];
   image_url: string;
   badge_text: string;
   salary_type: string;
@@ -40,7 +40,7 @@ type FormState = {
 
 const EMPTY: FormState = {
   title: "",
-  occupation_type_id: "",
+  occupation_type_ids: [],
   image_url: "",
   badge_text: "",
   salary_type: SALARY_TYPES[0],
@@ -309,7 +309,7 @@ function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Omi
 
   const buildJob = (): Omit<Job, "id" | "created_at" | "updated_at"> => ({
     title: form.title.trim(),
-    occupation_type_id: form.occupation_type_id,
+    occupation_type_ids: form.occupation_type_ids,
     image_url: form.image_url.trim() || null,
     badge_text: form.badge_text.trim() || null,
     salary_type: form.salary_type,
@@ -386,10 +386,25 @@ function AddJobModal({ onClose, onAdd }: { onClose: () => void; onAdd: (job: Omi
 
                   <div>
                     <Label text="職種カテゴリ" required />
-                    <select value={form.occupation_type_id} onChange={setText("occupation_type_id")} className={selectCls()}>
-                      <option value="">選択してください</option>
-                      {occupationTypes.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
-                    </select>
+                    <div className="flex flex-wrap gap-x-4 gap-y-2 pt-1">
+                      {occupationTypes.map((t) => (
+                        <label key={t.id} className="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={form.occupation_type_ids.includes(t.id)}
+                            onChange={(e) =>
+                              setForm((prev) => ({
+                                ...prev,
+                                occupation_type_ids: e.target.checked
+                                  ? [...prev.occupation_type_ids, t.id]
+                                  : prev.occupation_type_ids.filter((id) => id !== t.id),
+                              }))
+                            }
+                          />
+                          {t.label}
+                        </label>
+                      ))}
+                    </div>
                   </div>
 
                   <div>
