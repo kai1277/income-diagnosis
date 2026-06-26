@@ -27,8 +27,8 @@ export type OccupationType = {
 export type Job = {
   id: string;
   title: string;
-  occupation_type_id: string;
-  occupation_type?: { id: string; label: string };
+  occupation_type_ids: string[];
+  occupation_types?: { id: string; label: string }[];
   image_url: string | null;
   badge_text: string | null;
   salary_type: string;

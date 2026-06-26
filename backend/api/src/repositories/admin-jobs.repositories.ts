@@ -2,13 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
 import { CreateJobDto, UpdateJobDto } from '../features/admin/jobs/admin-jobs.schema';
 
+const JOB_INCLUDE = {
+  job_requirements: true,
+  job_occupation_types: { include: { occupation_type: true } },
+} as const;
+
 @Injectable()
 export class AdminJobsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll() {
     return this.prisma.job.findMany({
-      include: { job_requirements: true, occupation_type: true },
+      include: JOB_INCLUDE,
       orderBy: { created_at: 'desc' },
     });
   }
@@ -16,12 +21,12 @@ export class AdminJobsRepository {
   async findById(id: string) {
     return this.prisma.job.findUnique({
       where: { id },
-      include: { job_requirements: true, occupation_type: true },
+      include: JOB_INCLUDE,
     });
   }
 
   async update(id: string, dto: UpdateJobDto) {
-    const { requirements, expires_at, ...jobFields } = dto;
+    const { requirements, expires_at, occupation_type_ids, ...jobFields } = dto;
 
     return this.prisma.job.update({
       where: { id },
@@ -41,8 +46,16 @@ export class AdminJobsRepository {
             })),
           },
         }),
+        ...(occupation_type_ids !== undefined && {
+          job_occupation_types: {
+            deleteMany: {},
+            create: occupation_type_ids.map((occupation_type_id) => ({
+              occupation_type_id,
+            })),
+          },
+        }),
       },
-      include: { job_requirements: true, occupation_type: true },
+      include: JOB_INCLUDE,
     });
   }
 
@@ -51,7 +64,7 @@ export class AdminJobsRepository {
   }
 
   async create(dto: CreateJobDto) {
-    const { requirements, expires_at, ...jobFields } = dto;
+    const { requirements, expires_at, occupation_type_ids, ...jobFields } = dto;
 
     return this.prisma.job.create({
       data: {
@@ -68,8 +81,15 @@ export class AdminJobsRepository {
               })),
             }
           : undefined,
+        job_occupation_types: occupation_type_ids?.length
+          ? {
+              create: occupation_type_ids.map((occupation_type_id) => ({
+                occupation_type_id,
+              })),
+            }
+          : undefined,
       },
-      include: { job_requirements: true },
+      include: JOB_INCLUDE,
     });
   }
 }

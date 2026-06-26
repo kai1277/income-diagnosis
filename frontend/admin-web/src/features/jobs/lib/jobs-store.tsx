@@ -8,9 +8,15 @@ type UpdateJobPayload = Partial<CreateJobPayload>;
 
 function normalizeJob(raw: Record<string, unknown>): Job {
   const reqs = (raw.job_requirements as Record<string, unknown>[] | undefined) ?? [];
+  const jots = (raw.job_occupation_types as Record<string, unknown>[] | undefined) ?? [];
   return {
     ...(raw as unknown as Job),
     job_types: (raw.job_types as string[]) ?? [],
+    occupation_type_ids: jots.map((jot) => jot.occupation_type_id as string),
+    occupation_types: jots.map((jot) => {
+      const ot = jot.occupation_type as { id: string; label: string } | undefined;
+      return { id: ot?.id ?? "", label: ot?.label ?? "" };
+    }),
     requirements: reqs.map((r): JobRequirementRow => ({
       requirement_code_id: r.requirement_code_id as string,
       level: r.level as "required" | "preferred",
