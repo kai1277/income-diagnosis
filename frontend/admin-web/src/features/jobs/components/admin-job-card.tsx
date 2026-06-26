@@ -56,7 +56,11 @@ export default function AdminJobCard({ job, onDelete }: Props) {
         <div className="space-y-1 text-xs text-gray-500">
           <div className="flex items-center gap-2">
             <span>📍</span>
-            <span>{job.job_location}</span>
+            <span>
+              {job.job_location
+                ? job.job_location
+                : [job.prefecture?.name, job.city?.name].filter(Boolean).join("") || "—"}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <span>🔧</span>

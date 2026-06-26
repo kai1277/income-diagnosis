@@ -5,6 +5,8 @@ import { CreateJobDto, UpdateJobDto } from '../features/admin/jobs/admin-jobs.sc
 const JOB_INCLUDE = {
   job_requirements: true,
   job_occupation_types: { include: { occupation_type: true } },
+  prefecture: true,
+  city: true,
 } as const;
 
 @Injectable()
@@ -26,7 +28,7 @@ export class AdminJobsRepository {
   }
 
   async update(id: string, dto: UpdateJobDto) {
-    const { requirements, expires_at, occupation_type_ids, ...jobFields } = dto;
+    const { requirements, expires_at, occupation_type_ids, job_location, prefecture_id, city_id, ...jobFields } = dto;
 
     return this.prisma.job.update({
       where: { id },
@@ -35,6 +37,9 @@ export class AdminJobsRepository {
         expires_at: expires_at !== undefined
           ? (expires_at ? new Date(expires_at) : null)
           : undefined,
+        ...(job_location !== undefined && { job_location: job_location ?? null }),
+        ...(prefecture_id !== undefined && { prefecture_id: prefecture_id ?? null }),
+        ...(city_id !== undefined && { city_id: city_id ?? null }),
         ...(requirements !== undefined && {
           job_requirements: {
             deleteMany: {},
@@ -54,7 +59,7 @@ export class AdminJobsRepository {
             })),
           },
         }),
-      },
+      } as Parameters<typeof this.prisma.job.update>[0]['data'],
       include: JOB_INCLUDE,
     });
   }
@@ -64,11 +69,14 @@ export class AdminJobsRepository {
   }
 
   async create(dto: CreateJobDto) {
-    const { requirements, expires_at, occupation_type_ids, ...jobFields } = dto;
+    const { requirements, expires_at, occupation_type_ids, job_location, prefecture_id, city_id, ...jobFields } = dto;
 
     return this.prisma.job.create({
       data: {
         ...jobFields,
+        job_location: job_location ?? null,
+        prefecture_id: prefecture_id ?? null,
+        city_id: city_id ?? null,
         is_active: jobFields.is_active ?? true,
         expires_at: expires_at ? new Date(expires_at) : null,
         job_requirements: requirements?.length
@@ -88,7 +96,7 @@ export class AdminJobsRepository {
               })),
             }
           : undefined,
-      },
+      } as Parameters<typeof this.prisma.job.create>[0]['data'],
       include: JOB_INCLUDE,
     });
   }

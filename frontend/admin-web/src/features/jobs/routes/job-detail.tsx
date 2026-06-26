@@ -14,6 +14,7 @@ import {
   OPERATOR_LABELS,
 } from "@/features/requirement-codes/lib/requirement-codes-constants";
 import { AddReqCodeModal } from "@/features/requirement-codes/routes/requirement-codes";
+import { usePrefectures, useCities } from "@/features/prefectures/lib/prefectures-store";
 
 // ── Shared UI helpers ─────────────────────────────────────────────────────────
 
@@ -247,6 +248,8 @@ type FormState = {
   salary_max: string;
   salary_text: string;
   job_location: string;
+  prefecture_id: string;
+  city_id: string;
   job_types: string;
   affiliate_url: string;
   impression_pixel_url: string;
@@ -267,7 +270,9 @@ function jobToForm(job: Job): FormState {
     salary_min: job.salary_min != null ? String(job.salary_min) : "",
     salary_max: job.salary_max != null ? String(job.salary_max) : "",
     salary_text: job.salary_text,
-    job_location: job.job_location,
+    job_location: job.job_location ?? "",
+    prefecture_id: job.prefecture_id ?? "",
+    city_id: job.city_id ?? "",
     job_types: job.job_types.join("、"),
     affiliate_url: job.affiliate_url,
     impression_pixel_url: job.impression_pixel_url,
@@ -303,6 +308,9 @@ export default function JobDetail() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
+  const { prefectures } = usePrefectures();
+  const { cities } = useCities(form?.prefecture_id || null);
+
   if (!job || !form) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-gray-400 text-sm">
@@ -327,7 +335,6 @@ export default function JobDetail() {
     const next: Partial<Record<keyof FormState, string>> = {};
     if (!form.title.trim()) next.title = "必須です";
     if (!form.salary_text.trim()) next.salary_text = "必須です";
-    if (!form.job_location.trim()) next.job_location = "必須です";
     if (!form.job_types.trim()) next.job_types = "必須です";
     if (!form.affiliate_url.trim()) next.affiliate_url = "必須です";
     if (!form.impression_pixel_url.trim()) next.impression_pixel_url = "必須です";
@@ -345,7 +352,9 @@ export default function JobDetail() {
     salary_max: form.salary_max ? parseInt(form.salary_max, 10) : null,
     salary_range_type: form.salary_range_type,
     salary_text: form.salary_text.trim(),
-    job_location: form.job_location.trim(),
+    job_location: form.job_location.trim() || null,
+    prefecture_id: form.prefecture_id || null,
+    city_id: form.city_id || null,
     job_types: form.job_types.split(/[,、]/).map((s) => s.trim()).filter(Boolean),
     affiliate_url: form.affiliate_url.trim(),
     impression_pixel_url: form.impression_pixel_url.trim(),
@@ -463,15 +472,45 @@ export default function JobDetail() {
                 </div>
 
                 <div>
-                  <Label text="勤務地" required />
+                  <Label text="都道府県" />
+                  <select
+                    value={form.prefecture_id}
+                    onChange={(e) =>
+                      setForm((prev) => prev ? { ...prev, prefecture_id: e.target.value, city_id: "" } : prev)
+                    }
+                    className={selectCls()}
+                  >
+                    <option value="">選択してください</option>
+                    {prefectures.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <Label text="市区町村" />
+                  <select
+                    value={form.city_id}
+                    onChange={(e) => setForm((prev) => prev ? { ...prev, city_id: e.target.value } : prev)}
+                    className={selectCls()}
+                    disabled={!form.prefecture_id || cities.length === 0}
+                  >
+                    <option value="">選択してください</option>
+                    {cities.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <Label text="勤務地テキスト（任意）" />
                   <input
                     type="text"
                     value={form.job_location}
                     onChange={setText("job_location")}
-                    placeholder="例）東京都羽村市"
-                    className={inputCls(!!errors.job_location)}
+                    placeholder="例）東京都羽村市（入力時は都道府県・市区町村より優先表示）"
+                    className={inputCls(false)}
                   />
-                  <FieldError msg={errors.job_location} />
                 </div>
               </div>
             </div>
