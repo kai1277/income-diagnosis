@@ -29,6 +29,14 @@ export class PrismaService implements OnModuleInit {
     return this.client.occupationType;
   }
 
+  get prefecture() {
+    return this.client.prefecture;
+  }
+
+  get city() {
+    return this.client.city;
+  }
+
   async onModuleInit() {
     await this.client.$connect();
   }
