@@ -12,6 +12,11 @@ function normalizeJob(raw: Record<string, unknown>): Job {
   return {
     ...(raw as unknown as Job),
     job_types: (raw.job_types as string[]) ?? [],
+    job_location: (raw.job_location as string | null) ?? null,
+    prefecture_id: (raw.prefecture_id as string | null) ?? null,
+    city_id: (raw.city_id as string | null) ?? null,
+    prefecture: (raw.prefecture as Job["prefecture"]) ?? null,
+    city: (raw.city as Job["city"]) ?? null,
     occupation_type_ids: jots.map((jot) => jot.occupation_type_id as string),
     occupation_types: jots.map((jot) => {
       const ot = jot.occupation_type as { id: string; label: string } | undefined;

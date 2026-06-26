@@ -24,6 +24,19 @@ export type OccupationType = {
   sort_order: number | null;
 };
 
+export type Prefecture = {
+  id: string;
+  name: string;
+  sort_order: number;
+};
+
+export type City = {
+  id: string;
+  prefecture_id: string;
+  name: string;
+  sort_order: number;
+};
+
 export type Job = {
   id: string;
   title: string;
@@ -36,7 +49,11 @@ export type Job = {
   salary_max: number | null;
   salary_range_type: string;
   salary_text: string;
-  job_location: string;
+  job_location: string | null;
+  prefecture_id: string | null;
+  city_id: string | null;
+  prefecture?: Prefecture | null;
+  city?: City | null;
   job_types: string[];
   affiliate_url: string;
   impression_pixel_url: string;

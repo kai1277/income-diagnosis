@@ -73,7 +73,15 @@ export class UpdateJobDto {
 
   @IsOptional()
   @IsString()
-  job_location?: string;
+  job_location?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  prefecture_id?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  city_id?: string | null;
 
   @IsOptional()
   @IsArray()
@@ -148,9 +156,17 @@ export class CreateJobDto {
   @IsNotEmpty()
   salary_text!: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  job_location!: string;
+  job_location?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  prefecture_id?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  city_id?: string | null;
 
   @IsArray()
   @IsString({ each: true })
