@@ -1,10 +1,24 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import type { Job } from "@/features/jobs/types";
+import type { Job, JobRequirementRow } from "@/features/jobs/types";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
 type CreateJobPayload = Omit<Job, "id" | "created_at" | "updated_at">;
 type UpdateJobPayload = Partial<CreateJobPayload>;
+
+function normalizeJob(raw: Record<string, unknown>): Job {
+  const reqs = (raw.job_requirements as Record<string, unknown>[] | undefined) ?? [];
+  return {
+    ...(raw as unknown as Job),
+    job_types: (raw.job_types as string[]) ?? [],
+    requirements: reqs.map((r): JobRequirementRow => ({
+      requirement_code_id: r.requirement_code_id as string,
+      level: r.level as "required" | "preferred",
+      operator: r.operator as string,
+      value: (r.value as string | null) ?? "",
+    })),
+  };
+}
 
 type JobsContextValue = {
   jobs: Job[];
@@ -33,8 +47,8 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
       if (!contentType.includes("application/json")) {
         throw new Error("サーバーが起動中です。しばらく待ってから再試行してください。");
       }
-      const data: Job[] = await res.json();
-      setJobs(data);
+      const data: Record<string, unknown>[] = await res.json();
+      setJobs(data.map(normalizeJob));
     } catch (e) {
       const msg = e instanceof Error ? e.message : "求人の取得に失敗しました";
       setError(msg.includes("<!DOCTYPE") ? "サーバーが起動中です。しばらく待ってから再試行してください。" : msg);
@@ -54,7 +68,7 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
       body: JSON.stringify(jobData),
     });
     if (!res.ok) throw new Error("求人の追加に失敗しました");
-    const created: Job = await res.json();
+    const created = normalizeJob(await res.json());
     setJobs((prev) => [...prev, created]);
   };
 
@@ -65,7 +79,7 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
       body: JSON.stringify(jobData),
     });
     if (!res.ok) throw new Error("求人の更新に失敗しました");
-    const updated: Job = await res.json();
+    const updated = normalizeJob(await res.json());
     setJobs((prev) => prev.map((j) => (j.id === id ? updated : j)));
     return updated;
   };
