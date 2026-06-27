@@ -1,25 +1,70 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import JobLink from "@/features/jobs/components/job-link";
-import { diagnose } from "@/features/diagnosis/utils/diagnose";
 import { getTracking } from "@/lib/tracking";
 import { STEP_CATEGORIES } from "@/features/diagnosis/constants/step-categories";
+import type { CharacterResult } from "@/features/diagnosis/types";
 
+const API_BASE = import.meta.env.VITE_API_URL ?? "";
 const STEP_LABELS = STEP_CATEGORIES;
 
 export default function Result() {
   const [searchParams] = useSearchParams();
+  const [result, setResult] = useState<CharacterResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [copyDone, setCopyDone] = useState(false);
 
-  const answers = Object.fromEntries(searchParams.entries());
-
-  const result = diagnose(answers);
   const tracking = getTracking();
-  const total = STEP_LABELS.length;
+
+  const fetchResult = useCallback(async () => {
+    const answers = Object.fromEntries(searchParams.entries());
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await fetch(`${API_BASE}/api/user/diagnosis`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers }),
+      });
+      if (!res.ok) throw new Error();
+      const data: CharacterResult = await res.json();
+      setResult(data);
+      window.gtag?.("event", "result_view", { ...tracking, result_card_id: data.id });
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
-    window.gtag?.("event", "result_view", { ...tracking, result_card_id: result.id });
-  }, []);
+    fetchResult();
+  }, [fetchResult]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#f0f2f5" }}>
+        <p className="text-gray-500 text-sm">診断中...</p>
+      </div>
+    );
+  }
+
+  if (error || !result) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ backgroundColor: "#f0f2f5" }}>
+        <p className="text-gray-500 text-sm">サーバーが起動中です。少々お待ちください。</p>
+        <button
+          onClick={fetchResult}
+          className="px-6 py-2 rounded-xl bg-white border border-gray-200 text-sm text-gray-600 shadow-sm"
+        >
+          再試行する
+        </button>
+      </div>
+    );
+  }
+
+  const total = STEP_LABELS.length;
 
   const handleShare = async () => {
     window.gtag?.("event", "result_share", { result_card_id: result.id, ...tracking });
