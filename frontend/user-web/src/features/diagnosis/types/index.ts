@@ -16,7 +16,7 @@ export type QuizStepProps = {
   onBack?: () => void;
 };
 
-export type SuggestedJob = { title: string; reason: string };
+export type SuggestedJob = { code: string; title: string; reason: string };
 
 export type TierDef = {
   id: string;

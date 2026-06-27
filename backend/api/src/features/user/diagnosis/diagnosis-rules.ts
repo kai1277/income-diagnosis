@@ -1,5 +1,51 @@
 import type { TierDef } from './diagnosis.types';
 
+export const OCCUPATION_TYPES: Array<{ code: string; label: string }> = [
+  { code: 'apparel_cosmetics', label: 'アパレル・コスメ' },
+  { code: 'security_guard', label: '警備員' },
+  { code: 'factory_manufacturing', label: '工場・製造業' },
+  { code: 'tutor', label: '塾講師' },
+  { code: 'call_center', label: 'コールセンター' },
+  { code: 'resort_jobs', label: 'リゾートバイト' },
+  { code: 'girls_bar_concept_cafe', label: 'ガールズバー・コンカフェ' },
+  { code: 'caregiving', label: '介護' },
+  { code: 'chat_hostess', label: 'チャットレディー' },
+  { code: 'food_beverage', label: '飲食' },
+  { code: 'taxi_driver', label: 'タクシードライバー' },
+  { code: 'truck_driver', label: 'トラックドライバー' },
+  { code: 'remote_work', label: '在宅ワーク' },
+  { code: 'marketing_creative', label: 'マーケティング・クリエイティブ' },
+  { code: 'housekeeping', label: '家事代行' },
+  { code: 'consulting', label: 'コンサル' },
+  { code: 'construction', label: '建設' },
+  { code: 'real_estate', label: '不動産' },
+  { code: 'sales_reception', label: '販売・受付' },
+  { code: 'supermarket_fresh_food', label: 'スーパー・生鮮' },
+  { code: 'translation', label: '翻訳' },
+  { code: 'back_office_administration', label: 'バックオフィス・事務' },
+  { code: 'venture_startup', label: 'ベンチャー・スタートアップ' },
+  { code: 'it_engineer', label: 'ITエンジニア' },
+  { code: 'ma', label: 'M&A' },
+  { code: 'foreign_affiliated', label: '外資系' },
+  { code: 'sales', label: '営業' },
+  { code: 'human_resources', label: '人材' },
+  { code: 'doctor', label: '医師' },
+  { code: 'nurse', label: '看護師' },
+  { code: 'pharmacist', label: '薬剤師' },
+  { code: 'physical_therapist', label: '理学療法士' },
+  { code: 'dentist', label: '歯科医師' },
+  { code: 'dental_hygienist', label: '歯科衛生士' },
+  { code: 'hair_stylist', label: '美容師' },
+  { code: 'seitai_therapist', label: '整体師' },
+  { code: 'certified_tax_accountant', label: '税理士' },
+  { code: 'certified_public_accountant', label: '公認会計士' },
+  { code: 'nail_technician', label: 'ネイリスト' },
+  { code: 'eyelash_technician', label: 'アイリスト' },
+  { code: 'eyebrow_technician', label: 'アイブロウリスト' },
+  { code: 'esthetician', label: 'エステティシャン' },
+  { code: 'therapist', label: 'セラピスト' },
+];
+
 export const INCOME_BASE: Record<string, number> = {
   '〜300万': 270,
   '300〜400万': 350,
@@ -204,11 +250,6 @@ export const TIERS: TierDef[] = [
     tagline: 'あなたの経験は、市場の上位数%が持つ希少価値です',
     description:
       'IT/SaaS・大手企業・エンタープライズ営業・高単価商材などの組み合わせが市場価値を大きく高めています。今の年収は実力の7〜8割しか反映されていない可能性があります。',
-    suggestedJobs: [
-      { title: 'SaaS系営業マネージャー', reason: 'インセンティブ+チームマネジメントで年収1000万超が現実的' },
-      { title: '外資系セールス', reason: 'OTEベースで高収入。経験が直接評価される' },
-      { title: 'M&Aアドバイザー', reason: '1件の成果で数百万のインセンティブも' },
-    ],
   },
   {
     id: 'mid_senior',
@@ -219,11 +260,6 @@ export const TIERS: TierDef[] = [
     tagline: '今の経験を正しく評価してくれる会社に移るだけで、年収は変わります',
     description:
       '現職での実績・業界知識・商材経験が市場で評価される水準に達しています。職場環境や評価制度を変えることで、年収が一段階上がる可能性が高いです。',
-    suggestedJobs: [
-      { title: 'IT系法人営業', reason: 'インセンティブ制度が整っており、成果に直結' },
-      { title: 'SaaS系カスタマーサクセス', reason: '顧客折衝経験が即戦力として評価される' },
-      { title: 'ベンチャー営業リーダー', reason: 'マネジメント経験を活かして早期昇格が狙える' },
-    ],
   },
   {
     id: 'standard',
@@ -234,11 +270,6 @@ export const TIERS: TierDef[] = [
     tagline: 'スキルの掛け合わせ次第で、次の水準へ上がれます',
     description:
       '現年収と近い水準で安定していますが、特定のスキルや業界知識を深めることで上振れ余地があります。転職よりもスキルアップが先の可能性もあります。',
-    suggestedJobs: [
-      { title: '業界特化型営業・コンサル', reason: '専門性を深めることで市場価値が上がる' },
-      { title: 'マーケター/事業企画', reason: '営業経験×マーケの組み合わせで需要が高い' },
-      { title: '中堅IT企業の法人営業', reason: '業界知識を活かした転職で年収アップ' },
-    ],
   },
   {
     id: 'growth',
@@ -249,11 +280,6 @@ export const TIERS: TierDef[] = [
     tagline: '今は仕込み時期。3年後のあなたは全然違います',
     description:
       '経験年数や成果指標はまだ途中段階ですが、伸びしろが大きい時期です。スキル習得・業界変更・成果実績の積み上げで、年収が大きく変わってきます。',
-    suggestedJobs: [
-      { title: 'SaaS系インサイドセールス', reason: '未経験でも採用している企業が多く、成長できる環境' },
-      { title: '成長産業の若手営業', reason: '年功序列より成果評価の会社でスタート' },
-      { title: 'IT業界の法人営業', reason: '業界知識を身につけながら年収アップを狙える' },
-    ],
   },
   {
     id: 'redesign',
@@ -264,10 +290,5 @@ export const TIERS: TierDef[] = [
     tagline: '今の方向性を少し変えるだけで、大きく変わる可能性があります',
     description:
       '職種・業界・雇用形態の組み合わせを見直すことで、収入アップのルートが開けます。現状の延長線よりも、一度立ち止まってキャリアを整理することが先決です。',
-    suggestedJobs: [
-      { title: '未経験OKの法人営業', reason: 'まず業界を変えることで年収の底上げを狙う' },
-      { title: '資格取得系専門職', reason: '国家資格取得で収入が安定的に上がるパスがある' },
-      { title: 'フリーランス・副業', reason: '副収入を積み上げてキャリアの幅を広げる' },
-    ],
   },
 ];
