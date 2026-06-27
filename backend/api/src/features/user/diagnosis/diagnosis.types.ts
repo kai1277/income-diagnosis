@@ -1,6 +1,6 @@
 export type QuizAnswers = Record<string, string>;
 
-export type SuggestedJob = { title: string; reason: string };
+export type SuggestedJob = { code: string; title: string; reason: string };
 
 export type TierDef = {
   id: string;
@@ -10,7 +10,7 @@ export type TierDef = {
   growthType: string;
   tagline: string;
   description: string;
-  suggestedJobs: SuggestedJob[];
+  suggestedJobs?: SuggestedJob[];
 };
 
 export type DiagnosisResult = {

@@ -186,6 +186,20 @@ export const QUESTIONS: QuizQuestion[] = [
     },
   },
   {
+    key: "careerInterest",
+    highlight: "気になる職種・分野",
+    category: 2,
+    showIf: (a) => a.jobLevel1 === "その他",
+    options: [
+      { label: "美容・ウェルネス（美容師・エステ・ネイル等）", emoji: "💄" },
+      { label: "医療・介護・福祉", emoji: "🏥" },
+      { label: "ドライバー・物流", emoji: "🚛" },
+      { label: "製造・建設", emoji: "🏭" },
+      { label: "接客・サービス・販売", emoji: "🛍️" },
+      { label: "特にこだわりなし", emoji: "✨" },
+    ],
+  },
+  {
     key: "yearsOfExperience",
     highlight: "職種の経験年数",
     category: 2,
