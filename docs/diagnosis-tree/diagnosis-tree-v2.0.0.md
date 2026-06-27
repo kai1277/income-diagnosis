@@ -62,7 +62,10 @@ flowchart LR
 
     Q13a --> Q14
     Q13b --> Q14
-    Q13c --> Q14
+    Q13c --> Q13d
+
+    Q13d["気になる職種・分野 ★その他のみ\n美容・ウェルネス / 医療・介護・福祉\nドライバー・物流 / 製造・建設\n接客・サービス・販売 / 特にこだわりなし"]
+    Q13d --> Q14
 
     Q14["職種の経験年数\n1年未満 / 1〜2年 / 2〜4年 / 4年以上"]
     Q14 -->|営業以外| Q20
@@ -111,6 +114,7 @@ flowchart LR
     style Q13a fill:#dbeafe,stroke:#3b82f6
     style Q13b fill:#dbeafe,stroke:#3b82f6
     style Q13c fill:#dbeafe,stroke:#3b82f6
+    style Q13d fill:#fce7f3,stroke:#db2777
     style Q15 fill:#fee2e2,stroke:#ef4444
     style Q16 fill:#fee2e2,stroke:#ef4444
     style Q17 fill:#fee2e2,stroke:#ef4444
@@ -162,14 +166,20 @@ flowchart TD
     ADM_CHK -->|Yes| ADM_H["① バックオフィス・事務\n② 人材\n③ 税理士"]
     ADM_CHK -->|No| ADM_L["① バックオフィス・事務\n② 介護\n③ 工場・製造業"]
 
-    %% ── その他 ──
-    JL1 -->|その他| OTHER_CHK{潜在年収}
+    %% ── その他（careerInterest で細分化）──
+    JL1 -->|その他| CI_CHK{careerInterest}
+    CI_CHK -->|美容・ウェルネス| CI_BEAUTY["① 美容師\n② エステティシャン\n③ ネイリスト"]
+    CI_CHK -->|医療・介護・福祉| CI_MEDICAL["① 介護\n② 看護師\n③ 理学療法士"]
+    CI_CHK -->|ドライバー・物流| CI_DRIVER["① タクシードライバー\n② トラックドライバー\n③ 工場・製造業"]
+    CI_CHK -->|製造・建設| CI_MFG["① 工場・製造業\n② 建設\n③ 警備員"]
+    CI_CHK -->|接客・サービス・販売| CI_SERVICE["① 販売・受付\n② 飲食\n③ リゾートバイト"]
+    CI_CHK -->|特にこだわりなし| OTHER_CHK{潜在年収}
     OTHER_CHK -->|650万〜| OTHER_H["① 営業\n② 不動産\n③ 人材"]
     OTHER_CHK -->|400〜650万| OTHER_M["① 工場・製造業\n② タクシードライバー\n③ トラックドライバー"]
     OTHER_CHK -->|〜400万| OTHER_L["① 工場・製造業\n② 介護\n③ 警備員"]
 
     %% ── 英語ボーナス補正 ──
-    IT_H & IT_L & CONS_EN & CONS_NO & SALES_H & SALES_M & SALES_L & MKT_H & MKT_L & ADM_H & ADM_L & OTHER_H & OTHER_M & OTHER_L --> ENG_CHK
+    IT_H & IT_L & CONS_EN & CONS_NO & SALES_H & SALES_M & SALES_L & MKT_H & MKT_L & ADM_H & ADM_L & CI_BEAUTY & CI_MEDICAL & CI_DRIVER & CI_MFG & CI_SERVICE & OTHER_H & OTHER_M & OTHER_L --> ENG_CHK
 
     ENG_CHK{"英語力\nビジネス以上?\n× 潜在年収650万〜?"}
     ENG_CHK -->|Yes かつ ③が外資系でない| ENG_REPLACE["③ を 外資系 に差し替え"]
@@ -199,6 +209,12 @@ flowchart TD
     style MKT_L fill:#fef9c3,stroke:#ca8a04
     style ADM_H fill:#fce7f3,stroke:#db2777
     style ADM_L fill:#fce7f3,stroke:#db2777
+    style CI_CHK fill:#7c3aed,color:#fff,stroke:none
+    style CI_BEAUTY fill:#fce7f3,stroke:#db2777
+    style CI_MEDICAL fill:#fce7f3,stroke:#db2777
+    style CI_DRIVER fill:#fce7f3,stroke:#db2777
+    style CI_MFG fill:#fce7f3,stroke:#db2777
+    style CI_SERVICE fill:#fce7f3,stroke:#db2777
     style OTHER_H fill:#ffedd5,stroke:#ea580c
     style OTHER_M fill:#ffedd5,stroke:#ea580c
     style OTHER_L fill:#ffedd5,stroke:#ea580c

@@ -148,8 +148,39 @@ export class DiagnosisService {
             ];
         break;
 
-      default:
-        if (isHigh) {
+      default: {
+        const interest = answers.careerInterest ?? '';
+        if (interest === '美容・ウェルネス（美容師・エステ・ネイル等）') {
+          jobs = [
+            this.occ('hair_stylist', '指名客が増えるほど収入が伸び、独立も狙いやすい'),
+            this.occ('esthetician', '高級サロンへの就職でブライダルや高単価施術ができる'),
+            this.occ('nail_technician', '資格取得後にフリーランスとして独立しやすい職種'),
+          ];
+        } else if (interest === '医療・介護・福祉') {
+          jobs = [
+            this.occ('caregiving', '処遇改善が続く安定した需要がある職種'),
+            this.occ('nurse', '資格取得で安定高収入。夜勤手当でさらにアップ'),
+            this.occ('physical_therapist', '高齢化社会で需要が増え続ける専門職'),
+          ];
+        } else if (interest === 'ドライバー・物流') {
+          jobs = [
+            this.occ('taxi_driver', '固定給＋歩合で安定した収入が見込める'),
+            this.occ('truck_driver', '長距離で日当が高く稼ぎやすい'),
+            this.occ('factory_manufacturing', '物流倉庫での仕分けなど未経験でも即戦力になれる'),
+          ];
+        } else if (interest === '製造・建設') {
+          jobs = [
+            this.occ('factory_manufacturing', '未経験OKで安定した収入が得られる'),
+            this.occ('construction', '資格取得で収入が大幅アップする職種'),
+            this.occ('security_guard', '夜勤手当で収入アップ。資格取得で昇給も狙える'),
+          ];
+        } else if (interest === '接客・サービス・販売') {
+          jobs = [
+            this.occ('sales_reception', '大手百貨店やブランドで安定して働ける'),
+            this.occ('food_beverage', '店長職への昇進で収入アップを狙える'),
+            this.occ('resort_jobs', '住み込みで生活費を抑えながら貯金できる'),
+          ];
+        } else if (isHigh) {
           jobs = [
             this.occ('sales', 'コミュニケーション力があれば高収入が狙いやすい職種'),
             this.occ('real_estate', '体力と交渉力で大きく稼げる業界'),
@@ -168,6 +199,8 @@ export class DiagnosisService {
             this.occ('security_guard', '夜勤手当で収入アップ。資格取得で昇給も狙える'),
           ];
         }
+        break;
+      }
     }
 
     // 英語力が高い場合、まだ外資系が入っていなければ3枠目に差し込む
