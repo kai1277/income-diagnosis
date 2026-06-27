@@ -144,7 +144,7 @@ export default function JobCard({
             onClick={() => trackJobLinkClick("image", job)}
           >
             <img
-              src={job.imageUrl}
+              src={job.imageUrl ?? undefined}
               alt={job.title}
               className="w-full h-40 object-contain bg-gray-100"
               draggable={false}
@@ -152,15 +152,17 @@ export default function JobCard({
           </a>
         ) : (
           <img
-            src={job.imageUrl}
+            src={job.imageUrl ?? undefined}
             alt={job.title}
             className="w-full h-40 object-contain bg-gray-100"
             draggable={false}
           />
         )}
-        <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-          {job.imageBadge}
-        </span>
+        {job.imageBadge && (
+          <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+            {job.imageBadge}
+          </span>
+        )}
         <span className="absolute top-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
           {current} / {total}
         </span>

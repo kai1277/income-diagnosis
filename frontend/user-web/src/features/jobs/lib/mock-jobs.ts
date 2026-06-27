@@ -1,10 +1,10 @@
 export type MockJob = {
   id: string;
-  imageUrl: string;
-  imageBadge: string;
+  imageUrl: string | null;
+  imageBadge: string | null;
   title: string;
   incomeRange: string;
-  location: string;
+  location: string | null;
   jobTypes: string[];
   /** A8.netクリック計測URL。未設定の場合は画像・詳細リンクを非表示 */
   affiliateUrl?: string;

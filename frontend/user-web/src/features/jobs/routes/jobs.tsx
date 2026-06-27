@@ -1,18 +1,40 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import JobCard from "@/features/jobs/components/job-card";
-import { MOCK_JOBS } from "@/features/jobs/lib/mock-jobs";
+import { MOCK_JOBS, type MockJob } from "@/features/jobs/lib/mock-jobs";
+
+const API_BASE = import.meta.env.VITE_API_URL ?? "";
+
+async function fetchJobsByCodes(codes: string[]): Promise<MockJob[]> {
+  const res = await fetch(`${API_BASE}/api/user/jobs?codes=${codes.join(",")}`);
+  if (!res.ok) throw new Error();
+  return res.json();
+}
 
 export default function Jobs() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [jobs, setJobs] = useState<MockJob[]>([]);
   const [index, setIndex] = useState(0);
   const [kept, setKept] = useState<string[]>([]);
 
-  const total = MOCK_JOBS.length;
+  useEffect(() => {
+    const codes = searchParams.get("codes");
+    if (!codes) {
+      setJobs(MOCK_JOBS);
+      return;
+    }
+    const codeList = codes.split(",").filter(Boolean);
+    fetchJobsByCodes(codeList)
+      .then((data) => setJobs(data.length ? data : MOCK_JOBS))
+      .catch(() => setJobs(MOCK_JOBS));
+  }, [searchParams]);
+
+  const total = jobs.length;
   const isDone = index >= total;
 
   const handleKeep = () => {
-    setKept((prev) => [...prev, MOCK_JOBS[index].id]);
+    setKept((prev) => [...prev, jobs[index].id]);
     setIndex((i) => i + 1);
   };
 
@@ -45,10 +67,14 @@ export default function Jobs() {
               診断結果に戻る
             </button>
           </div>
+        ) : total === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-4 pt-16 text-center">
+            <p className="text-gray-500 text-sm">求人を読み込み中...</p>
+          </div>
         ) : (
           <JobCard
-            key={MOCK_JOBS[index].id}
-            job={MOCK_JOBS[index]}
+            key={jobs[index].id}
+            job={jobs[index]}
             current={index + 1}
             total={total}
             onKeep={handleKeep}

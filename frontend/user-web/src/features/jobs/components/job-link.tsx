@@ -7,9 +7,10 @@ type Props = {
   variant?: "primary" | "secondary";
   position: number;
   resultCardId: string;
+  occupationCodes?: string[];
 };
 
-export default function JobLink({ label, jobType, variant = "primary", position, resultCardId }: Props) {
+export default function JobLink({ label, jobType, variant = "primary", position, resultCardId, occupationCodes }: Props) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -19,7 +20,8 @@ export default function JobLink({ label, jobType, variant = "primary", position,
       result_card_id: resultCardId,
       ...getTracking(),
     });
-    navigate("/jobs");
+    const query = occupationCodes?.length ? `?codes=${occupationCodes.join(",")}` : "";
+    navigate(`/jobs${query}`);
   };
 
   if (variant === "primary") {

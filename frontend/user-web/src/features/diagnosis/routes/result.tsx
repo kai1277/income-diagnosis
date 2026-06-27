@@ -184,6 +184,7 @@ export default function Result() {
           variant="primary"
           position={1}
           resultCardId={result.id}
+          occupationCodes={result.suggestedJobs.map((j) => j.code)}
         />
         <JobLink
           label={`年収${result.potentialIncome}万円以上の求人`}
@@ -191,6 +192,7 @@ export default function Result() {
           variant="secondary"
           position={2}
           resultCardId={result.id}
+          occupationCodes={result.suggestedJobs.map((j) => j.code)}
         />
       </div>
     </div>
