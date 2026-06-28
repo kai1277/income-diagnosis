@@ -10,16 +10,25 @@ export interface AuthResult {
   userId: string;
 }
 
+let _lastAuthError: string | null = null;
+export function getLastAuthError(): string | null {
+  return _lastAuthError;
+}
+
 export async function initLiffAndLogin(): Promise<AuthResult | null> {
+  _lastAuthError = null;
+
   if (!LIFF_ID) {
-    console.warn("[auth] VITE_LIFF_ID is not set");
+    _lastAuthError = "VITE_LIFF_ID is not set";
+    console.warn("[auth]", _lastAuthError);
     return null;
   }
 
   try {
     await liff.init({ liffId: LIFF_ID });
   } catch (e) {
-    console.error("[auth] liff.init failed:", e);
+    _lastAuthError = `liff.init failed: ${e}`;
+    console.error("[auth]", _lastAuthError);
     return null;
   }
 
@@ -31,7 +40,8 @@ export async function initLiffAndLogin(): Promise<AuthResult | null> {
 
   const idToken = liff.getIDToken();
   if (!idToken) {
-    console.error("[auth] liff.getIDToken() returned null — openid scope may not be enabled");
+    _lastAuthError = "liff.getIDToken() returned null — openid scope may not be enabled in LINE Developers Console";
+    console.error("[auth]", _lastAuthError);
     return null;
   }
 
@@ -44,7 +54,8 @@ export async function initLiffAndLogin(): Promise<AuthResult | null> {
 
     if (!res.ok) {
       const body = await res.text().catch(() => "(unreadable)");
-      console.error(`[auth] POST /api/auth/line failed: ${res.status}`, body);
+      _lastAuthError = `POST /api/auth/line failed: HTTP ${res.status} — ${body}`;
+      console.error("[auth]", _lastAuthError);
       return null;
     }
 
@@ -52,7 +63,8 @@ export async function initLiffAndLogin(): Promise<AuthResult | null> {
     localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
     return { accessToken: data.accessToken, userId: data.user.id };
   } catch (e) {
-    console.error("[auth] network error calling /api/auth/line:", e);
+    _lastAuthError = `network error calling /api/auth/line: ${e}`;
+    console.error("[auth]", _lastAuthError);
     return null;
   }
 }
