@@ -6,8 +6,9 @@ import { OccupationTypesModule } from '../features/admin/occupation-types/occupa
 import { PrefecturesModule } from '../features/admin/prefectures/admin-prefectures.routes';
 import { DiagnosisModule } from '../features/user/diagnosis/diagnosis.routes';
 import { UserJobsModule } from '../features/user/jobs/user-jobs.routes';
+import { AuthModule } from '../features/auth/auth.routes';
 
 @Module({
-  imports: [DatabaseModule, AdminJobsModule, RequirementCodesModule, OccupationTypesModule, PrefecturesModule, DiagnosisModule, UserJobsModule],
+  imports: [DatabaseModule, AdminJobsModule, RequirementCodesModule, OccupationTypesModule, PrefecturesModule, DiagnosisModule, UserJobsModule, AuthModule],
 })
 export class AppModule {}
