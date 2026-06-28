@@ -238,6 +238,8 @@ Vite の `import.meta.env.VITE_*` 変数は**ビルド時に埋め込まれる**
 
 > ⚠️ `VITE_LIFF_ID` が未設定の場合、`initLiffAndLogin()` が即座に `null` を返す。LINEログインが行われずユーザーがDBに登録されない。エラーは表示されないため気づきにくい。
 
+> ⚠️ LINE Developers Console の LIFFアプリ設定で **`openid` スコープを有効にしないと `liff.getIDToken()` が `null` を返す**。ユーザーはログインできても `users` テーブルに登録されない。設定場所: LINE Developers Console → チャネル → LIFFタブ → 該当アプリ → Scopes → `openid` にチェック。
+
 ---
 
 ## ✅ KPI目標（判断基準）
