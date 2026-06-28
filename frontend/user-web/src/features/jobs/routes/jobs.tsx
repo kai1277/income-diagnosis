@@ -33,8 +33,16 @@ export default function Jobs() {
   const total = jobs.length;
   const isDone = index >= total;
 
+  useEffect(() => {
+    if (!isDone || total === 0) return;
+    const timer = setTimeout(() => navigate("/user-my-page"), 1500);
+    return () => clearTimeout(timer);
+  }, [isDone, total, navigate]);
+
   const handleKeep = () => {
-    setKept((prev) => [...prev, jobs[index].id]);
+    const next = [...kept, jobs[index].id];
+    setKept(next);
+    localStorage.setItem("income_kept_jobs", JSON.stringify(next));
     setIndex((i) => i + 1);
   };
 

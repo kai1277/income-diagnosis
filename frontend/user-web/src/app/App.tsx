@@ -3,6 +3,7 @@ import Home from "../features/home/routes/home";
 import Quiz from "../features/diagnosis/routes/quiz";
 import Result from "../features/diagnosis/routes/result";
 import Jobs from "../features/jobs/routes/jobs";
+import UserMyPage from "../features/user-my-page/routes/user-my-page";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/result" element={<Result />} />
           <Route path="/jobs" element={<Jobs />} />
+          <Route path="/user-my-page" element={<UserMyPage />} />
         </Routes>
       </div>
     </BrowserRouter>
