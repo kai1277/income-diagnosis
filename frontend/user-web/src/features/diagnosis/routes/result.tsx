@@ -30,6 +30,8 @@ export default function Result() {
       if (!res.ok) throw new Error();
       const data: CharacterResult = await res.json();
       setResult(data);
+      localStorage.setItem("income_diagnosis_result", JSON.stringify(data));
+      localStorage.setItem("income_diagnosis_answers", JSON.stringify(answers));
       window.gtag?.("event", "result_view", { ...tracking, result_card_id: data.id });
     } catch {
       setError(true);
