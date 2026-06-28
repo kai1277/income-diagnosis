@@ -1,31 +1,37 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { initLiffAndLogin, type AuthResult } from "@/lib/auth";
+import { initLiffAndLogin } from "@/lib/auth";
 
 interface AuthState {
   accessToken: string | null;
   userId: string | null;
   isLoading: boolean;
+  debugError: string | null;
 }
 
 const AuthContext = createContext<AuthState>({
   accessToken: null,
   userId: null,
   isLoading: true,
+  debugError: null,
 });
+
+const isDebugMode = new URLSearchParams(window.location.search).get("debug") === "1";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({
     accessToken: null,
     userId: null,
     isLoading: true,
+    debugError: null,
   });
 
   useEffect(() => {
-    initLiffAndLogin().then((result: AuthResult | null) => {
+    initLiffAndLogin().then(({ result, error }) => {
       setState({
         accessToken: result?.accessToken ?? null,
         userId: result?.userId ?? null,
         isLoading: false,
+        debugError: error,
       });
     });
   }, []);
@@ -38,7 +44,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={state}>
+      {isDebugMode && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 9999,
+            background: state.debugError ? "#fee2e2" : state.accessToken ? "#dcfce7" : "#fef9c3",
+            padding: "8px 12px",
+            fontSize: "11px",
+            fontFamily: "monospace",
+            wordBreak: "break-all",
+            borderBottom: "1px solid #ccc",
+          }}
+        >
+          <strong>[auth debug]</strong>{" "}
+          {state.accessToken
+            ? `✅ logged in (userId: ${state.userId})`
+            : state.debugError
+            ? `❌ ${state.debugError}`
+            : "⚠️ auth returned null (redirecting or no error)"}
+        </div>
+      )}
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

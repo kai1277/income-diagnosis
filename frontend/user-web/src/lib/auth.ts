@@ -10,29 +10,36 @@ export interface AuthResult {
   userId: string;
 }
 
-export async function initLiffAndLogin(): Promise<AuthResult | null> {
+export interface AuthDebugResult {
+  result: AuthResult | null;
+  error: string | null;
+}
+
+export async function initLiffAndLogin(): Promise<AuthDebugResult> {
   if (!LIFF_ID) {
     console.warn("[auth] VITE_LIFF_ID is not set");
-    return null;
+    return { result: null, error: "VITE_LIFF_ID is not set" };
   }
 
   try {
     await liff.init({ liffId: LIFF_ID });
   } catch (e) {
-    console.error("[auth] liff.init failed:", e);
-    return null;
+    const msg = `liff.init failed: ${e}`;
+    console.error("[auth]", msg);
+    return { result: null, error: msg };
   }
 
   if (!liff.isLoggedIn()) {
     console.info("[auth] not logged in, redirecting to LINE login");
     liff.login();
-    return null;
+    return { result: null, error: null };
   }
 
   const idToken = liff.getIDToken();
   if (!idToken) {
-    console.error("[auth] liff.getIDToken() returned null — openid scope may not be enabled");
-    return null;
+    const msg = "liff.getIDToken() returned null — openid scope may not be enabled in LINE Developers Console";
+    console.error("[auth]", msg);
+    return { result: null, error: msg };
   }
 
   try {
@@ -44,16 +51,18 @@ export async function initLiffAndLogin(): Promise<AuthResult | null> {
 
     if (!res.ok) {
       const body = await res.text().catch(() => "(unreadable)");
-      console.error(`[auth] POST /api/auth/line failed: ${res.status}`, body);
-      return null;
+      const msg = `POST /api/auth/line failed: HTTP ${res.status} — ${body}`;
+      console.error("[auth]", msg);
+      return { result: null, error: msg };
     }
 
     const data: { accessToken: string; user: { id: string } } = await res.json();
     localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
-    return { accessToken: data.accessToken, userId: data.user.id };
+    return { result: { accessToken: data.accessToken, userId: data.user.id }, error: null };
   } catch (e) {
-    console.error("[auth] network error calling /api/auth/line:", e);
-    return null;
+    const msg = `network error calling /api/auth/line: ${e}`;
+    console.error("[auth]", msg);
+    return { result: null, error: msg };
   }
 }
 
