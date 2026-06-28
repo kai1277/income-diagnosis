@@ -230,9 +230,13 @@ Vite の `import.meta.env.VITE_*` 変数は**ビルド時に埋め込まれる**
 | プロジェクト | 変数名 | 内容 |
 |---|---|---|
 | `user-web` | `VITE_GA_ID` | GA4 測定ID |
+| `user-web` | `VITE_LIFF_ID` | LINE LIFF アプリID（LINEログイン連携用） |
+| `user-web` | `VITE_API_URL` | バックエンドAPIのURL |
 | `admin-web` | `VITE_API_URL` | バックエンドAPIのURL |
 
 > ⚠️ `VITE_API_URL` が未設定の場合、`API_BASE` が空文字になりリクエストが相対パス（`/api/admin/jobs`）に飛ぶ。Cloudflare Pages はその URL に対してHTMLを返すため、`Unexpected token '<', "<!DOCTYPE "...` エラーになる。
+
+> ⚠️ `VITE_LIFF_ID` が未設定の場合、`initLiffAndLogin()` が即座に `null` を返す。LINEログインが行われずユーザーがDBに登録されない。エラーは表示されないため気づきにくい。
 
 ---
 
@@ -312,6 +316,8 @@ npx prisma generate
 | `DATABASE_URL` | Supabase の接続URL（pgbouncer経由） |
 | `DIRECT_URL` | Supabase の直接接続URL（マイグレーション用） |
 | `NODE_ENV` | `production` |
+| `LINE_CHANNEL_ID` | LINE Login チャネルID（LINEトークン検証用） |
+| `JWT_SECRET` | JWTトークン署名用のシークレットキー |
 
 ### デプロイ時の注意
 
