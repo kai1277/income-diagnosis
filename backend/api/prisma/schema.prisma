@@ -12,6 +12,18 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  line_user_id String   @unique @db.Uuid
+  display_name String?
+  picture_url  String?
+  email        String?
+  created_at   DateTime @default(now()) @db.Timestamp(6)
+  updated_at   DateTime @default(now()) @updatedAt @db.Timestamp(6)
+
+  @@map("users")
+}
+
 model OccupationType {
   id         String   @id @default(uuid()) @db.Uuid
   code       String   @unique
