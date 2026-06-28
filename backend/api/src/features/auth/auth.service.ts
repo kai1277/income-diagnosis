@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { AuthRepository } from '../../repositories/auth.repository';
 
@@ -11,6 +11,8 @@ interface LineIdTokenPayload {
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(private readonly authRepository: AuthRepository) {}
 
   async lineLogin(idToken: string) {
@@ -48,6 +50,8 @@ export class AuthService {
     });
 
     if (!res.ok) {
+      const body = await res.text().catch(() => '(unreadable)');
+      this.logger.error(`LINE token verify failed: status=${res.status} body=${body} channel_id=${process.env.LINE_CHANNEL_ID}`);
       throw new UnauthorizedException('LINEトークンの検証に失敗しました');
     }
 

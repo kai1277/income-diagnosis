@@ -278,11 +278,13 @@ GA4の測定IDは `.env.local` に `VITE_GA_ID=G-XXXXXXXXXX` として管理。�
 
 Renderのダッシュボードで以下の環境変数を設定する：
 
-| 変数名         | 説明                                         |
-| -------------- | -------------------------------------------- |
-| `DATABASE_URL` | Supabase の接続URL（pgbouncer経由）          |
-| `DIRECT_URL`   | Supabase の直接接続URL（マイグレーション用） |
-| `NODE_ENV`     | `production`                                 |
+| 変数名             | 説明                                         |
+| ------------------ | -------------------------------------------- |
+| `DATABASE_URL`     | Supabase の接続URL（pgbouncer経由）          |
+| `DIRECT_URL`       | Supabase の直接接続URL（マイグレーション用） |
+| `NODE_ENV`         | `production`                                 |
+| `LINE_CHANNEL_ID`  | LINE Login チャネルID（LINEログイン認証用）  |
+| `JWT_SECRET`       | JWTトークン署名用のシークレットキー          |
 
 > ⚠️ マイグレーションは Render のデプロイ時に自動実行しない。本番マイグレーションは手動で `npx prisma migrate deploy` を実行すること（CLAUDE.mdのDBルール参照）。
 
@@ -299,10 +301,12 @@ Vite の `import.meta.env.VITE_*` 変数はビルド時に埋め込まれる。`
 
 各プロジェクトの Settings → Environment variables で以下を設定し、リデプロイすること：
 
-| プロジェクト | 変数名         | 説明                                                            |
-| ------------ | -------------- | --------------------------------------------------------------- |
-| `user-web`   | `VITE_GA_ID`   | GA4 測定ID                                                      |
-| `admin-web`  | `VITE_API_URL` | バックエンドAPIのURL（`https://<render-service>.onrender.com`） |
+| プロジェクト | 変数名          | 説明                                                            |
+| ------------ | --------------- | --------------------------------------------------------------- |
+| `user-web`   | `VITE_GA_ID`    | GA4 測定ID                                                      |
+| `user-web`   | `VITE_LIFF_ID`  | LINE LIFF アプリID（LINEログイン連携用）                        |
+| `user-web`   | `VITE_API_URL`  | バックエンドAPIのURL（`https://<render-service>.onrender.com`） |
+| `admin-web`  | `VITE_API_URL`  | バックエンドAPIのURL（`https://<render-service>.onrender.com`） |
 
 ---
 
