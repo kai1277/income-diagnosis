@@ -1,11 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import liff from "@line/liff";
 import "./index.css";
 import App from "./app/App";
 
 const GA_ID = import.meta.env.VITE_GA_ID as string | undefined;
-const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
 
 if (GA_ID) {
   const script = document.createElement("script");
@@ -22,18 +20,8 @@ if (GA_ID) {
   window.gtag = gtag;
 }
 
-function initApp() {
-  createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-      <App />
-    </StrictMode>
-  );
-
-  if (LIFF_ID) {
-    liff.init({ liffId: LIFF_ID }).catch(() => {
-      // outside LINE — ignore
-    });
-  }
-}
-
-initApp();
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
