@@ -3,6 +3,14 @@ import { useNavigate } from "react-router-dom";
 import type { CharacterResult } from "@/features/diagnosis/types";
 import type { SkillItem } from "@/features/user-my-page/types";
 import { buildSkillItems } from "@/features/user-my-page/utils/build-skill-items";
+import { useAuth } from "@/features/auth/auth-context";
+import { apiGet } from "@/lib/api";
+
+interface UserProfile {
+  id: string;
+  display_name: string | null;
+  picture_url: string | null;
+}
 
 const RESULT_KEY = "income_diagnosis_result";
 const ANSWERS_KEY = "income_diagnosis_answers";
@@ -10,9 +18,18 @@ const KEPT_JOBS_KEY = "income_kept_jobs";
 
 export default function UserHome() {
   const navigate = useNavigate();
+  const { accessToken } = useAuth();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [result, setResult] = useState<CharacterResult | null>(null);
   const [skillItems, setSkillItems] = useState<SkillItem[]>([]);
   const [keptCount, setKeptCount] = useState(0);
+
+  useEffect(() => {
+    if (!accessToken) return;
+    apiGet<UserProfile>("/api/users/me", accessToken)
+      .then(setProfile)
+      .catch(() => {});
+  }, [accessToken]);
 
   useEffect(() => {
     const storedResult = localStorage.getItem(RESULT_KEY);
@@ -45,6 +62,29 @@ export default function UserHome() {
       </div>
 
       <div className="px-5 space-y-4">
+        {/* User profile */}
+        {profile && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+            {profile.picture_url ? (
+              <img
+                src={profile.picture_url}
+                alt="プロフィール"
+                className="w-14 h-14 rounded-full object-cover shrink-0"
+              />
+            ) : (
+              <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-2xl shrink-0">
+                👤
+              </div>
+            )}
+            <div>
+              <p className="text-base font-bold text-gray-800">
+                {profile.display_name ?? "ゲスト"}
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">LINEアカウント連携済み</p>
+            </div>
+          </div>
+        )}
+
         {/* Diagnosis result */}
         {result && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4">
