@@ -1,4 +1,4 @@
-import type { SkillItem } from "@/features/user-home/types";
+import type { SkillItem } from "@/features/user-my-page/types";
 
 export function buildSkillItems(answers: Record<string, string>): SkillItem[] {
   const items: SkillItem[] = [];
