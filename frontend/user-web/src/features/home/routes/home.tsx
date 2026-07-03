@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { captureTrackingParams, getTracking } from "@/lib/tracking";
+import { captureTrackingParams } from "@/lib/tracking";
+import { trackEvent } from "@/lib/analytics";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function Home() {
   }, []);
 
   const handleStart = () => {
-    window.gtag?.("event", "quiz_start", getTracking());
+    trackEvent("diagnosis_start", { source: "top_page" });
     navigate("/quiz");
   };
 

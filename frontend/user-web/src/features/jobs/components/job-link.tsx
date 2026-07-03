@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { getTracking } from "@/lib/tracking";
+import { trackEvent } from "@/lib/analytics";
 
 type Props = {
   label: string;
@@ -14,11 +14,11 @@ export default function JobLink({ label, jobType, variant = "primary", position,
   const navigate = useNavigate();
 
   const handleClick = () => {
-    window.gtag?.("event", "job_link_click", {
-      job_type: jobType,
+    trackEvent("job_click", {
+      job_id: resultCardId,
+      occupation_type: occupationCodes?.[0] ?? "",
       position,
-      result_card_id: resultCardId,
-      ...getTracking(),
+      result_type: jobType,
     });
     const query = occupationCodes?.length ? `?codes=${occupationCodes.join(",")}` : "";
     navigate(`/jobs${query}`);

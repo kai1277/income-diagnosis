@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import JobLink from "@/features/jobs/components/job-link";
 import { getTracking } from "@/lib/tracking";
+import { trackEvent } from "@/lib/analytics";
 import { STEP_CATEGORIES } from "@/features/diagnosis/constants/step-categories";
 import type { CharacterResult } from "@/features/diagnosis/types";
 
@@ -32,6 +33,10 @@ export default function Result() {
       setResult(data);
       localStorage.setItem("income_diagnosis_result", JSON.stringify(data));
       localStorage.setItem("income_diagnosis_answers", JSON.stringify(answers));
+      trackEvent("diagnosis_complete", {
+        result_type: data.id,
+        estimated_income_range: data.potentialIncome,
+      });
       window.gtag?.("event", "result_view", { ...tracking, result_card_id: data.id });
     } catch {
       setError(true);
