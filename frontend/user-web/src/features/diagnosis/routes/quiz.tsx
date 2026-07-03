@@ -1,8 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import QuizStep from "@/features/diagnosis/components/quiz-step";
-import { getTracking } from "@/lib/tracking";
-import { trackEvent } from "@/lib/analytics";
 import { STEP_CATEGORIES } from "@/features/diagnosis/constants/step-categories";
 import { getVisibleQuestions, resolveOptions } from "@/features/diagnosis/utils/quiz-helpers";
 import type { Answers } from "@/features/diagnosis/types";
@@ -11,10 +9,6 @@ export default function Quiz() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
-
-  useEffect(() => {
-    trackEvent("diagnosis_start", getTracking());
-  }, []);
 
   const visibleQuestions = useMemo(() => getVisibleQuestions(answers), [answers]);
   const current = visibleQuestions[step];
@@ -28,7 +22,6 @@ export default function Quiz() {
     if (step < nextVisible.length - 1) {
       setStep(step + 1);
     } else {
-      window.gtag?.("event", "quiz_complete", getTracking());
       const params = new URLSearchParams(next);
       navigate(`/result?${params.toString()}`);
     }

@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import type { MockJob } from "@/features/jobs/lib/mock-jobs";
-import { getTracking } from "@/lib/tracking";
+import { trackEvent } from "@/lib/analytics";
 
 const SWIPE_THRESHOLD = 80;
 const EXIT_X = 500;
@@ -13,12 +13,23 @@ type Props = {
   onReject: () => void;
 };
 
-function trackJobLinkClick(clickType: "image" | "detail_button", job: MockJob) {
-  window.gtag?.("event", "job_link_click", {
-    click_type: clickType,
+function getStoredResultType(): string {
+  try {
+    const raw = localStorage.getItem("income_diagnosis_result");
+    if (!raw) return "unknown";
+    return (JSON.parse(raw) as { id?: string }).id ?? "unknown";
+  } catch {
+    return "unknown";
+  }
+}
+
+function trackAffiliateLinkClick(clickType: "image" | "detail_button", job: MockJob) {
+  trackEvent("affiliate_click", {
     job_id: job.id,
-    destination_url: job.affiliateUrl,
-    ...getTracking(),
+    asp: "a8net",
+    occupation_type: job.jobTypes[0] ?? "",
+    result_type: getStoredResultType(),
+    click_type: clickType,
   });
 }
 
@@ -141,7 +152,7 @@ export default function JobCard({
             href={job.affiliateUrl}
             target="_blank"
             rel="nofollow noopener noreferrer"
-            onClick={() => trackJobLinkClick("image", job)}
+            onClick={() => trackAffiliateLinkClick("image", job)}
           >
             <img
               src={job.imageUrl ?? undefined}
@@ -195,7 +206,7 @@ export default function JobCard({
             href={job.affiliateUrl}
             target="_blank"
             rel="nofollow noopener noreferrer"
-            onClick={() => trackJobLinkClick("detail_button", job)}
+            onClick={() => trackAffiliateLinkClick("detail_button", job)}
             className="block w-full py-2.5 text-center text-sm font-medium rounded-xl border"
             style={{ color: "#0288d1", borderColor: "#0288d1" }}
           >
