@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BackIcon, BrandIcon } from "@/features/diagnosis/components/icons";
 import { JobSelectPanel } from "@/features/diagnosis/components/job-select-panel";
 import { LoadingError } from "@/features/diagnosis/components/loading-error";
@@ -15,6 +16,7 @@ const TRANSITION_MS = 420;
 const MIN_LOADING_MS = 2650;
 
 export default function DiagnosisFlow() {
+  const navigate = useNavigate();
   const [jobId, setJobId] = useState<JobId | null>(null);
   const [answers, setAnswers] = useState<Answers>({});
   const [estimate, setEstimate] = useState<Estimate | null>(null);
@@ -86,7 +88,9 @@ export default function DiagnosisFlow() {
   }, [step, jobId]);
 
   const handleSearch = () => {
+    if (!jobId) return;
     trackEvent("job_link_click", { job_type: jobId });
+    navigate(`/jobs?jobId=${jobId}`);
   };
 
   const panelExtraClass = (s: number) => {
