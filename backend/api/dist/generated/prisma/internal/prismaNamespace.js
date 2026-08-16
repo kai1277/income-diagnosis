@@ -48,7 +48,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineExtension = exports.NullsOrder = exports.JsonNullValueFilter = exports.QueryMode = exports.JsonNullValueInput = exports.SortOrder = exports.RequirementCodeScalarFieldEnum = exports.JobRequirementScalarFieldEnum = exports.JobScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
+exports.defineExtension = exports.JsonNullValueFilter = exports.NullsOrder = exports.QueryMode = exports.JsonNullValueInput = exports.SortOrder = exports.RequirementCodeScalarFieldEnum = exports.JobRequirementScalarFieldEnum = exports.JobOccupationTypeScalarFieldEnum = exports.JobScalarFieldEnum = exports.CityScalarFieldEnum = exports.PrefectureScalarFieldEnum = exports.OccupationTypeScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/client"));
 /**
  * Prisma Errors
@@ -103,7 +103,12 @@ exports.JsonNull = runtime.JsonNull;
  */
 exports.AnyNull = runtime.AnyNull;
 exports.ModelName = {
+    User: 'User',
+    OccupationType: 'OccupationType',
+    Prefecture: 'Prefecture',
+    City: 'City',
     Job: 'Job',
+    JobOccupationType: 'JobOccupationType',
     JobRequirement: 'JobRequirement',
     RequirementCode: 'RequirementCode'
 };
@@ -116,10 +121,42 @@ exports.TransactionIsolationLevel = runtime.makeStrictEnum({
     RepeatableRead: 'RepeatableRead',
     Serializable: 'Serializable'
 });
+exports.UserScalarFieldEnum = {
+    id: 'id',
+    line_user_id: 'line_user_id',
+    display_name: 'display_name',
+    picture_url: 'picture_url',
+    email: 'email',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+};
+exports.OccupationTypeScalarFieldEnum = {
+    id: 'id',
+    code: 'code',
+    label: 'label',
+    is_active: 'is_active',
+    sort_order: 'sort_order',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+};
+exports.PrefectureScalarFieldEnum = {
+    id: 'id',
+    name: 'name',
+    sort_order: 'sort_order',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+};
+exports.CityScalarFieldEnum = {
+    id: 'id',
+    prefecture_id: 'prefecture_id',
+    name: 'name',
+    sort_order: 'sort_order',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+};
 exports.JobScalarFieldEnum = {
     id: 'id',
     title: 'title',
-    occupation_type: 'occupation_type',
     image_url: 'image_url',
     badge_text: 'badge_text',
     salary_type: 'salary_type',
@@ -128,6 +165,8 @@ exports.JobScalarFieldEnum = {
     salary_range_type: 'salary_range_type',
     salary_text: 'salary_text',
     job_location: 'job_location',
+    prefecture_id: 'prefecture_id',
+    city_id: 'city_id',
     job_types: 'job_types',
     affiliate_url: 'affiliate_url',
     impression_pixel_url: 'impression_pixel_url',
@@ -136,6 +175,12 @@ exports.JobScalarFieldEnum = {
     created_at: 'created_at',
     updated_at: 'updated_at',
     expires_at: 'expires_at'
+};
+exports.JobOccupationTypeScalarFieldEnum = {
+    job_id: 'job_id',
+    occupation_type_id: 'occupation_type_id',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
 };
 exports.JobRequirementScalarFieldEnum = {
     id: 'id',
@@ -170,13 +215,13 @@ exports.QueryMode = {
     default: 'default',
     insensitive: 'insensitive'
 };
+exports.NullsOrder = {
+    first: 'first',
+    last: 'last'
+};
 exports.JsonNullValueFilter = {
     DbNull: exports.DbNull,
     JsonNull: exports.JsonNull,
     AnyNull: exports.AnyNull
-};
-exports.NullsOrder = {
-    first: 'first',
-    last: 'last'
 };
 exports.defineExtension = runtime.Extensions.defineExtension;

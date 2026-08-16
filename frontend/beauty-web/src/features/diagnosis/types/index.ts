@@ -1,49 +1,10 @@
 export type JobId = "hair" | "nail" | "lash" | "esthe";
 
-export interface AreaOption {
+export interface Option {
   v: string;
   label: string;
   desc?: string;
-  mult: number;
 }
-
-export interface PositionOption {
-  v: string;
-  label: string;
-  desc: string;
-  base: number;
-}
-
-export interface SalesOption {
-  v: string;
-  label: string;
-  desc: string;
-  mid: number;
-}
-
-export interface CertOption {
-  v: string;
-  label: string;
-  desc: string;
-  bonus: number;
-}
-
-export interface StyleOption {
-  v: string;
-  label: string;
-  desc: string;
-  mode: "fixed" | "hybrid" | "commission";
-  rate?: number;
-}
-
-export interface StrengthOption {
-  v: string;
-  label: string;
-  desc: string;
-  bonus: number;
-}
-
-export type SingleOptionValue = AreaOption | PositionOption | SalesOption | CertOption | StyleOption;
 
 interface QuestionBase {
   key: string;
@@ -55,7 +16,7 @@ interface QuestionBase {
 export interface SingleQuestion extends QuestionBase {
   type: "single";
   tickShape: "circle" | "square";
-  options: SingleOptionValue[];
+  options: Option[];
 }
 
 export interface SliderQuestion extends QuestionBase {
@@ -70,7 +31,7 @@ export interface MultiQuestion extends QuestionBase {
   type: "multi";
   tickShape: "circle" | "square";
   max: number;
-  options: StrengthOption[];
+  options: Option[];
 }
 
 export type Question = SingleQuestion | SliderQuestion | MultiQuestion;
@@ -79,7 +40,7 @@ export interface ExperienceAnswer {
   years: number;
 }
 
-export type AnswerValue = SingleOptionValue | StrengthOption[] | ExperienceAnswer;
+export type AnswerValue = Option | Option[] | ExperienceAnswer;
 
 export type Answers = Record<string, AnswerValue | undefined>;
 
@@ -102,5 +63,4 @@ export interface Job {
   tagline: string;
   resultName: string;
   questions: Question[];
-  calc: (answers: Answers) => Estimate;
 }

@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { LOADING_LINES } from "@/features/diagnosis/constants/jobs";
 
-interface Props {
-  onComplete: () => void;
-}
-
-export function LoadingPanel({ onComplete }: Props) {
+export function LoadingPanel() {
   const [onFlags, setOnFlags] = useState<boolean[]>(() => LOADING_LINES.map(() => false));
 
   useEffect(() => {
@@ -21,12 +17,9 @@ export function LoadingPanel({ onComplete }: Props) {
         260 + i * 430,
       ),
     );
-    const doneTimer = setTimeout(onComplete, 2650);
     return () => {
       lineTimers.forEach(clearTimeout);
-      clearTimeout(doneTimer);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

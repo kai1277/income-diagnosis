@@ -1,19 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BackIcon, BrandIcon } from "@/features/diagnosis/components/icons";
 import { JobSelectPanel } from "@/features/diagnosis/components/job-select-panel";
+import { LoadingError } from "@/features/diagnosis/components/loading-error";
 import { LoadingPanel } from "@/features/diagnosis/components/loading-panel";
 import { ProgressRow } from "@/features/diagnosis/components/progress-row";
 import { QuestionPanel } from "@/features/diagnosis/components/question-panel";
 import { ResultPanel } from "@/features/diagnosis/components/result-panel";
 import { JOBS } from "@/features/diagnosis/constants/jobs";
-import type { AnswerValue, Answers, JobId } from "@/features/diagnosis/types";
+import type { AnswerValue, Answers, Estimate, JobId } from "@/features/diagnosis/types";
+import { fetchDiagnosis } from "@/features/diagnosis/utils/diagnose";
 import { trackEvent } from "@/lib/analytics";
 
 const TRANSITION_MS = 420;
+const MIN_LOADING_MS = 2650;
 
 export default function DiagnosisFlow() {
   const [jobId, setJobId] = useState<JobId | null>(null);
   const [answers, setAnswers] = useState<Answers>({});
+  const [estimate, setEstimate] = useState<Estimate | null>(null);
+  const [diagnosisError, setDiagnosisError] = useState(false);
   const [step, setStep] = useState(0);
   const [outgoingStep, setOutgoingStep] = useState<number | null>(null);
   const [entered, setEntered] = useState(true);
@@ -44,6 +49,7 @@ export default function DiagnosisFlow() {
   const handleSelectJob = (id: JobId) => {
     setJobId(id);
     setAnswers({});
+    setEstimate(null);
     trackEvent("quiz_start", { job_type: id });
     goTo(1);
   };
@@ -55,13 +61,29 @@ export default function DiagnosisFlow() {
   const handleRetry = () => {
     setJobId(null);
     setAnswers({});
+    setEstimate(null);
+    setDiagnosisError(false);
     goTo(0);
   };
 
-  const handleLoadingComplete = () => {
-    trackEvent("quiz_complete", { job_type: jobId });
-    goTo(totalQ + 2);
-  };
+  const runDiagnosis = useCallback(() => {
+    if (!jobId) return;
+    setDiagnosisError(false);
+    const minDelay = new Promise<void>((resolve) => setTimeout(resolve, MIN_LOADING_MS));
+    Promise.all([fetchDiagnosis(jobId, answers), minDelay])
+      .then(([result]) => {
+        setEstimate(result);
+        trackEvent("quiz_complete", { job_type: jobId });
+        goTo(totalQ + 2);
+      })
+      .catch(() => setDiagnosisError(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobId, answers]);
+
+  useEffect(() => {
+    if (jobId && step === totalQ + 1) runDiagnosis();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, jobId]);
 
   const handleSearch = () => {
     trackEvent("job_link_click", { job_type: jobId });
@@ -91,9 +113,10 @@ export default function DiagnosisFlow() {
         />
       );
     }
-    if (s === totalQ + 1) return <LoadingPanel onComplete={handleLoadingComplete} />;
-    if (s === totalQ + 2) {
-      const estimate = job.calc(answers);
+    if (s === totalQ + 1) {
+      return diagnosisError ? <LoadingError onRetry={runDiagnosis} /> : <LoadingPanel />;
+    }
+    if (s === totalQ + 2 && estimate) {
       return <ResultPanel job={job} estimate={estimate} answers={answers} onSearch={handleSearch} onRetry={handleRetry} />;
     }
     return null;

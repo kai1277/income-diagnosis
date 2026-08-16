@@ -30,6 +30,18 @@ let PrismaService = class PrismaService {
     get requirementCode() {
         return this.client.requirementCode;
     }
+    get occupationType() {
+        return this.client.occupationType;
+    }
+    get prefecture() {
+        return this.client.prefecture;
+    }
+    get city() {
+        return this.client.city;
+    }
+    get user() {
+        return this.client.user;
+    }
     async onModuleInit() {
         await this.client.$connect();
     }

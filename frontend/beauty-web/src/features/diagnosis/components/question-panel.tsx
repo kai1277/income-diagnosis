@@ -5,11 +5,10 @@ import type {
   Answers,
   ExperienceAnswer,
   MultiQuestion,
+  Option,
   Question,
-  SingleOptionValue,
   SingleQuestion,
   SliderQuestion,
-  StrengthOption,
 } from "@/features/diagnosis/types";
 
 interface Props {
@@ -37,9 +36,9 @@ function QuestionHeader({ index, totalQ, question }: { index: number; totalQ: nu
 }
 
 function SingleQuestionPanel({ question, index, totalQ, answers, onAnswer, onNext }: Props & { question: SingleQuestion }) {
-  const selected = answers[question.key] as SingleOptionValue | undefined;
+  const selected = answers[question.key] as Option | undefined;
 
-  const handleSelect = (opt: SingleOptionValue) => {
+  const handleSelect = (opt: Option) => {
     if (selected?.v === opt.v) return;
     onAnswer(question.key, opt);
     setTimeout(onNext, 320);
@@ -122,10 +121,10 @@ function SliderQuestionPanel({ question, index, totalQ, answers, onAnswer, onNex
 }
 
 function MultiQuestionPanel({ question, index, totalQ, answers, onAnswer, onNext }: Props & { question: MultiQuestion }) {
-  const selected = (answers[question.key] as StrengthOption[] | undefined) ?? [];
+  const selected = (answers[question.key] as Option[] | undefined) ?? [];
   const selectedVs = new Set(selected.map((o) => o.v));
 
-  const toggle = (opt: StrengthOption) => {
+  const toggle = (opt: Option) => {
     const isSelected = selectedVs.has(opt.v);
     if (!isSelected && selected.length >= question.max) return;
     const next = isSelected ? selected.filter((o) => o.v !== opt.v) : [...selected, opt];
