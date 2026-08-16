@@ -32,6 +32,11 @@ export async function initLiffAndLogin(): Promise<AuthResult | null> {
     return null;
   }
 
+  if (!liff.isInClient()) {
+    console.info("[auth] not opened inside LINE app, skipping LINE login");
+    return null;
+  }
+
   if (!liff.isLoggedIn()) {
     console.info("[auth] not logged in, redirecting to LINE login");
     liff.login();
