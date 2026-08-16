@@ -20,8 +20,18 @@ let AdminJobsService = class AdminJobsService {
     getJobs() {
         return this.repo.findAll();
     }
+    async getJobById(id) {
+        const job = await this.repo.findById(id);
+        if (!job)
+            throw new common_1.NotFoundException(`Job ${id} not found`);
+        return job;
+    }
     createJob(dto) {
         return this.repo.create(dto);
+    }
+    async updateJob(id, dto) {
+        await this.getJobById(id);
+        return this.repo.update(id, dto);
     }
     deleteJob(id) {
         return this.repo.deleteById(id);

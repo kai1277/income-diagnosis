@@ -8,8 +8,22 @@ import { DiagnosisModule } from '../features/user/diagnosis/diagnosis.routes';
 import { UserJobsModule } from '../features/user/jobs/user-jobs.routes';
 import { AuthModule } from '../features/auth/auth.routes';
 import { UserModule } from '../features/user/users/user.routes';
+import { BeautyDiagnosisModule } from '../features/beauty/diagnosis/beauty-diagnosis.routes';
+import { BeautyJobsModule } from '../features/beauty/jobs/beauty-jobs.routes';
 
 @Module({
-  imports: [DatabaseModule, AdminJobsModule, RequirementCodesModule, OccupationTypesModule, PrefecturesModule, DiagnosisModule, UserJobsModule, AuthModule, UserModule],
+  imports: [
+    DatabaseModule,
+    AdminJobsModule,
+    RequirementCodesModule,
+    OccupationTypesModule,
+    PrefecturesModule,
+    DiagnosisModule,
+    UserJobsModule,
+    AuthModule,
+    UserModule,
+    BeautyDiagnosisModule,
+    BeautyJobsModule,
+  ],
 })
 export class AppModule {}

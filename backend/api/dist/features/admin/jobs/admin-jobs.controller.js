@@ -24,8 +24,14 @@ let AdminJobsController = class AdminJobsController {
     getJobs() {
         return this.service.getJobs();
     }
+    getJobById(id) {
+        return this.service.getJobById(id);
+    }
     createJob(dto) {
         return this.service.createJob(dto);
+    }
+    updateJob(id, dto) {
+        return this.service.updateJob(id, dto);
     }
     deleteJob(id) {
         return this.service.deleteJob(id);
@@ -39,6 +45,13 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AdminJobsController.prototype, "getJobs", null);
 __decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AdminJobsController.prototype, "getJobById", null);
+__decorate([
     (0, common_1.Post)(),
     (0, common_1.HttpCode)(201),
     __param(0, (0, common_1.Body)()),
@@ -46,6 +59,14 @@ __decorate([
     __metadata("design:paramtypes", [admin_jobs_schema_1.CreateJobDto]),
     __metadata("design:returntype", void 0)
 ], AdminJobsController.prototype, "createJob", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, admin_jobs_schema_1.UpdateJobDto]),
+    __metadata("design:returntype", void 0)
+], AdminJobsController.prototype, "updateJob", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, common_1.HttpCode)(204),
