@@ -109,7 +109,7 @@ export function JobMatchCard({ job, jobId, current, total, onKeep, onReject }: P
             <img src={job.imageUrl} alt={job.title} draggable={false} />
           </a>
         ) : (
-          <div className="match-media-fallback">MIRROR</div>
+          <div className="match-media-fallback">キレキャリ</div>
         )}
         {job.imageBadge && <span className="match-badge">{job.imageBadge}</span>}
         <span className="match-counter">

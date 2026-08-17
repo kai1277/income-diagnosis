@@ -71,7 +71,7 @@ export default function UserMyPage() {
         </div>
         <div className="brand">
           <BrandIcon />
-          MIRROR
+          キレキャリ
         </div>
         <div style={{ width: 34 }}></div>
       </div>

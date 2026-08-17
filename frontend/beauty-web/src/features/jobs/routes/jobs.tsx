@@ -70,7 +70,7 @@ export default function Jobs() {
         </div>
         <div className="brand">
           <BrandIcon />
-          MIRROR
+          キレキャリ
         </div>
         <div style={{ width: 34 }}></div>
       </div>
