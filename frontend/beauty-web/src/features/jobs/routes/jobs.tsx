@@ -56,6 +56,12 @@ export default function Jobs() {
   const total = jobs.length;
   const isDone = status === "ready" && total > 0 && index >= total;
 
+  useEffect(() => {
+    if (!isDone) return;
+    const timer = setTimeout(() => navigate("/user-my-page"), 1500);
+    return () => clearTimeout(timer);
+  }, [isDone, navigate]);
+
   return (
     <div className="screen">
       <div className="topbar">
@@ -118,8 +124,8 @@ export default function Jobs() {
             </div>
             <div className="done-title">すべての求人を確認しました</div>
             <p>気になる求人：{kept.length}件</p>
-            <button className="btn-primary" onClick={() => navigate("/")}>
-              診断結果に戻る
+            <button className="btn-primary" onClick={() => navigate("/user-my-page")}>
+              マイページで確認する
             </button>
           </div>
         )}
