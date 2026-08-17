@@ -592,14 +592,24 @@ DIRECT_URL=""
 CIやデプロイ時にマイグレーションを自動実行してはいけない。
 スキーマ変更は必ず開発者が手動でコマンドを実行して反映する。
 
+### AIエージェント（Claude等）の役割範囲
+
+DBスキーマを変更する際、AIエージェントは **`schema.prisma` の編集まで**を担当範囲とする。以下はユーザー（開発者）が手動で行うため、AIエージェントは実行しない。
+
+- `npx prisma migrate dev` の実行（マイグレーションファイルの生成・ローカル/開発DBへの適用）
+- `npx prisma migrate deploy` の実行（本番DBへの適用）
+- マイグレーション関連ファイルの `git add` / `git commit` / `git push`
+
+理由：スキーマ変更はDBに対する破壊的操作になりうるため、実行タイミング・対象環境をユーザー自身がコントロールする。
+
 ### スキーマ変更の手順
 
-マイグレーションは「ローカルで作成 → GitHub に push → 本番で適用」の3ステップで行う。
+マイグレーションは「ローカルで作成 → GitHub に push → 本番で適用」の3ステップで行う。**Step 1〜3はすべてユーザーが手動で実行する**（AIエージェントは1の `schema.prisma` 編集のみ担当）。
 
 **Step 1: ローカルでマイグレーションを作成する**
 
-1. `backend/api/prisma/schema.prisma` を編集する
-2. `backend/api` ディレクトリで以下を実行する
+1. `backend/api/prisma/schema.prisma` を編集する（ここまでAIエージェントが担当可）
+2. `backend/api` ディレクトリで以下を実行する（ここから先はユーザーが手動で実行）
 
 ```bash
 cd backend/api
@@ -608,7 +618,7 @@ npx prisma migrate dev --name <変更内容を表す名前>
 
 例：`npx prisma migrate dev --name add_beauty_users`
 
-これにより `backend/api/prisma/migrations/` にマイグレーションファイルが生成される。
+これにより `backend/api/prisma/migrations/` にマイグレーションファイルが生成され、`DIRECT_URL` で指定したDB（通常はローカル/開発用のSupabaseプロジェクト）に即座に適用される。
 
 **Step 2: GitHub に push する**
 
@@ -622,14 +632,16 @@ git push
 
 > ⚠️ マイグレーションファイルを push してからでないと、本番環境で `migrate deploy` を実行できない。
 
-**Step 3: 本番環境でマイグレーションを適用する**
+**Step 3: 本番（リモート）DBにマイグレーションを適用する**
 
-本番サーバー上で以下を実行する。
+本番サーバー、またはローカルから `DIRECT_URL` を本番Supabaseの接続情報に向けた状態で以下を実行する。
 
 ```bash
 cd backend/api
 npx prisma migrate deploy
 ```
+
+`migrate deploy` は未適用のマイグレーションのみを順番に適用する（`migrate dev` と違い、スキーマ差分からの新規生成は行わない）。Renderの場合はダッシュボードの Shell からこのコマンドを実行する。
 
 ### Prisma Client の再生成
 

@@ -10,6 +10,7 @@ import { AuthModule } from '../features/auth/auth.routes';
 import { UserModule } from '../features/user/users/user.routes';
 import { BeautyDiagnosisModule } from '../features/beauty/diagnosis/beauty-diagnosis.routes';
 import { BeautyJobsModule } from '../features/beauty/jobs/beauty-jobs.routes';
+import { BeautyAuthModule } from '../features/beauty/auth/beauty-auth.routes';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BeautyJobsModule } from '../features/beauty/jobs/beauty-jobs.routes';
     UserModule,
     BeautyDiagnosisModule,
     BeautyJobsModule,
+    BeautyAuthModule,
   ],
 })
 export class AppModule {}
