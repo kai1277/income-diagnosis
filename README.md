@@ -1,16 +1,16 @@
-# 推定年収診断モック
+# 推定年収診断プラットフォーム
 
-## ⚡ このプロジェクトの本質
+## ⚡ このプロジェクトについて
 
-**「プロダクト」ではなく「検証装置」**
+「あなたの推定年収は◯◯万円」という診断→求人マッチングの型を、複数の職種バーティカルに展開するプロダクト群。
 
-目的は以下3つの仮説を検証すること：
+現在は本格開発・リリースフェーズにあり、各バーティカルで以下を継続的に伸ばすことを目標にする：
 
-- 仮説①：年収診断はクリックされるか
-- 仮説②：結果画面から求人クリックされるか
-- 仮説③：ブルーカラー職種提示でもユーザーに拒否されないか
+- 診断がクリック・完了されること
+- 結果画面から求人がクリックされること
+- 提示した職種提案がユーザーに受け入れられること
 
-> 作り込み・AI実装・UXこだわりは**禁止**。今は「刺さるか・クリックされるか・金になるか」だけを検証する。
+診断ロジックはルールベースを採用する（LLM等による動的生成は行わない。理由・係数を説明可能な状態に保つため）。
 
 ---
 
@@ -19,92 +19,128 @@
 ```
 /
 ├── frontend/
-│   ├── user-web/                      # Viteプロジェクトルート（ユーザー向け）
+│   ├── user-web/                      # 一般職・ブルーカラー系 診断アプリ（Cloudflare Pages: 個別プロジェクト）
 │   │   ├── src/
 │   │   │   ├── main.tsx                   # エントリーポイント（GA4初期化）
-│   │   │   ├── vite-env.d.ts              # 型定義（gtag, import.meta.env）
-│   │   │   ├── index.css                  # グローバルCSS（Tailwind）
-│   │   │   ├── app/
-│   │   │   │   └── App.tsx                # ルーティング定義（/, /quiz, /result）
+│   │   │   ├── app/App.tsx                # ルーティング（/, /quiz, /result, /jobs, /user-my-page）
 │   │   │   ├── features/
-│   │   │   │   ├── home/
-│   │   │   │   │   └── routes/home.tsx        # トップLP（診断開始）
+│   │   │   │   ├── home/routes/home.tsx       # トップLP（診断開始）
 │   │   │   │   ├── diagnosis/
-│   │   │   │   │   ├── routes/
-│   │   │   │   │   │   ├── quiz.tsx           # 診断画面（ステップ形式）
-│   │   │   │   │   │   └── result.tsx         # 結果画面（求人CTA）
-│   │   │   │   │   ├── components/
-│   │   │   │   │   │   ├── quiz-step.tsx      # 1問ずつ表示するUI
-│   │   │   │   │   │   └── result-card.tsx    # 年収・職種表示
-│   │   │   │   │   ├── constants/
-│   │   │   │   │   │   ├── questions.ts       # 質問一覧
-│   │   │   │   │   │   ├── diagnosis-rules.ts # 診断ロジック（ルールベース）
-│   │   │   │   │   │   └── step-categories.ts
-│   │   │   │   │   ├── utils/
-│   │   │   │   │   │   ├── diagnose.ts        # 診断結果算出
-│   │   │   │   │   │   └── quiz-helpers.ts
-│   │   │   │   │   └── types/
-│   │   │   │   └── jobs/
-│   │   │   │       ├── components/job-link.tsx   # 求人リンク（クリック計測付き）
-│   │   │   │       └── lib/job-links.ts           # 求人URL集約
-│   │   │   └── lib/
-│   │   │       └── tracking.ts            # GA4イベント送信ヘルパー
-│   │   ├── index.html
-│   │   ├── vite.config.ts
-│   │   └── .env.local                     # VITE_GA_ID
-│   └── admin-web/                     # 管理画面（Viteプロジェクト・実装済み）
+│   │   │   │   │   ├── routes/quiz.tsx, result.tsx
+│   │   │   │   │   ├── components/quiz-step.tsx, result-card.tsx
+│   │   │   │   │   └── utils/diagnose.ts          # backend/api の /api/user/diagnosis を叩く
+│   │   │   │   ├── jobs/
+│   │   │   │   │   ├── routes/jobs.tsx            # スワイプ式求人マッチングUI（キープ/スキップ）
+│   │   │   │   │   ├── components/job-card.tsx, job-link.tsx
+│   │   │   │   │   └── lib/mock-jobs.ts           # API失敗時のフォールバック用モック
+│   │   │   │   ├── user-my-page/routes/user-my-page.tsx
+│   │   │   │   └── auth/auth-context.tsx          # LINE LIFFログインのReact Context
+│   │   │   └── lib/tracking.ts, analytics.ts
+│   │   ├── .env.local                     # VITE_GA_ID, VITE_LIFF_ID, VITE_API_URL
+│   │   └── vite.config.ts
+│   │
+│   ├── beauty-web/                    # 美容系（美容師/ネイリスト/アイリスト/エステ）診断アプリ（Cloudflare Pages: 個別プロジェクト）
+│   │   ├── src/
+│   │   │   ├── app/App.tsx                # ルーティング（/ = DiagnosisFlow, /jobs, /user-my-page）
+│   │   │   ├── features/
+│   │   │   │   ├── diagnosis/
+│   │   │   │   │   ├── routes/diagnosis-flow.tsx # 職種選択→質問→結果を1画面内でステップ管理
+│   │   │   │   │   ├── components/                # question-panel, result-panel, job-select-panel 等
+│   │   │   │   │   ├── constants/jobs.ts           # 職種別の質問セット（hair/nail/lash/esthe）
+│   │   │   │   │   └── utils/diagnose.ts           # backend/api の /api/beauty/diagnosis を叩く
+│   │   │   │   ├── jobs/
+│   │   │   │   │   ├── routes/jobs.tsx            # スワイプ式求人マッチングUI（user-webと同じUX、ダーク×ゴールドで再スキン）
+│   │   │   │   │   ├── components/job-match-card.tsx
+│   │   │   │   │   └── lib/beauty-jobs.ts         # /api/beauty/jobs?jobId=... を叩く
+│   │   │   │   ├── user-my-page/routes/user-my-page.tsx  # 未実装（TODO）
+│   │   │   │   └── auth/auth-context.tsx
+│   │   │   ├── lib/auth.ts, api.ts, analytics.ts, tracking.ts
+│   │   │   └── index.css                  # ダーク×ゴールドのデザイントークン（--gold, --rose, --panel 等）
+│   │   └── .env.local                     # VITE_GA_MEASUREMENT_ID, VITE_LIFF_ID, VITE_API_URL
+│   │
+│   └── admin-web/                     # 管理画面（求人・職種・都道府県・要件コードのCRUD、Cloudflare Pages: 個別プロジェクト）
+│
 ├── backend/
-│   ├── api/                           # NestJS APIサーバー（ポート3000）
-│   │   ├── prisma/                    # Prismaスキーマ・マイグレーション
-│   │   │   ├── schema.prisma          # DBスキーマ定義
-│   │   │   └── migrations/            # マイグレーション履歴（Git管理）
+│   ├── api/                           # NestJS APIサーバー（ポート3000、プレフィックス /api、Renderにデプロイ）
+│   │   ├── prisma/
+│   │   │   ├── schema.prisma          # DBスキーマ（下記「DBスキーマ概要」参照）
+│   │   │   └── migrations/            # マイグレーション履歴（Git管理・手動実行）
 │   │   └── src/
-│   │       ├── main.ts                # エントリーポイント
-│   │       ├── app/
-│   │       │   └── app.module.ts      # ルートNestJSモジュール
-│   │       ├── db/
-│   │       │   ├── prisma.service.ts  # PrismaClient DI用サービス
-│   │       │   └── database.module.ts # @Global()モジュール
+│   │       ├── main.ts
+│   │       ├── app/app.module.ts      # 全モジュールを imports に登録
+│   │       ├── db/prisma.service.ts, database.module.ts（@Global）
+│   │       ├── middleware/jwt.guard.ts, error-handler.ts
+│   │       ├── decorators/current-user.decorator.ts
 │   │       ├── features/
-│   │       │   └── admin/
-│   │       │       └── jobs/
-│   │       │           ├── admin-jobs.controller.ts  # HTTPハンドラ
-│   │       │           ├── admin-jobs.service.ts     # ビジネスロジック
-│   │       │           ├── admin-jobs.schema.ts      # DTOクラス
-│   │       │           └── admin-jobs.routes.ts      # NestJSモジュール定義
-│   │       ├── middleware/
-│   │       │   └── error-handler.ts
-│   │       └── repositories/
-│   │           └── admin-jobs.repositories.ts  # DBアクセス層
-│   ├── batch/                         # バッチ処理
-│   ├── scripts/                       # 手動で実行するスクリプト
-│   └── worker/                        # 重い処理や非同期通信を裏でやる
+│   │       │   ├── admin/
+│   │       │   │   ├── jobs/               # 求人CRUD（全バーティカル共通の求人マスタ）
+│   │       │   │   ├── occupation-types/   # 職種コードマスタ（全バーティカル共通）
+│   │       │   │   ├── prefectures/
+│   │       │   │   └── requirement-codes/
+│   │       │   ├── auth/                   # 一般職バーティカル用 LINEログイン（POST /api/auth/line）
+│   │       │   ├── user/
+│   │       │   │   ├── diagnosis/          # 一般職の診断ロジック（ルールベーススコアリング）
+│   │       │   │   ├── jobs/                # 一般職の求人マッチング（occupation_type コードで絞り込み）
+│   │       │   │   └── users/               # GET /api/users/me（JWT保護）
+│   │       │   └── beauty/
+│   │       │       ├── diagnosis/          # 美容系の診断ロジック（職種別の役職・売上・エリア係数）
+│   │       │       ├── jobs/                # 美容系の求人マッチング（occupation_type コードで絞り込み）
+│   │       │       └── auth/                # 美容系専用 LINEログイン（POST /api/beauty/auth/line、beauty_users テーブル）
+│   │       └── repositories/               # Prismaクエリの集約（*.repository.ts）
+│   ├── batch/                          # バッチ処理（未使用）
+│   ├── scripts/                        # 手動実行スクリプト（未使用）
+│   └── worker/                         # 非同期処理（未使用）
 ├── docs/
-│   └── diagnosis-tree/                # 診断ロジックの設計ドキュメント
-└── CLAUDE.md
+│   └── diagnosis-tree/                 # 診断ロジックの設計ドキュメント
+└── CLAUDE.md                           # このリポジトリの開発ルール（AIエージェント向け・詳細版）
 ```
 
 **フロントエンド技術スタック**
 
 - ビルドツール: **Vite**
 - フレームワーク: **React + React Router v7**
-- スタイリング: **Tailwind CSS v4**（`@tailwindcss/vite` プラグイン）
-- デプロイ: **Cloudflare Pages**（本番環境）／モック検証はローカルホストで完結
+- スタイリング: **Tailwind CSS v4**（`@tailwindcss/vite`）。`beauty-web` は独自CSS変数ベースのデザインシステム（`index.css`）が主体で、Tailwindはユーティリティ補助的な位置づけ。
+- 認証: **LINE LIFF SDK**（`@line/liff`）。LIFF外の通常ブラウザからアクセスした場合はログインをスキップし、未ログインでも診断・求人閲覧はできる。
+- デプロイ: **Cloudflare Pages**（本番）。`user-web` / `admin-web` / `beauty-web` はそれぞれ**別々のCloudflare Pagesプロジェクト**としてデプロイする（モノレポ内の各ディレクトリを Root directory に指定）。
 - 計測: **Google Analytics 4**（gtag.js）
 
 **バックエンド技術スタック**
 
-- フレームワーク: **NestJS**
-- ORM: **Prisma v7**（`prisma-client` generator / カスタム出力）
-- DB接続: **@prisma/adapter-pg**（PgDriverアダプター経由）
+- フレームワーク: **NestJS**（3層アーキテクチャ、詳細はCLAUDE.md参照）
+- ORM: **Prisma v7**（`prisma-client` generator / 出力先: `backend/api/src/generated/prisma/`）
+- DB接続: **@prisma/adapter-pg**
 - バリデーション: **class-validator / class-transformer**
-- DB: **Supabase PostgreSQL**
+- DB: **Supabase PostgreSQL**（全バーティカルで1つのDB・1つのバックエンドサービスを共有）
+- 認証: **LINE ID Token検証 + 自前JWT発行**（`jsonwebtoken`）
+
+---
+
+## 🧭 バーティカル（診断アプリ）ごとの方針
+
+このプロジェクトは「年収診断×求人マッチング」という同じ型を、異なる職種セグメントに展開する構造になっている。現在2つのバーティカルが存在する。
+
+| 項目 | 一般職（user-web） | 美容系（beauty-web） |
+| --- | --- | --- |
+| 対象職種 | 警備・製造・介護・営業 等の幅広い職種 | 美容師・ネイリスト・アイリスト・エステ |
+| UXトンマナ | ライト・シンプル | ダーク×ゴールドの専門誌的な世界観 |
+| 診断ロジック | `backend/api/src/features/user/diagnosis` | `backend/api/src/features/beauty/diagnosis` |
+| 求人マッチング | `backend/api/src/features/user/jobs`（スワイプUI） | `backend/api/src/features/beauty/jobs`（同UXを再スキン） |
+| LINE Loginチャネル | 一般職専用チャネル（`LINE_CHANNEL_ID`） | 美容系専用チャネル（`BEAUTY_LINE_CHANNEL_ID`） |
+| ユーザーテーブル | `users` | `beauty_users` |
+
+**共有しているもの**：バックエンド（Renderの同一サービス）、DB（同一Supabaseインスタンス）、求人・職種マスタ（`Job` / `OccupationType` / `JobRequirement` / `Prefecture` / `City`）、admin-webによる求人管理画面。
+
+**バーティカルごとに分離しているもの**：診断ロジック、フロントエンドアプリ、Cloudflare Pagesプロジェクト、LINE Loginチャネル、ユーザーテーブル。
+
+**なぜユーザーテーブルだけ分離するのか**：LINEの`line_user_id`（sub）はLINE Loginチャネル単位で発行されるため、チャネルを分けた時点で同一人物でも別IDになる。そのため「テーブルを共有する」ことの重複排除メリットは成立しない。一方、求人・職種マスタはadmin-webで一元管理する方が運用コストが低いため、意図的に共有している。境界線は「実態として分離/共有が合理的な単位」で引く。
+
+新しいバーティカルを追加する場合は、この表と同じ形で「何を共有し、何を分離するか」を最初に決めてから実装すること。
 
 ---
 
 ## 🚀 開発サーバーの起動
 
-### フロントエンド（ユーザー向け）
+### フロントエンド（一般職: user-web）
 
 ```bash
 cd frontend/user-web
@@ -112,25 +148,61 @@ npm install
 npm run dev
 ```
 
-`.env.local` に GA4 測定IDを設定：
-
+`.env.local`:
 ```
 VITE_GA_ID=G-XXXXXXXXXX
+VITE_LIFF_ID=xxxxxxxxxx-xxxxxxxx
+VITE_API_URL=https://<render-service>.onrender.com
 ```
+
+### フロントエンド（美容系: beauty-web）
+
+```bash
+cd frontend/beauty-web
+npm install
+npm run dev
+```
+
+`.env.local`:
+```
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+VITE_LIFF_ID=xxxxxxxxxx-xxxxxxxx
+VITE_API_URL=https://<render-service>.onrender.com
+```
+
+> ⚠️ `beauty-web` は GA4測定IDの変数名が `VITE_GA_ID` ではなく **`VITE_GA_MEASUREMENT_ID`** なので注意（`user-web`と命名が異なる）。
+
+### 管理画面（admin-web）
+
+```bash
+cd frontend/admin-web
+npm install
+npm run dev
+```
+
+`.env.local`:
+```
+VITE_API_URL=https://<render-service>.onrender.com
+```
+
+> ⚠️ この変数が未設定だとリクエストが相対パス `/api/admin/jobs` に飛び、HTMLが返ってJSONパースエラーになる。
 
 ### バックエンド API
 
 ```bash
 cd backend/api
 npm install
-npm run start:dev   # ts-node でホットリロードなし起動（ポート3000）
+npm run start:dev   # ts-node で起動（ポート3000）
 ```
 
-初回は `.env` を作成してDBの接続URLを設定：
+初回は `.env` を作成：
 
 ```env
 DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<db>?pgbouncer=true
 DIRECT_URL=postgresql://<user>:<password>@<host>:5432/<db>
+LINE_CHANNEL_ID=xxxxxxxxxx          # 一般職バーティカル用 LINE Login チャネルID
+BEAUTY_LINE_CHANNEL_ID=xxxxxxxxxx   # 美容系バーティカル用 LINE Login チャネルID
+JWT_SECRET=xxxxxxxxxx
 ```
 
 Prismaクライアントの生成（スキーマ変更時も必要）：
@@ -140,25 +212,23 @@ cd backend/api
 npx prisma generate
 ```
 
-### 管理画面フロントエンド
+---
 
-```bash
-cd frontend/admin-web
-npm install
-npm run dev
-```
+## 🔐 ログイン（LINE LIFF）
 
-`.env.local` にバックエンドAPIのURLを設定（必須）：
+- ログイン方式は **LINE LIFF** のみ。従来型のID/パスワード認証は実装しない。
+- LIFFアプリ内（LINEアプリ経由）でアクセスした場合は自動でLINEログインを試みる。**通常のブラウザから直接アクセスした場合はログインをスキップし**、未ログインでも診断・求人閲覧はできる（マイページ等ログイン前提の機能のみ利用不可）。
+- フロント: `lib/auth.ts` の `initLiffAndLogin()` が `liff.init()` → `liff.getIDToken()` → バックエンドへPOSTの流れを実行し、返ってきたJWTを `localStorage` に保存する。
+- バックエンド: `POST /api/auth/line`（一般職） / `POST /api/beauty/auth/line`（美容系）で LINEのIDトークンをLINE公式エンドポイントに投げて検証し、`line_user_id` で `findOrCreate` した上で自前のJWT（`JWT_SECRET`で署名、30日有効）を返す。
+- 保護されたエンドポイントは `JwtGuard`（`middleware/jwt.guard.ts`）で `Authorization: Bearer <token>` を検証する。
 
-```
-VITE_API_URL=https://<render-service-name>.onrender.com
-```
+> ⚠️ LINE Developers Console の対象チャネル → LIFFタブ → Scopes で **`openid` を有効にしないと** `liff.getIDToken()` が `null` を返し、ログインはできてもユーザーがDBに登録されない（エラー表示なし・気づきにくい）。
 
-> ⚠️ この変数が未設定だとリクエストが相対パス `/api/admin/jobs` に飛び、HTMLが返ってJSONエラーになる。
+> ⚠️ バーティカルを追加する場合は、既存チャネルに相乗りさせず**新しいLINE Loginチャネルを作成**し、対応する `*_LINE_CHANNEL_ID` 環境変数とユーザーテーブルを用意すること（理由は上記「バーティカルごとの方針」参照）。
 
 ---
 
-## 📱 画面要件
+## 📱 画面要件（user-web / 一般職バーティカル）
 
 ### 1. トップLP（`/`）
 
@@ -193,11 +263,21 @@ VITE_API_URL=https://<render-service-name>.onrender.com
      - 「年収○○万円以上の求人」
 - CTAボタンは**画面下部に固定**（sticky）
 
+### 4. 求人一覧（`/jobs`）
+
+- Tinder風のスワイプUI（右スワイプ=キープ、左スワイプ=スキップ）
+- `GET /api/user/jobs?codes=<occupation_type_code,...>` から取得。取得失敗時は `lib/mock-jobs.ts` のモックにフォールバック
+- アフィリエイトリンククリック・インプレッションはGAイベントで計測
+
+美容系バーティカル（beauty-web）の画面仕様は、一般職と同じ「診断→結果→求人」の型を踏襲しつつ、質問内容・診断ロジック・デザインは職種特化で別設計になっている（`frontend/beauty-web/src/features/diagnosis/constants/jobs.ts` 参照）。
+
 ---
 
-## 🧠 診断ロジック（`features/diagnosis/constants/diagnosis-rules.ts`）
+## 🧠 診断ロジック
 
-シンプルなルールベース。正確性より**納得感**を優先。
+### 一般職（`backend/api/src/features/user/diagnosis/diagnosis-rules.ts`）
+
+シンプルなルールベース。正確性より**納得感**を優先する設計方針。
 
 ```typescript
 // 大まかな方針
@@ -212,45 +292,37 @@ if (働き方志向 === "安定重視") {
 }
 
 // 年収の表示はレンジではなく「単一数値」で表示（例：680万円）
-// 仮数値でOK。ユーザーの納得感が重要
 ```
 
-職種候補テーブルは `features/diagnosis/constants/diagnosis-rules.ts` にハードコードで定義する。DB不要。
+診断ロジックは元々フロントエンド（`frontend/user-web`）にあったが、現在は `backend/api` の `POST /api/user/diagnosis` に移植済み（フロントは `features/diagnosis/utils/diagnose.ts` からAPIを叩くのみ）。
+
+### 美容系（`backend/api/src/features/beauty/diagnosis/beauty-diagnosis.service.ts`）
+
+職種（美容師/ネイリスト/アイリスト/エステ）ごとに、役職ベース給与・経験年数・売上・資格・エリア相場・給与体系（固定/歩合ハイブリッド/業務委託）を加味した独自の計算式で想定年収を算出する。`POST /api/beauty/diagnosis` で提供。
 
 ---
 
 ## 📊 計測実装（必須）
 
-Google Analytics 4 を使い、以下のカスタムイベントを計測する：
+Google Analytics 4 を使い、以下のカスタムイベントを計測する（両バーティカル共通のイベント名）：
 
-| イベント名       | 発火タイミング                     |
-| ---------------- | ---------------------------------- |
-| `quiz_start`     | 「無料で診断する」ボタンクリック時 |
-| `quiz_complete`  | 全問回答完了・結果画面表示時       |
-| `job_link_click` | 求人CTAボタンクリック時            |
+| イベント名        | 発火タイミング                     |
+| ----------------- | ----------------------------------- |
+| `quiz_start`      | 診断開始（職種選択・「無料で診断する」ボタンクリック時） |
+| `quiz_complete`   | 全問回答完了・結果画面表示時       |
+| `job_link_click`  | 結果画面の求人CTAボタンクリック時（`/jobs` への遷移） |
+| `affiliate_click` | 求人一覧内の個別求人（アフィリエイトリンク）クリック時 |
 
 ```typescript
-// features/jobs/components/job-link.tsx での計測例
-const handleClick = () => {
-  window.gtag?.("event", "job_link_click", {
-    job_type: jobType,
-    destination_url: url,
-  });
-  window.open(url, "_blank");
+// 計測例（beauty-web: features/diagnosis/routes/diagnosis-flow.tsx）
+const handleSearch = () => {
+  trackEvent("job_link_click", { job_type: jobId });
+  navigate(`/jobs?jobId=${jobId}`);
 };
 ```
 
-GA4の測定IDは `.env.local` に `VITE_GA_ID=G-XXXXXXXXXX` として管理。コード内では `import.meta.env.VITE_GA_ID` で参照。
-
----
-
-## 🚫 やらないこと（絶対禁止）
-
-- ログイン・認証機能
-- AIによる診断ロジック
-- マイページ・履歴保存
-- アニメーション・演出の作り込み
-- レスポンシブの細かい調整（スマホが動けばOK）
+- `user-web`: GA4測定IDは `.env.local` の `VITE_GA_ID`
+- `beauty-web`: GA4測定IDは `.env.local` の `VITE_GA_MEASUREMENT_ID`（変数名が異なる点に注意）
 
 ---
 
@@ -258,16 +330,42 @@ GA4の測定IDは `.env.local` に `VITE_GA_ID=G-XXXXXXXXXX` として管理。�
 
 ### フロントエンド（Cloudflare Pages）
 
-- **モック検証フェーズ**：`npm run dev`（Vite）によるローカルホストで動作確認・KPI計測を行う
-- **本番公開フェーズ**：Cloudflare Pagesにデプロイ
-  - `npm run build` で `dist/` に静的ファイルを出力（Viteはデフォルト静的エクスポート）
-  - GAの測定IDは Cloudflare Pages の環境変数（`VITE_GA_ID`）で管理
+- 開発中は `npm run dev`（Vite）によるローカルホストで動作確認・計測を行う
+- 本番は Cloudflare Pages にデプロイ
+  - `user-web` / `admin-web` / `beauty-web` は**それぞれ別のCloudflare Pagesプロジェクト**として作成する
+  - `npm run build` で各アプリの `dist/` に静的ファイルを出力
+  - GitHub の `main` ブランチへの push で自動デプロイされる
 
 > ⚠️ Vercelは使わない
 
+**Cloudflare Pages の Build settings（新規プロジェクト作成時）**
+
+| 項目 | 値 |
+| --- | --- |
+| Framework preset | `None`（もしくは `Vite`） |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory (Path) | `frontend/user-web` / `frontend/admin-web` / `frontend/beauty-web`（プロジェクトごとに指定） |
+
+**環境変数**（Settings → Environment variables で設定し、リデプロイすること。`.env.local` はgit管理外のためビルドに渡らない）
+
+| プロジェクト | 変数名 | 内容 |
+| --- | --- | --- |
+| `user-web` | `VITE_GA_ID` | GA4 測定ID |
+| `user-web` | `VITE_LIFF_ID` | LINE LIFF アプリID（一般職チャネル） |
+| `user-web` | `VITE_API_URL` | バックエンドAPIのURL |
+| `beauty-web` | `VITE_GA_MEASUREMENT_ID` | GA4 測定ID（**変数名が`user-web`と異なる**） |
+| `beauty-web` | `VITE_LIFF_ID` | LINE LIFF アプリID（美容系チャネル。`user-web`とは別チャネル） |
+| `beauty-web` | `VITE_API_URL` | バックエンドAPIのURL |
+| `admin-web` | `VITE_API_URL` | バックエンドAPIのURL |
+
+> ⚠️ `VITE_API_URL` が未設定の場合、`API_BASE` が空文字になりリクエストが相対パス（`/api/admin/jobs`等）に飛ぶ。Cloudflare Pages はその URL に対してHTMLを返すため、`Unexpected token '<', "<!DOCTYPE "...` エラーになる。
+
+> ⚠️ `VITE_LIFF_ID` が未設定の場合、`initLiffAndLogin()` が即座に `null` を返す。LINEログインが行われずユーザーがDBに登録されない。エラーは表示されないため気づきにくい。
+
 ### バックエンド（Render）
 
-バックエンドAPIは **Render** にデプロイする。
+バックエンドAPIは **Render** にデプロイする（全バーティカル共通の単一サービス）。
 
 | 設定項目       | 値                                                    |
 | -------------- | ----------------------------------------------------- |
@@ -276,49 +374,31 @@ GA4の測定IDは `.env.local` に `VITE_GA_ID=G-XXXXXXXXXX` として管理。�
 | Start Command  | `npm run start`                                       |
 | Environment    | Node                                                  |
 
-Renderのダッシュボードで以下の環境変数を設定する：
+環境変数：
 
-| 変数名             | 説明                                         |
-| ------------------ | -------------------------------------------- |
-| `DATABASE_URL`     | Supabase の接続URL（pgbouncer経由）          |
-| `DIRECT_URL`       | Supabase の直接接続URL（マイグレーション用） |
-| `NODE_ENV`         | `production`                                 |
-| `LINE_CHANNEL_ID`  | LINE Login チャネルID（LINEログイン認証用）  |
-| `JWT_SECRET`       | JWTトークン署名用のシークレットキー          |
+| 変数名                    | 説明                                                   |
+| ------------------------- | ------------------------------------------------------ |
+| `DATABASE_URL`            | Supabase の接続URL（pgbouncer経由）                     |
+| `DIRECT_URL`               | Supabase の直接接続URL（マイグレーション用）             |
+| `NODE_ENV`                 | `production`                                            |
+| `LINE_CHANNEL_ID`          | 一般職バーティカル用 LINE Login チャネルID               |
+| `BEAUTY_LINE_CHANNEL_ID`   | 美容系バーティカル用 LINE Login チャネルID               |
+| `JWT_SECRET`               | JWTトークン署名用のシークレットキー（全バーティカル共通） |
 
-> ⚠️ マイグレーションは Render のデプロイ時に自動実行しない。本番マイグレーションは手動で `npx prisma migrate deploy` を実行すること（CLAUDE.mdのDBルール参照）。
+> ⚠️ マイグレーションは Render のデプロイ時に自動実行しない。本番マイグレーションは手動で `npx prisma migrate deploy` を実行すること。
 
-> ⚠️ **Render 無料プランのスリープ**: 一定時間アクセスがないとサービスがスリープし、最初のリクエスト時にHTMLを返す（JSONエラーの原因）。admin-web はエラーメッセージと「再試行」ボタンで対処済み。継続利用する場合は有料プランへのアップグレードを検討すること。
-
-### フロントエンド（Cloudflare Pages）
-
-`frontend/user-web` および `frontend/admin-web` はともに **Cloudflare Pages** にデプロイする。
-GitHub の main ブランチへの push で自動デプロイされる。
-
-**⚠️ 環境変数は Cloudflare Pages のダッシュボードで設定が必要**
-
-Vite の `import.meta.env.VITE_*` 変数はビルド時に埋め込まれる。`.env.local` は git 管理外のため、Cloudflare Pages のビルドには渡されない。
-
-各プロジェクトの Settings → Environment variables で以下を設定し、リデプロイすること：
-
-| プロジェクト | 変数名          | 説明                                                            |
-| ------------ | --------------- | --------------------------------------------------------------- |
-| `user-web`   | `VITE_GA_ID`    | GA4 測定ID                                                      |
-| `user-web`   | `VITE_LIFF_ID`  | LINE LIFF アプリID（LINEログイン連携用）                        |
-| `user-web`   | `VITE_API_URL`  | バックエンドAPIのURL（`https://<render-service>.onrender.com`） |
-| `admin-web`  | `VITE_API_URL`  | バックエンドAPIのURL（`https://<render-service>.onrender.com`） |
+> ⚠️ **Render 無料プランのスリープ**: 一定時間アクセスがないとサービスがスリープし、最初のリクエスト時にHTMLを返す（JSONパースエラーの原因）。フロント側でエラーメッセージと「再試行」ボタンを出す実装で対処済み。継続利用する場合は有料プランへのアップグレードを検討すること。
 
 ---
 
-## ✅ KPI目標（判断基準）
+## ✅ 目安KPI
 
-| 指標                             | 目標値      |
+| 指標                             | 目安値      |
 | -------------------------------- | ----------- |
-| 診断完了率（start→complete）     | **50%以上** |
-| 求人クリック率（complete→click） | **20%以上** |
+| 診断完了率（start→complete）     | 50%以上 |
+| 求人クリック率（complete→click） | 20%以上 |
 
-- クリック率20%未満 → 即ピボット
-- 診断完了率50%未満 → 質問数・選択肢を見直す
+バーティカルごとに個別に計測・評価する（一般職と美容系で反応が違って当然のため、合算しない）。数値を大きく下回る場合は、質問数・選択肢・訴求の見直しを検討する材料として使う。
 
 ---
 
@@ -326,188 +406,12 @@ Vite の `import.meta.env.VITE_*` 変数はビルド時に埋め込まれる。`
 
 迷ったときはこの順で判断する：
 
-1. **これはKPI計測に必要か？** → 必要なら作る
-2. **スマホで3秒で理解できるか？** → できなければシンプルにする
-3. **求人CTAクリックに近づくか？** → 近づかなければ作らない
+1. **KPI（診断完了・求人クリック）の向上につながるか**
+2. **スマホで3秒で意図が伝わるか**
+3. **既存バーティカルとインフラを不必要に分離していないか**（求人・職種マスタ、admin-web、バックエンド/DBは原則共有する。ユーザー識別のようにチャネル起因で分離が必須なものだけ分離する）
 
 ---
 
 ## 🗄 バックエンドアーキテクチャ
 
-### 3層構造（NestJS）
-
-```
-HTTP Request
-    ↓
-Controller  (features/admin/<機能>/<機能>.controller.ts)  — ルーティング・レスポンス
-    ↓
-Service     (features/admin/<機能>/<機能>.service.ts)     — ビジネスロジック
-    ↓
-Repository  (repositories/<機能>.repositories.ts)         — DBアクセス（Prismaクエリ）
-    ↓
-Supabase PostgreSQL
-```
-
-| ファイル                         | 役割                                                          |
-| -------------------------------- | ------------------------------------------------------------- |
-| `*.controller.ts`                | HTTP リクエスト受付、デコレーター（`@Get` `@Post` 等）で定義  |
-| `*.service.ts`                   | ビジネスロジック。Repositoryを注入して呼び出す                |
-| `repositories/*.repositories.ts` | Prismaクエリを記述。DBアクセスはここに集約                    |
-| `*.schema.ts`                    | DTOクラス（class-validatorデコレーター）                      |
-| `*.routes.ts`                    | NestJS Module（Controller/Service/Repositoryをproviders登録） |
-
-### 実装済みAPIエンドポイント
-
-| メソッド | パス              | 説明                                   |
-| -------- | ----------------- | -------------------------------------- |
-| `GET`    | `/api/admin/jobs` | 求人一覧取得（job_requirements含む）   |
-| `POST`   | `/api/admin/jobs` | 求人追加（job_requirements同時作成可） |
-
-### 新機能の追加パターン
-
-1. `features/admin/<機能>/` にフォルダを作成
-2. `<機能>.schema.ts` → DTOをclass-validatorで定義
-3. `repositories/<機能>.repositories.ts` → Prismaクエリを記述
-4. `<機能>.service.ts` → Repositoryを注入してロジックを実装
-5. `<機能>.controller.ts` → Serviceを注入してエンドポイントを定義
-6. `<機能>.routes.ts` → NestJS Moduleとして `providers` と `controllers` を登録
-7. `app/app.module.ts` の `imports` に追加
-
----
-
-## Supabase Security Settings
-
-本プロジェクトでは、Database として Supabase PostgreSQL を使用する。
-
-現在の Supabase Security 設定は以下とする。
-
-| Setting                         | Value | 理由                                                             |
-| ------------------------------- | ----- | ---------------------------------------------------------------- |
-| Enable Data API                 | OFF   | フロントエンドから Supabase Data API を直接利用しないため        |
-| Automatically expose new tables | OFF   | 新規テーブルが意図せず外部APIに公開されることを防ぐため          |
-| Enable automatic RLS            | ON    | 新規テーブルに Row Level Security を自動適用し、安全側に倒すため |
-
-## DB Access Policy
-
-本プロジェクトでは、フロントエンドから Supabase に直接アクセスしない。
-
-DBアクセスは必ず以下の経路で行う。
-
-```text
-frontend/user-web または frontend/admin-web
-↓
-backend/api
-↓
-Supabase PostgreSQL
-```
-
-フロントエンドに Supabase の `anon key` や `service_role key` を置かない。
-特に `service_role key` は管理者権限を持つため、絶対にフロントエンドへ公開してはいけない。
-
-## Prisma Usage
-
-バックエンドでは Prisma を使用して Supabase PostgreSQL に接続する。
-
-`.env` は以下に配置する。
-
-```text
-backend/api/.env
-```
-
-主な環境変数は以下。
-
-```env
-DATABASE_URL=""
-DIRECT_URL=""
-```
-
-`DATABASE_URL` はアプリケーション実行時のDB接続に使用する。
-`DIRECT_URL` は Prisma migration 実行時のDB接続に使用する。
-
-`.env` は Git 管理しない。
-共有用には `.env.example` を使用する。
-
----
-
-## データベース運用
-
-### マイグレーションは必ず手動で実行する
-
-CIやデプロイ時にマイグレーションを自動実行しない。
-スキーマ変更は必ず開発者が手動でコマンドを実行して反映する。
-
-### スキーマ変更の手順
-
-マイグレーションは「ローカルで作成 → GitHub に push → 本番で適用」の3ステップで行う。
-
-**Step 1: ローカルでマイグレーションを作成する**
-
-1. `backend/api/prisma/schema.prisma` を編集する
-2. `backend/api` ディレクトリで以下を実行する
-
-```bash
-cd backend/api
-npx prisma migrate dev --name <変更内容を表す名前>
-```
-
-例：`npx prisma migrate dev --name add_jobs_table`
-
-これにより `backend/api/prisma/migrations/` にマイグレーションファイルが生成される。
-
-**Step 2: GitHub に push する**
-
-生成されたマイグレーションファイルを Git にコミットして GitHub に push する。
-
-```bash
-git add backend/api/prisma/
-git commit -m "add migration: <変更内容>"
-git push
-```
-
-> ⚠️ マイグレーションファイルを push してからでないと、本番環境で `migrate deploy` を実行できない。
-
-**Step 3: 本番環境でマイグレーションを適用する**
-
-本番サーバー上で以下を実行する。
-
-```bash
-cd backend/api
-npx prisma migrate deploy
-```
-
-### Prisma Client の再生成
-
-`migrate dev` を実行すると自動で再生成されるが、手動で行う場合は以下。
-
-```bash
-cd backend/api
-npx prisma generate
-```
-
-### マイグレーションファイルの管理
-
-`backend/api/prisma/migrations/` 以下に生成されるマイグレーションファイルは Git で管理する。
-このファイルが本番環境への変更履歴となるため、削除・改ざんをしてはいけない。
-
-### 本番マイグレーション前の確認事項
-
-- マイグレーション内容をレビューしてから実行する
-- 破壊的変更（カラム削除・型変更）の場合はデータのバックアップを取ってから実行する
-- `prisma migrate deploy` は適用済みマイグレーションをスキップするため、冪等に実行できる
-
-## RLSについて
-
-Supabaseでは automatic RLS を有効にしている。
-
-そのため、新規テーブル作成時には Row Level Security が自動的に有効になる。
-ただし、本プロジェクトでは基本的にバックエンドAPI経由でDBにアクセスするため、アプリケーション上の認証・認可は `backend/api` 側で実装する。
-
-管理者操作、求人管理、診断ログ閲覧、クリックログ閲覧などは、必ずバックエンド側で権限チェックを行う。
-
-## 注意点
-
-- 新規テーブルを作成しても、Data API に自動公開されない。
-- フロントエンドから Supabase Data API を直接叩く設計に変更してはいけない。
-- 管理者用機能は必ず `backend/api` 経由で実装する。
-- Supabaseの `service_role key` はサーバーサイドでのみ使用可能。
-- `.env`、DB接続URL、SupabaseキーはGitHubにコミットしない。
+3層構造・実装済みAPIエンドポイント・新機能追加パターン・Prismaの使い方・DB運用ルール・Supabaseセキュリティ設定などの詳細は **`CLAUDE.md`** を参照。README.mdでは概要のみを扱う。

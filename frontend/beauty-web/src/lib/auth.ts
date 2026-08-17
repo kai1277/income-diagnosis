@@ -46,7 +46,7 @@ export async function initLiffAndLogin(): Promise<AuthResult | null> {
   }
 
   try {
-    const res = await fetch(`${API_URL}/api/auth/line`, {
+    const res = await fetch(`${API_URL}/api/beauty/auth/line`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id_token: idToken }),
