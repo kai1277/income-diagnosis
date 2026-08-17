@@ -32,6 +32,11 @@ export async function initLiffAndLogin(): Promise<AuthResult | null> {
     return null;
   }
 
+  if (!liff.isInClient()) {
+    console.info("[auth] not opened inside LINE app, skipping LINE login");
+    return null;
+  }
+
   if (!liff.isLoggedIn()) {
     console.info("[auth] not logged in, redirecting to LINE login");
     liff.login();
@@ -54,7 +59,7 @@ export async function initLiffAndLogin(): Promise<AuthResult | null> {
 
     if (!res.ok) {
       const body = await res.text().catch(() => "(unreadable)");
-      _lastAuthError = `POST /api/auth/line failed: HTTP ${res.status} — ${body}`;
+      _lastAuthError = `POST /api/beauty/auth/line failed: HTTP ${res.status} — ${body}`;
       console.error("[auth]", _lastAuthError);
       return null;
     }
@@ -63,7 +68,7 @@ export async function initLiffAndLogin(): Promise<AuthResult | null> {
     localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
     return { accessToken: data.accessToken, userId: data.user.id };
   } catch (e) {
-    _lastAuthError = `network error calling /api/auth/line: ${e}`;
+    _lastAuthError = `network error calling /api/beauty/auth/line: ${e}`;
     console.error("[auth]", _lastAuthError);
     return null;
   }

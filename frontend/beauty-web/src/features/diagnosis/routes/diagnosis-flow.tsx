@@ -15,6 +15,9 @@ import { trackEvent } from "@/lib/analytics";
 const TRANSITION_MS = 420;
 const MIN_LOADING_MS = 2650;
 
+const RESULT_KEY = "beauty_diagnosis_result";
+const ANSWERS_KEY = "beauty_diagnosis_answers";
+
 export default function DiagnosisFlow() {
   const navigate = useNavigate();
   const [jobId, setJobId] = useState<JobId | null>(null);
@@ -75,6 +78,8 @@ export default function DiagnosisFlow() {
     Promise.all([fetchDiagnosis(jobId, answers), minDelay])
       .then(([result]) => {
         setEstimate(result);
+        localStorage.setItem(RESULT_KEY, JSON.stringify({ jobId, estimate: result }));
+        localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
         trackEvent("quiz_complete", { job_type: jobId });
         goTo(totalQ + 2);
       })

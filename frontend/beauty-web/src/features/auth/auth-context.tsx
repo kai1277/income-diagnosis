@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             ? `✅ logged in (userId: ${state.userId})`
             : debugError
             ? `❌ ${debugError}`
-            : "⚠️ auth skipped (login redirect or LIFF_ID unset)"}
+            : "⚠️ auth skipped (not in LINE app, login redirect, or LIFF_ID unset)"}
         </div>
       )}
       {children}
