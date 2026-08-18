@@ -196,7 +196,7 @@ export default function UserHome() {
 
         {/* Re-diagnose */}
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/quiz")}
           className="w-full py-3 rounded-2xl border border-gray-200 bg-white text-gray-500 text-sm font-medium shadow-sm active:bg-gray-50 transition-colors"
         >
           もう一度診断する

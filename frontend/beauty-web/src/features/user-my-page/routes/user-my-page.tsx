@@ -140,7 +140,7 @@ export default function UserMyPage() {
         <button
           type="button"
           className="mypage-link-card"
-          onClick={() => stored && navigate(`/jobs?jobId=${stored.jobId}`)}
+          onClick={() => stored && navigate(`/saved-jobs?jobId=${stored.jobId}`)}
           disabled={!stored}
         >
           <div className="mypage-link-left">
