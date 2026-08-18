@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { BeautyDiagnosisResultsRepository } from '../../../repositories/beauty-diagnosis-results.repository';
+import type { InputJsonValue } from '@prisma/client/runtime/client';
 import { AREA_MULT, JOB_RULES } from './beauty-diagnosis-rules';
 import type { BeautyDiagnosisAnswers, BreakdownRow, Estimate, JobId } from './beauty-diagnosis.types';
 
@@ -10,6 +12,8 @@ function rangeFromCenter(center: number, volatile: boolean) {
 
 @Injectable()
 export class BeautyDiagnosisService {
+  constructor(private readonly resultsRepository: BeautyDiagnosisResultsRepository) {}
+
   diagnose(jobId: JobId, answers: BeautyDiagnosisAnswers): Estimate {
     switch (jobId) {
       case 'hair':
@@ -21,6 +25,29 @@ export class BeautyDiagnosisService {
       case 'esthe':
         return this.calcEsthe(answers);
     }
+  }
+
+  async diagnoseAndSave(
+    jobId: JobId,
+    answers: Record<string, unknown>,
+    beautyUserId: string | null,
+  ): Promise<Estimate> {
+    const estimate = this.diagnose(jobId, answers as unknown as BeautyDiagnosisAnswers);
+
+    await this.resultsRepository.create({
+      beautyUserId,
+      answers: { jobId, ...answers } as InputJsonValue,
+      potentialIncome: estimate.center,
+      incomeLow: estimate.low,
+      incomeHigh: estimate.high,
+      resultSnapshot: estimate as unknown as InputJsonValue,
+    });
+
+    return estimate;
+  }
+
+  async getLatestResult(beautyUserId: string) {
+    return this.resultsRepository.findLatestByUserId(beautyUserId);
   }
 
   private applyAreaAdjustment(subtotal: number, areaId: string, breakdown: BreakdownRow[]) {

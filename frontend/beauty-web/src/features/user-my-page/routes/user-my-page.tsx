@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackIcon, BrandIcon } from "@/features/diagnosis/components/icons";
 import { JOBS } from "@/features/diagnosis/constants/jobs";
-import { buildTags } from "@/features/diagnosis/utils/build-tags";
+import { buildTags, buildTagsFromRawAnswers } from "@/features/diagnosis/utils/build-tags";
 import type { Answers, Estimate, JobId } from "@/features/diagnosis/types";
 import { useAuth } from "@/features/auth/auth-context";
 import { apiGet } from "@/lib/api";
@@ -18,6 +18,11 @@ interface StoredResult {
   estimate: Estimate;
 }
 
+interface BeautyDiagnosisResultRecord {
+  answers: Record<string, unknown> & { jobId: JobId };
+  result_snapshot: Estimate;
+}
+
 const RESULT_KEY = "beauty_diagnosis_result";
 const ANSWERS_KEY = "beauty_diagnosis_answers";
 const KEPT_JOBS_KEY = "beauty_kept_jobs";
@@ -27,7 +32,7 @@ export default function UserMyPage() {
   const { accessToken } = useAuth();
   const [profile, setProfile] = useState<BeautyUserProfile | null>(null);
   const [stored, setStored] = useState<StoredResult | null>(null);
-  const [answers, setAnswers] = useState<Answers | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
   const [keptCount, setKeptCount] = useState(0);
 
   useEffect(() => {
@@ -37,18 +42,30 @@ export default function UserMyPage() {
       .catch(() => {});
   }, [accessToken]);
 
+  // ログイン中は保存済みの診断結果をサーバーから取得する（他端末からでも同じ結果が見られる）。
+  // localStorage側の結果は先に読み込んでおき、API取得が成功したら上書きする。
+  useEffect(() => {
+    if (!accessToken) return;
+    apiGet<BeautyDiagnosisResultRecord>("/api/beauty/diagnosis/latest", accessToken)
+      .then((result) => {
+        const job = JOBS[result.answers.jobId];
+        setStored({ jobId: result.answers.jobId, estimate: result.result_snapshot });
+        setTags(buildTagsFromRawAnswers(job, result.answers));
+      })
+      .catch(() => {});
+  }, [accessToken]);
+
   useEffect(() => {
     const storedResult = localStorage.getItem(RESULT_KEY);
+    const storedAnswers = localStorage.getItem(ANSWERS_KEY);
     if (storedResult) {
       try {
-        setStored(JSON.parse(storedResult));
-      } catch {}
-    }
-
-    const storedAnswers = localStorage.getItem(ANSWERS_KEY);
-    if (storedAnswers) {
-      try {
-        setAnswers(JSON.parse(storedAnswers));
+        const parsed: StoredResult = JSON.parse(storedResult);
+        setStored((prev) => prev ?? parsed);
+        if (storedAnswers) {
+          const parsedAnswers: Answers = JSON.parse(storedAnswers);
+          setTags((prev) => (prev.length > 0 ? prev : buildTags(JOBS[parsed.jobId], parsedAnswers)));
+        }
       } catch {}
     }
 
@@ -61,7 +78,6 @@ export default function UserMyPage() {
   }, []);
 
   const job = stored ? JOBS[stored.jobId] : null;
-  const tags = job && answers ? buildTags(job, answers) : [];
 
   return (
     <div className="screen">

@@ -33,7 +33,28 @@ model BeautyUser {
   created_at   DateTime @default(now()) @db.Timestamp(6)
   updated_at   DateTime @default(now()) @updatedAt @db.Timestamp(6)
 
+  diagnosis_results BeautyDiagnosisResult[]
+
   @@map("beauty_users")
+}
+
+model BeautyDiagnosisResult {
+  id               String   @id @default(uuid()) @db.Uuid
+  beauty_user_id   String?  @db.Uuid
+  answers          Json
+  quiz_version     Int      @default(1)
+  potential_income Int
+  income_low       Int
+  income_high      Int
+  result_snapshot  Json
+  created_at       DateTime @default(now()) @db.Timestamp(6)
+  updated_at       DateTime @default(now()) @updatedAt @db.Timestamp(6)
+
+  beauty_user BeautyUser? @relation(fields: [beauty_user_id], references: [id])
+
+  @@index([beauty_user_id])
+  @@index([created_at])
+  @@map("beauty_diagnosis_results")
 }
 
 model OccupationType {

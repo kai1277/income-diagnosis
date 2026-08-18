@@ -11,6 +11,7 @@ import { JOBS } from "@/features/diagnosis/constants/jobs";
 import type { AnswerValue, Answers, Estimate, JobId } from "@/features/diagnosis/types";
 import { fetchDiagnosis } from "@/features/diagnosis/utils/diagnose";
 import { trackEvent } from "@/lib/analytics";
+import { useAuth } from "@/features/auth/auth-context";
 
 const TRANSITION_MS = 420;
 const MIN_LOADING_MS = 2650;
@@ -20,6 +21,7 @@ const ANSWERS_KEY = "beauty_diagnosis_answers";
 
 export default function DiagnosisFlow() {
   const navigate = useNavigate();
+  const { accessToken } = useAuth();
   const [jobId, setJobId] = useState<JobId | null>(null);
   const [answers, setAnswers] = useState<Answers>({});
   const [estimate, setEstimate] = useState<Estimate | null>(null);
@@ -75,7 +77,7 @@ export default function DiagnosisFlow() {
     if (!jobId) return;
     setDiagnosisError(false);
     const minDelay = new Promise<void>((resolve) => setTimeout(resolve, MIN_LOADING_MS));
-    Promise.all([fetchDiagnosis(jobId, answers), minDelay])
+    Promise.all([fetchDiagnosis(jobId, answers, accessToken), minDelay])
       .then(([result]) => {
         setEstimate(result);
         localStorage.setItem(RESULT_KEY, JSON.stringify({ jobId, estimate: result }));
@@ -85,7 +87,7 @@ export default function DiagnosisFlow() {
       })
       .catch(() => setDiagnosisError(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobId, answers]);
+  }, [jobId, answers, accessToken]);
 
   useEffect(() => {
     if (jobId && step === totalQ + 1) runDiagnosis();

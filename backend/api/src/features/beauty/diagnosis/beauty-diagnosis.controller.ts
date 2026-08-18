@@ -1,7 +1,9 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, NotFoundException, Post, UseGuards } from '@nestjs/common';
 import { BeautyDiagnosisService } from './beauty-diagnosis.service';
 import { BeautyDiagnoseDto } from './beauty-diagnosis.schema';
-import type { BeautyDiagnosisAnswers } from './beauty-diagnosis.types';
+import { JwtGuard } from '../../../middleware/jwt.guard';
+import { CurrentUserId } from '../../../decorators/current-user.decorator';
+import { OptionalCurrentUserId } from '../../../decorators/optional-current-user.decorator';
 
 @Controller('beauty/diagnosis')
 export class BeautyDiagnosisController {
@@ -9,7 +11,15 @@ export class BeautyDiagnosisController {
 
   @Post()
   @HttpCode(200)
-  diagnose(@Body() dto: BeautyDiagnoseDto) {
-    return this.service.diagnose(dto.jobId, dto.answers as unknown as BeautyDiagnosisAnswers);
+  diagnose(@Body() dto: BeautyDiagnoseDto, @OptionalCurrentUserId() beautyUserId: string | null) {
+    return this.service.diagnoseAndSave(dto.jobId, dto.answers, beautyUserId);
+  }
+
+  @Get('latest')
+  @UseGuards(JwtGuard)
+  async latest(@CurrentUserId() beautyUserId: string) {
+    const result = await this.service.getLatestResult(beautyUserId);
+    if (!result) throw new NotFoundException('診断結果が見つかりません');
+    return result;
   }
 }

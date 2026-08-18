@@ -16,10 +16,13 @@ function serializeAnswers(jobId: JobId, answers: Answers): Record<string, unknow
   return out;
 }
 
-export async function fetchDiagnosis(jobId: JobId, answers: Answers): Promise<Estimate> {
+export async function fetchDiagnosis(jobId: JobId, answers: Answers, accessToken?: string | null): Promise<Estimate> {
   const res = await fetch(`${API_URL}/api/beauty/diagnosis`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    },
     body: JSON.stringify({ jobId, answers: serializeAnswers(jobId, answers) }),
   });
   if (!res.ok) throw new Error(`beauty diagnosis API error: ${res.status}`);
