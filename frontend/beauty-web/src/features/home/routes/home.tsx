@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import DiagnosisFlow from "@/features/diagnosis/routes/diagnosis-flow";
 import { useAuth } from "@/features/auth/auth-context";
 import { apiGet } from "@/lib/api";
 
 export default function Home() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const restart = searchParams.get("restart") === "1";
   const { accessToken } = useAuth();
-  const [checking, setChecking] = useState(!!accessToken);
+  const [checking, setChecking] = useState(!restart && !!accessToken);
 
   useEffect(() => {
-    if (!accessToken) {
+    if (restart || !accessToken) {
       setChecking(false);
       return;
     }
@@ -27,7 +29,7 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, [accessToken, navigate]);
+  }, [accessToken, restart, navigate]);
 
   if (checking) {
     return (
