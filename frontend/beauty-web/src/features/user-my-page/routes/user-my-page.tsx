@@ -155,7 +155,7 @@ export default function UserMyPage() {
           <span className="mypage-link-chevron">›</span>
         </button>
 
-        <button className="btn-ghost" onClick={() => navigate("/")}>
+        <button className="btn-ghost" onClick={() => navigate("/?restart=1")}>
           もう一度診断する
         </button>
       </div>
