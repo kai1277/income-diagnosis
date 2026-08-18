@@ -1,6 +1,8 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { BeautyJobsService } from './beauty-jobs.service';
 import type { JobId } from '../diagnosis/beauty-diagnosis.types';
+import { JwtGuard } from '../../../middleware/jwt.guard';
+import { CurrentUserId } from '../../../decorators/current-user.decorator';
 
 const JOB_IDS: JobId[] = ['hair', 'nail', 'lash', 'esthe'];
 
@@ -16,5 +18,18 @@ export class BeautyJobsController {
   getJobs(@Query('jobId') jobId: string) {
     if (!jobId || !isJobId(jobId)) return [];
     return this.service.getJobsByJobId(jobId);
+  }
+
+  @Get('kept')
+  @UseGuards(JwtGuard)
+  getKeptJobs(@CurrentUserId() beautyUserId: string) {
+    return this.service.getKeptJobs(beautyUserId);
+  }
+
+  @Post(':jobId/keep')
+  @UseGuards(JwtGuard)
+  @HttpCode(204)
+  async keepJob(@Param('jobId') jobId: string, @CurrentUserId() beautyUserId: string) {
+    await this.service.keepJob(beautyUserId, jobId);
   }
 }
