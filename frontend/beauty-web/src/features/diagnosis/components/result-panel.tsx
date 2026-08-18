@@ -167,7 +167,7 @@ export function ResultPanel({ job, estimate, answers, onSearch, onRetry }: Props
           別の職種でもう一度診断する
         </button>
       </div>
-      <div className="fine">※本診断はモックであり、実際の年収を保証するものではありません。歩合率・給与水準は求人ごとに異なります。</div>
+      <div className="fine">※本診断結果は目安であり、実際の年収を保証するものではありません。歩合率・給与水準は求人ごとに異なります。</div>
     </>
   );
 }
