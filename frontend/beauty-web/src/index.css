@@ -910,6 +910,16 @@ input[type="range"].range-input::-moz-range-thumb {
   pointer-events: none;
 }
 
+.saved-jobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+.saved-job-card {
+  touch-action: auto;
+}
+
 .jobs-empty,
 .jobs-done {
   flex: 1;

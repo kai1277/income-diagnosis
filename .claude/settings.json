@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(node -e \"require.resolve\\('playwright'\\)\")",
+      "Bash(timeout 20 npx --yes playwright --version)",
+      "Bash(npx --yes playwright --version)",
+      "Bash(ls ~/Library/Caches/ms-playwright 2>/dev/null || echo \"none\")",
+      "Read(//Users/kawasakikaichi/Library/Caches/ms-playwright/**)",
+      "Bash(npx --yes playwright@1.62.1 --version)",
+      "Bash(node /private/tmp/claude-501/-Users-kawasakikaichi-income-diagnosis/86742d32-3481-4150-be87-06c7bafef803/scratchpad/verify.js)",
+      "Bash(node -e \"console.log\\(require.resolve\\('playwright'\\)\\)\")",
+      "Bash(npm init *)",
+      "Bash(node verify.js)",
+      "Bash(node verify2.js)",
+      "Bash(lsof -ti:5173 -sTCP:LISTEN)"
+    ]
+  }
+}
