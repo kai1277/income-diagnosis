@@ -133,7 +133,7 @@ export function ResultPanel({ job, estimate, answers, onSearch, onRetry }: Props
       <div className="card-cert">
         <div className="cert-title">
           <span>診断カルテ</span>
-          <span>MIRROR CHECK / {job.label}</span>
+          <span>キレキャリ CHECK / {job.label}</span>
         </div>
         <div className="tag-row">
           {tags.map((t, i) => (

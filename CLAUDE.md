@@ -121,6 +121,7 @@
 - DB接続: **@prisma/adapter-pg**（PgDriverアダプター経由）
 - バリデーション: **class-validator / class-transformer**
 - DB: **Supabase PostgreSQL**（全バーティカル共通の単一DB・単一バックエンドサービス）
+- 認証: **LINE ID Token検証 + 自前JWT発行**（`jsonwebtoken`）
 
 ---
 
@@ -149,6 +150,59 @@
 3. バックエンド: `backend/api/src/features/<vertical>/{diagnosis,jobs,auth}/` を作成し、既存の `user`/`beauty` と同じ3層構造・命名パターンに揃える
 4. ユーザーを持つ場合は、専用のLINE Loginチャネルと専用のユーザーテーブル（Prismaモデル）を作成する。既存チャネル・既存ユーザーテーブルに相乗りさせない
 5. 求人・職種マスタ（`Job`/`OccupationType`等）とadmin-webは既存のものを再利用する。新しいバーティカル専用の求人テーブルは作らない
+
+---
+
+## 🚀 開発サーバーの起動（フロントエンド）
+
+### user-web
+
+```bash
+cd frontend/user-web
+npm install
+npm run dev
+```
+
+`.env.local`:
+```
+VITE_GA_ID=G-XXXXXXXXXX
+VITE_LIFF_ID=xxxxxxxxxx-xxxxxxxx
+VITE_API_URL=https://<render-service>.onrender.com
+```
+
+### beauty-web
+
+```bash
+cd frontend/beauty-web
+npm install
+npm run dev
+```
+
+`.env.local`:
+```
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+VITE_LIFF_ID=xxxxxxxxxx-xxxxxxxx
+VITE_API_URL=https://<render-service>.onrender.com
+```
+
+> ⚠️ `beauty-web` はGA4測定IDの変数名が `VITE_GA_ID` ではなく **`VITE_GA_MEASUREMENT_ID`**（`user-web`と命名が異なる）。
+
+### admin-web
+
+```bash
+cd frontend/admin-web
+npm install
+npm run dev
+```
+
+`.env.local`:
+```
+VITE_API_URL=https://<render-service>.onrender.com
+```
+
+> ⚠️ `VITE_API_URL` が未設定だとリクエストが相対パス（`/api/admin/jobs`）に飛び、HTMLが返って `Unexpected token '<', "<!DOCTYPE "...` エラーになる。
+
+バックエンドAPI（`backend/api`）のローカル起動手順は、本ファイル後半の「NestJS バックエンド開発ルール」章の「バックエンドの起動（ローカル開発）」を参照。
 
 ---
 
