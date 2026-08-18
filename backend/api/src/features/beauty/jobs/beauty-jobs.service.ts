@@ -24,6 +24,31 @@ const OCCUPATION_CODES: Record<JobId, string[]> = {
   esthe: ['esthetician', 'therapist'],
 };
 
+// 求人検索の対象となる美容系職種コード（全職種）
+export const ALL_BEAUTY_OCCUPATION_CODES = [
+  'hair_stylist',
+  'nail_technician',
+  'eyelash_technician',
+  'eyebrow_technician',
+  'esthetician',
+  'therapist',
+];
+
+export type BeautyJobSearchParams = {
+  occupationCodes: string[];
+  prefectureId?: string;
+  salaryType?: string;
+  keyword?: string;
+};
+
+function matchesKeyword(job: Job, keyword: string): boolean {
+  const needle = keyword.trim().toLowerCase();
+  if (!needle) return true;
+  const jobTypes = Array.isArray(job.job_types) ? (job.job_types as string[]) : [];
+  const haystacks = [job.title, job.job_location ?? '', ...jobTypes];
+  return haystacks.some((text) => text.toLowerCase().includes(needle));
+}
+
 function toBeautyJobDto(job: Job): BeautyJobDto {
   return {
     id: job.id,
@@ -59,5 +84,12 @@ export class BeautyJobsService {
   async getKeptJobs(beautyUserId: string): Promise<BeautyJobDto[]> {
     const keptJobs = await this.keptJobsRepo.findJobsByUserId(beautyUserId);
     return keptJobs.map((keptJob) => toBeautyJobDto(keptJob.job));
+  }
+
+  async searchJobs(params: BeautyJobSearchParams): Promise<BeautyJobDto[]> {
+    const codes = params.occupationCodes.length ? params.occupationCodes : ALL_BEAUTY_OCCUPATION_CODES;
+    const jobs = await this.repo.search(codes, params.prefectureId, params.salaryType);
+    const filtered = params.keyword ? jobs.filter((job) => matchesKeyword(job, params.keyword!)) : jobs;
+    return filtered.map(toBeautyJobDto);
   }
 }

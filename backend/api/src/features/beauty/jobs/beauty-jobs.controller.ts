@@ -20,6 +20,17 @@ export class BeautyJobsController {
     return this.service.getJobsByJobId(jobId);
   }
 
+  @Get('search')
+  searchJobs(
+    @Query('occupationCodes') occupationCodes?: string,
+    @Query('prefectureId') prefectureId?: string,
+    @Query('salaryType') salaryType?: string,
+    @Query('keyword') keyword?: string,
+  ) {
+    const codes = occupationCodes ? occupationCodes.split(',').filter(Boolean) : [];
+    return this.service.searchJobs({ occupationCodes: codes, prefectureId, salaryType, keyword });
+  }
+
   @Get('kept')
   @UseGuards(JwtGuard)
   getKeptJobs(@CurrentUserId() beautyUserId: string) {
