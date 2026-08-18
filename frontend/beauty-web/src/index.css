@@ -920,6 +920,80 @@ input[type="range"].range-input::-moz-range-thumb {
   touch-action: auto;
 }
 
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.filter-label {
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  font-weight: 700;
+  margin: 0;
+}
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.chip {
+  appearance: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 8px 13px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cream-dim);
+  border: 1px solid var(--line);
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s;
+}
+.chip.selected {
+  background: rgba(228, 195, 136, 0.12);
+  color: var(--gold-bright);
+  border-color: var(--gold);
+}
+.select-input,
+.text-input {
+  width: 100%;
+  appearance: none;
+  background: var(--panel-raised);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--cream);
+  font-size: 13px;
+  font-family: "Zen Kaku Gothic New", sans-serif;
+}
+.select-input:focus,
+.text-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.search-results-count {
+  font-size: 12px;
+  color: var(--cream-dim);
+  margin: 0 0 14px;
+}
+.search-save-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
 .jobs-empty,
 .jobs-done {
   flex: 1;

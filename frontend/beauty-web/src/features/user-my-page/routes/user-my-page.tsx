@@ -155,6 +155,17 @@ export default function UserMyPage() {
           <span className="mypage-link-chevron">›</span>
         </button>
 
+        <button type="button" className="mypage-link-card" onClick={() => navigate("/job-search")}>
+          <div className="mypage-link-left">
+            <div className="mypage-link-icon">🔍</div>
+            <div>
+              <p className="mypage-link-title">求人を検索する</p>
+              <p className="mypage-link-sub">職種・エリアなどで求人を絞り込めます</p>
+            </div>
+          </div>
+          <span className="mypage-link-chevron">›</span>
+        </button>
+
         <button className="btn-ghost" onClick={() => navigate("/?restart=1")}>
           もう一度診断する
         </button>

@@ -20,4 +20,22 @@ export class BeautyJobsRepository {
       orderBy: { created_at: 'desc' },
     });
   }
+
+  async search(codes: string[], prefectureId?: string, salaryType?: string) {
+    const now = new Date();
+    return this.prisma.job.findMany({
+      where: {
+        is_active: true,
+        OR: [{ expires_at: null }, { expires_at: { gt: now } }],
+        job_occupation_types: {
+          some: {
+            occupation_type: { code: { in: codes } },
+          },
+        },
+        ...(prefectureId && { prefecture_id: prefectureId }),
+        ...(salaryType && { salary_type: salaryType }),
+      },
+      orderBy: { created_at: 'desc' },
+    });
+  }
 }
