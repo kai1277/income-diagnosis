@@ -6,6 +6,7 @@ export function SiteFooter() {
       <nav className="site-footer-nav">
         <Link to="/company">運営者情報</Link>
         <Link to="/privacy-policy">プライバシーポリシー</Link>
+        <Link to="/terms-of-service">利用規約</Link>
       </nav>
       <p className="site-footer-copyright">&copy; キレキャリ</p>
     </footer>
