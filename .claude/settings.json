@@ -16,7 +16,8 @@
       "Bash(lsof -ti:5173 -sTCP:LISTEN)",
       "Bash(node verify-userweb.js)",
       "Bash(node verify-restart.js)",
-      "Bash(lsof -ti:5174,5175 -sTCP:LISTEN)"
+      "Bash(lsof -ti:5174,5175 -sTCP:LISTEN)",
+      "Bash(pkill -f \"vite\")"
     ]
   }
 }

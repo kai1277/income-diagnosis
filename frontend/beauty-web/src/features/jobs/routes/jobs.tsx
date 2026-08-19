@@ -5,6 +5,7 @@ import { JobMatchCard } from "@/features/jobs/components/job-match-card";
 import { fetchBeautyJobs, type BeautyJob } from "@/features/jobs/lib/beauty-jobs";
 import type { JobId } from "@/features/diagnosis/types";
 import { JOBS } from "@/features/diagnosis/constants/jobs";
+import { SiteFooter } from "@/components/site-footer";
 
 const KEPT_JOBS_KEY = "beauty_kept_jobs";
 
@@ -129,6 +130,8 @@ export default function Jobs() {
             </button>
           </div>
         )}
+
+        <SiteFooter />
       </div>
     </div>
   );

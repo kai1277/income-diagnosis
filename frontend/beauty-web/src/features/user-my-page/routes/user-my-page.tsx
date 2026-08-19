@@ -6,6 +6,7 @@ import { buildTags, buildTagsFromRawAnswers } from "@/features/diagnosis/utils/b
 import type { Answers, Estimate, JobId } from "@/features/diagnosis/types";
 import { useAuth } from "@/features/auth/auth-context";
 import { apiGet } from "@/lib/api";
+import { SiteFooter } from "@/components/site-footer";
 
 interface BeautyUserProfile {
   id: string;
@@ -169,6 +170,8 @@ export default function UserMyPage() {
         <button className="btn-ghost" onClick={() => navigate("/?restart=1")}>
           もう一度診断する
         </button>
+
+        <SiteFooter />
       </div>
     </div>
   );
