@@ -1285,6 +1285,30 @@ input[type="range"].range-input::-moz-range-thumb {
   margin-top: 16px;
 }
 
+.policy-intro {
+  font-size: 12.5px;
+  color: var(--cream-dim);
+  line-height: 1.8;
+  margin: 0 0 24px;
+}
+.policy-section + .policy-section {
+  margin-top: 22px;
+}
+.policy-heading {
+  font-family: "Shippori Mincho", serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--gold);
+  margin: 0 0 8px;
+}
+.policy-body {
+  font-size: 12.5px;
+  color: var(--cream);
+  line-height: 1.9;
+  white-space: pre-line;
+  margin: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;
