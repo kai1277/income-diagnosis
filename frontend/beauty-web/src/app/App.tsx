@@ -7,6 +7,7 @@ import JobSearch from "../features/jobs/routes/job-search";
 import SavedJobs from "../features/jobs/routes/saved-jobs";
 import UserMyPage from "../features/user-my-page/routes/user-my-page";
 import Company from "../features/company/routes/company";
+import PrivacyPolicy from "../features/privacy-policy/routes/privacy-policy";
 import { AuthProvider } from "../features/auth/auth-context";
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/saved-jobs" element={<SavedJobs />} />
             <Route path="/user-my-page" element={<UserMyPage />} />
             <Route path="/company" element={<Company />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           </Routes>
         </div>
       </BrowserRouter>
