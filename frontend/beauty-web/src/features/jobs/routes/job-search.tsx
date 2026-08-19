@@ -11,6 +11,7 @@ import {
 } from "@/features/jobs/lib/beauty-jobs";
 import { fetchPrefectures, type Prefecture } from "@/features/jobs/lib/prefectures";
 import { addKeptJobId, readKeptJobIds } from "@/features/jobs/lib/kept-jobs";
+import { SiteFooter } from "@/components/site-footer";
 
 const ALL_CODES = BEAUTY_OCCUPATION_OPTIONS.map((o) => o.code);
 
@@ -192,6 +193,8 @@ export default function JobSearch() {
             </div>
           </>
         )}
+
+        <SiteFooter />
       </div>
     </div>
   );

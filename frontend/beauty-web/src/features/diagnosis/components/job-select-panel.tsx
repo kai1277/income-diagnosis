@@ -1,6 +1,7 @@
 import { JOB_ICONS } from "@/features/diagnosis/components/icons";
 import { JOBS, JOB_ORDER } from "@/features/diagnosis/constants/jobs";
 import type { JobId } from "@/features/diagnosis/types";
+import { SiteFooter } from "@/components/site-footer";
 
 interface Props {
   onSelect: (jobId: JobId) => void;
@@ -47,6 +48,7 @@ export function JobSelectPanel({ onSelect }: Props) {
         })}
       </div>
       <div className="spacer"></div>
+      <SiteFooter />
     </>
   );
 }

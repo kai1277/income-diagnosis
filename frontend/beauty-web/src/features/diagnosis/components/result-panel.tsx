@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRightIcon } from "@/features/diagnosis/components/icons";
 import { buildTags } from "@/features/diagnosis/utils/build-tags";
 import type { Answers, Estimate, Job } from "@/features/diagnosis/types";
+import { SiteFooter } from "@/components/site-footer";
 
 interface Props {
   job: Job;
@@ -168,6 +169,7 @@ export function ResultPanel({ job, estimate, answers, onSearch, onRetry }: Props
         </button>
       </div>
       <div className="fine">※本診断結果は目安であり、実際の年収を保証するものではありません。歩合率・給与水準は求人ごとに異なります。</div>
+      <SiteFooter />
     </>
   );
 }

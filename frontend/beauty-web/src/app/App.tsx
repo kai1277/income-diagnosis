@@ -6,6 +6,7 @@ import Jobs from "../features/jobs/routes/jobs";
 import JobSearch from "../features/jobs/routes/job-search";
 import SavedJobs from "../features/jobs/routes/saved-jobs";
 import UserMyPage from "../features/user-my-page/routes/user-my-page";
+import Company from "../features/company/routes/company";
 import { AuthProvider } from "../features/auth/auth-context";
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/job-search" element={<JobSearch />} />
             <Route path="/saved-jobs" element={<SavedJobs />} />
             <Route path="/user-my-page" element={<UserMyPage />} />
+            <Route path="/company" element={<Company />} />
           </Routes>
         </div>
       </BrowserRouter>
