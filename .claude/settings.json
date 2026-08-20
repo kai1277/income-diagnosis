@@ -17,7 +17,17 @@
       "Bash(node verify-userweb.js)",
       "Bash(node verify-restart.js)",
       "Bash(lsof -ti:5174,5175 -sTCP:LISTEN)",
-      "Bash(pkill -f \"vite\")"
+      "Bash(pkill -f \"vite\")",
+      "Bash(set -e)",
+      "Bash(mkdir -p __TRACKED_VAR__/src/app __TRACKED_VAR__/src/db __TRACKED_VAR__/src/middleware __TRACKED_VAR__/src/decorators __TRACKED_VAR__/src/repositories __TRACKED_VAR__/prisma)",
+      "Bash(cp __TRACKED_VAR__/src/main.ts __TRACKED_VAR__/src/main.ts)",
+      "Bash(cp __TRACKED_VAR__/src/db/database.module.ts __TRACKED_VAR__/src/db/database.module.ts)",
+      "Bash(cp __TRACKED_VAR__/src/db/prisma.service.ts __TRACKED_VAR__/src/db/prisma.service.ts)"
+    ],
+    "additionalDirectories": [
+      "/Users/kawasakikaichi/beauty-income-diagnosis/frontend/beauty-web",
+      "/Users/kawasakikaichi/beauty-income-diagnosis/frontend/beauty-admin-web",
+      "/Users/kawasakikaichi/beauty-income-diagnosis"
     ]
   }
 }

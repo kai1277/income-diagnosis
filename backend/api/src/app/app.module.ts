@@ -8,10 +8,6 @@ import { DiagnosisModule } from '../features/user/diagnosis/diagnosis.routes';
 import { UserJobsModule } from '../features/user/jobs/user-jobs.routes';
 import { AuthModule } from '../features/auth/auth.routes';
 import { UserModule } from '../features/user/users/user.routes';
-import { BeautyDiagnosisModule } from '../features/beauty/diagnosis/beauty-diagnosis.routes';
-import { BeautyJobsModule } from '../features/beauty/jobs/beauty-jobs.routes';
-import { BeautyAuthModule } from '../features/beauty/auth/beauty-auth.routes';
-import { BeautyUserModule } from '../features/beauty/users/beauty-user.routes';
 
 @Module({
   imports: [
@@ -24,10 +20,6 @@ import { BeautyUserModule } from '../features/beauty/users/beauty-user.routes';
     UserJobsModule,
     AuthModule,
     UserModule,
-    BeautyDiagnosisModule,
-    BeautyJobsModule,
-    BeautyAuthModule,
-    BeautyUserModule,
   ],
 })
 export class AppModule {}
