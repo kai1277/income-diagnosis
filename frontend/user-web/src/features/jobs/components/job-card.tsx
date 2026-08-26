@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
-import type { MockJob } from "@/features/jobs/lib/mock-jobs";
-import { trackEvent } from "@/lib/analytics";
+import { useState, useRef } from 'react';
+import type { MockJob } from '@/features/jobs/lib/mock-jobs';
+import { trackEvent } from '@/lib/analytics';
 
 const SWIPE_THRESHOLD = 80;
 const EXIT_X = 500;
@@ -15,31 +15,25 @@ type Props = {
 
 function getStoredResultType(): string {
   try {
-    const raw = localStorage.getItem("income_diagnosis_result");
-    if (!raw) return "unknown";
-    return (JSON.parse(raw) as { id?: string }).id ?? "unknown";
+    const raw = localStorage.getItem('income_diagnosis_result');
+    if (!raw) return 'unknown';
+    return (JSON.parse(raw) as { id?: string }).id ?? 'unknown';
   } catch {
-    return "unknown";
+    return 'unknown';
   }
 }
 
-function trackAffiliateLinkClick(clickType: "image" | "detail_button", job: MockJob) {
-  trackEvent("affiliate_click", {
+function trackAffiliateLinkClick(clickType: 'image' | 'detail_button', job: MockJob) {
+  trackEvent('affiliate_click', {
     job_id: job.id,
-    asp: "a8net",
-    occupation_type: job.jobTypes[0] ?? "",
+    asp: 'a8net',
+    occupation_type: job.jobTypes[0] ?? '',
     result_type: getStoredResultType(),
     click_type: clickType,
   });
 }
 
-export default function JobCard({
-  job,
-  current,
-  total,
-  onKeep,
-  onReject,
-}: Props) {
+export default function JobCard({ job, current, total, onKeep, onReject }: Props) {
   const [dragX, setDragX] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const startX = useRef(0);
@@ -47,11 +41,11 @@ export default function JobCard({
   const dragging = useRef(false);
   const horizontalLocked = useRef(false);
 
-  const exit = (direction: "keep" | "reject") => {
+  const exit = (direction: 'keep' | 'reject') => {
     setIsAnimating(true);
-    setDragX(direction === "keep" ? EXIT_X : -EXIT_X);
+    setDragX(direction === 'keep' ? EXIT_X : -EXIT_X);
     setTimeout(() => {
-      if (direction === "keep") onKeep();
+      if (direction === 'keep') onKeep();
       else onReject();
     }, 250);
   };
@@ -88,9 +82,9 @@ export default function JobCard({
     if (!dragging.current) return;
     dragging.current = false;
     if (dragX > SWIPE_THRESHOLD) {
-      exit("keep");
+      exit('keep');
     } else if (dragX < -SWIPE_THRESHOLD) {
-      exit("reject");
+      exit('reject');
     } else {
       setDragX(0);
     }
@@ -107,9 +101,9 @@ export default function JobCard({
       onTouchEnd={handleTouchEnd}
       style={{
         transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
-        transition: dragging.current ? "none" : "transform 0.25s ease",
-        touchAction: "pan-y",
-        userSelect: "none",
+        transition: dragging.current ? 'none' : 'transform 0.25s ease',
+        touchAction: 'pan-y',
+        userSelect: 'none',
       }}
       className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative"
     >
@@ -123,7 +117,7 @@ export default function JobCard({
       >
         <span
           className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[-20deg]"
-          style={{ color: "#4dd0e1", borderColor: "#4dd0e1" }}
+          style={{ color: '#4dd0e1', borderColor: '#4dd0e1' }}
         >
           キープ ★
         </span>
@@ -139,7 +133,7 @@ export default function JobCard({
       >
         <span
           className="text-4xl font-black border-4 rounded-xl px-4 py-2 rotate-[20deg]"
-          style={{ color: "#ef4444", borderColor: "#ef4444" }}
+          style={{ color: '#ef4444', borderColor: '#ef4444' }}
         >
           スキップ ❌
         </span>
@@ -152,7 +146,7 @@ export default function JobCard({
             href={job.affiliateUrl}
             target="_blank"
             rel="nofollow noopener noreferrer"
-            onClick={() => trackAffiliateLinkClick("image", job)}
+            onClick={() => trackAffiliateLinkClick('image', job)}
           >
             <img
               src={job.imageUrl ?? undefined}
@@ -181,11 +175,9 @@ export default function JobCard({
 
       {/* Info section */}
       <div className="p-4 space-y-3">
-        <p className="text-sm font-medium text-gray-800 leading-snug">
-          {job.title}
-        </p>
+        <p className="text-sm font-medium text-gray-800 leading-snug">{job.title}</p>
 
-        <p className="text-xl font-black" style={{ color: "#0288d1" }}>
+        <p className="text-xl font-black" style={{ color: '#0288d1' }}>
           {job.incomeRange}
         </p>
 
@@ -196,7 +188,7 @@ export default function JobCard({
           </div>
           <div className="flex items-center gap-2">
             <span>🔧</span>
-            <span>{job.jobTypes.join("、")}</span>
+            <span>{job.jobTypes.join('、')}</span>
           </div>
         </div>
 
@@ -206,9 +198,9 @@ export default function JobCard({
             href={job.affiliateUrl}
             target="_blank"
             rel="nofollow noopener noreferrer"
-            onClick={() => trackAffiliateLinkClick("detail_button", job)}
+            onClick={() => trackAffiliateLinkClick('detail_button', job)}
             className="block w-full py-2.5 text-center text-sm font-medium rounded-xl border"
-            style={{ color: "#0288d1", borderColor: "#0288d1" }}
+            style={{ color: '#0288d1', borderColor: '#0288d1' }}
           >
             詳細を見る →
           </a>
@@ -216,15 +208,15 @@ export default function JobCard({
 
         <div className="flex gap-3 pt-1">
           <button
-            onClick={() => exit("reject")}
+            onClick={() => exit('reject')}
             className="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-400 text-xl font-bold active:bg-gray-50 transition-colors"
           >
             ❌
           </button>
           <button
-            onClick={() => exit("keep")}
+            onClick={() => exit('keep')}
             className="flex-1 py-3 rounded-xl text-white text-sm font-bold active:opacity-80 transition-opacity"
-            style={{ backgroundColor: "#4dd0e1" }}
+            style={{ backgroundColor: '#4dd0e1' }}
           >
             キープ ★
           </button>
@@ -239,11 +231,11 @@ export default function JobCard({
           height={1}
           alt=""
           style={{
-            position: "absolute",
+            position: 'absolute',
             bottom: 0,
             right: 0,
             opacity: 0,
-            pointerEvents: "none",
+            pointerEvents: 'none',
           }}
         />
       )}

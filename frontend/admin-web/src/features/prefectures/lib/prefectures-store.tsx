@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import type { Prefecture, City } from "@/features/jobs/types";
+import { useState, useEffect } from 'react';
+import type { Prefecture, City } from '@/features/jobs/types';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
 export function usePrefectures() {
   const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
@@ -37,13 +37,13 @@ export function useCities(prefectureId: string | null) {
   }, [prefectureId]);
 
   const addCity = async (name: string): Promise<City> => {
-    if (!prefectureId) throw new Error("都道府県を選択してください");
+    if (!prefectureId) throw new Error('都道府県を選択してください');
     const res = await fetch(`${API_BASE}/api/admin/prefectures/${prefectureId}/cities`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
     });
-    if (!res.ok) throw new Error("市区町村の追加に失敗しました");
+    if (!res.ok) throw new Error('市区町村の追加に失敗しました');
     const city: City = await res.json();
     setCities((prev) => [...prev, city].sort((a, b) => a.sort_order - b.sort_order));
     return city;
@@ -57,13 +57,13 @@ export function useCities(prefectureId: string | null) {
 export function AddCityModal({
   onClose,
   onAdd,
-  overlayClassName = "z-50",
+  overlayClassName = 'z-50',
 }: {
   onClose: () => void;
   onAdd: (name: string) => Promise<City>;
   overlayClassName?: string;
 }) {
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,7 +75,7 @@ export function AddCityModal({
       await onAdd(name.trim());
       onClose();
     } catch {
-      setError("市区町村の追加に失敗しました");
+      setError('市区町村の追加に失敗しました');
     } finally {
       setSubmitting(false);
     }
@@ -84,8 +84,10 @@ export function AddCityModal({
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center p-6 ${overlayClassName}`}
-      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">市区町村を追加</h2>
@@ -99,7 +101,9 @@ export function AddCityModal({
             onChange={(e) => setName(e.target.value)}
             placeholder="例）羽村市"
             autoFocus
-            onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSubmit();
+            }}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-blue-400 bg-white"
           />
           {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
@@ -118,9 +122,9 @@ export function AddCityModal({
             onClick={handleSubmit}
             disabled={submitting || !name.trim()}
             className="px-4 py-2 rounded-lg text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
-            style={{ backgroundColor: "#0288d1" }}
+            style={{ backgroundColor: '#0288d1' }}
           >
-            {submitting ? "追加中..." : "追加"}
+            {submitting ? '追加中...' : '追加'}
           </button>
         </div>
       </div>

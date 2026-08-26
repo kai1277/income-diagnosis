@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "../features/home/routes/home";
-import Quiz from "../features/diagnosis/routes/quiz";
-import Result from "../features/diagnosis/routes/result";
-import Jobs from "../features/jobs/routes/jobs";
-import UserMyPage from "../features/user-my-page/routes/user-my-page";
-import { AuthProvider } from "../features/auth/auth-context";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from '../features/home/routes/home';
+import Quiz from '../features/diagnosis/routes/quiz';
+import Result from '../features/diagnosis/routes/result';
+import Jobs from '../features/jobs/routes/jobs';
+import UserMyPage from '../features/user-my-page/routes/user-my-page';
+import { AuthProvider } from '../features/auth/auth-context';
 
 export default function App() {
   return (

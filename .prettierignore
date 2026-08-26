@@ -1,0 +1,13 @@
+node_modules
+dist
+build
+.wrangler
+
+# generated code (not hand-edited, and .gitignore'd)
+backend/api/src/generated
+
+# lockfiles
+package-lock.json
+
+# migration history (do not reformat, it is a change log)
+backend/api/prisma/migrations

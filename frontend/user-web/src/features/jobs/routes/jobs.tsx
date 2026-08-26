@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import JobCard from "@/features/jobs/components/job-card";
-import { MOCK_JOBS, type MockJob } from "@/features/jobs/lib/mock-jobs";
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import JobCard from '@/features/jobs/components/job-card';
+import { MOCK_JOBS, type MockJob } from '@/features/jobs/lib/mock-jobs';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
 async function fetchJobsByCodes(codes: string[]): Promise<MockJob[]> {
-  const res = await fetch(`${API_BASE}/api/user/jobs?codes=${codes.join(",")}`);
+  const res = await fetch(`${API_BASE}/api/user/jobs?codes=${codes.join(',')}`);
   if (!res.ok) throw new Error();
   return res.json();
 }
@@ -19,12 +19,12 @@ export default function Jobs() {
   const [kept, setKept] = useState<string[]>([]);
 
   useEffect(() => {
-    const codes = searchParams.get("codes");
+    const codes = searchParams.get('codes');
     if (!codes) {
       setJobs(MOCK_JOBS);
       return;
     }
-    const codeList = codes.split(",").filter(Boolean);
+    const codeList = codes.split(',').filter(Boolean);
     fetchJobsByCodes(codeList)
       .then((data) => setJobs(data.length ? data : MOCK_JOBS))
       .catch(() => setJobs(MOCK_JOBS));
@@ -35,14 +35,14 @@ export default function Jobs() {
 
   useEffect(() => {
     if (!isDone || total === 0) return;
-    const timer = setTimeout(() => navigate("/user-my-page"), 1500);
+    const timer = setTimeout(() => navigate('/user-my-page'), 1500);
     return () => clearTimeout(timer);
   }, [isDone, total, navigate]);
 
   const handleKeep = () => {
     const next = [...kept, jobs[index].id];
     setKept(next);
-    localStorage.setItem("income_kept_jobs", JSON.stringify(next));
+    localStorage.setItem('income_kept_jobs', JSON.stringify(next));
     setIndex((i) => i + 1);
   };
 
@@ -51,7 +51,7 @@ export default function Jobs() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#f0f2f5" }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#f0f2f5' }}>
       <div className="px-4 py-5 space-y-4">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="text-gray-500 text-sm">
@@ -64,13 +64,11 @@ export default function Jobs() {
           <div className="flex flex-col items-center justify-center gap-4 pt-16 text-center">
             <p className="text-4xl">🎉</p>
             <p className="text-gray-700 font-bold">全ての求人を確認しました</p>
-            <p className="text-gray-400 text-sm">
-              キープした求人：{kept.length}件
-            </p>
+            <p className="text-gray-400 text-sm">キープした求人：{kept.length}件</p>
             <button
               onClick={() => navigate(-1)}
               className="mt-4 px-6 py-3 rounded-xl text-white text-sm font-bold"
-              style={{ backgroundColor: "#4dd0e1" }}
+              style={{ backgroundColor: '#4dd0e1' }}
             >
               診断結果に戻る
             </button>

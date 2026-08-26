@@ -118,6 +118,7 @@ npm run dev
 ```
 
 `.env.local`:
+
 ```
 VITE_GA_ID=G-XXXXXXXXXX
 VITE_LIFF_ID=xxxxxxxxxx-xxxxxxxx
@@ -133,6 +134,7 @@ npm run dev
 ```
 
 `.env.local`:
+
 ```
 VITE_API_URL=https://<render-service>.onrender.com
 ```
@@ -251,21 +253,21 @@ if (働き方志向 === "安定重視") {
 
 Google Analytics 4 を使い、以下のカスタムイベントを計測する：
 
-| イベント名        | 発火タイミング                     |
-| ----------------- | ----------------------------------- |
+| イベント名        | 発火タイミング                                           |
+| ----------------- | -------------------------------------------------------- |
 | `quiz_start`      | 診断開始（職種選択・「無料で診断する」ボタンクリック時） |
-| `quiz_complete`   | 全問回答完了・結果画面表示時       |
-| `job_link_click`  | 結果画面の求人CTAボタンクリック時（`/jobs` への遷移） |
-| `affiliate_click` | 求人一覧内の個別求人（アフィリエイトリンク）クリック時 |
+| `quiz_complete`   | 全問回答完了・結果画面表示時                             |
+| `job_link_click`  | 結果画面の求人CTAボタンクリック時（`/jobs` への遷移）    |
+| `affiliate_click` | 求人一覧内の個別求人（アフィリエイトリンク）クリック時   |
 
 ```typescript
 // 計測例（features/jobs/components/job-link.tsx）
 const handleClick = () => {
-  window.gtag?.("event", "job_link_click", {
+  window.gtag?.('event', 'job_link_click', {
     job_type: jobType,
     destination_url: url,
   });
-  window.open(url, "_blank");
+  window.open(url, '_blank');
 };
 ```
 
@@ -287,21 +289,21 @@ const handleClick = () => {
 
 **Cloudflare Pages の Build settings（新規プロジェクト作成時）**
 
-| 項目 | 値 |
-| --- | --- |
-| Framework preset | `None`（もしくは `Vite`） |
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-| Root directory (Path) | `frontend/user-web` / `frontend/admin-web`（プロジェクトごとに指定） |
+| 項目                   | 値                                                                   |
+| ---------------------- | -------------------------------------------------------------------- |
+| Framework preset       | `None`（もしくは `Vite`）                                            |
+| Build command          | `npm run build`                                                      |
+| Build output directory | `dist`                                                               |
+| Root directory (Path)  | `frontend/user-web` / `frontend/admin-web`（プロジェクトごとに指定） |
 
 **環境変数**（Settings → Environment variables で設定し、リデプロイすること。`.env.local` はgit管理外のためビルドに渡らない）
 
-| プロジェクト | 変数名 | 内容 |
-| --- | --- | --- |
-| `user-web` | `VITE_GA_ID` | GA4 測定ID |
-| `user-web` | `VITE_LIFF_ID` | LINE LIFF アプリID（一般職チャネル） |
-| `user-web` | `VITE_API_URL` | バックエンドAPIのURL |
-| `admin-web` | `VITE_API_URL` | バックエンドAPIのURL |
+| プロジェクト | 変数名         | 内容                                 |
+| ------------ | -------------- | ------------------------------------ |
+| `user-web`   | `VITE_GA_ID`   | GA4 測定ID                           |
+| `user-web`   | `VITE_LIFF_ID` | LINE LIFF アプリID（一般職チャネル） |
+| `user-web`   | `VITE_API_URL` | バックエンドAPIのURL                 |
+| `admin-web`  | `VITE_API_URL` | バックエンドAPIのURL                 |
 
 > ⚠️ `VITE_API_URL` が未設定の場合、`API_BASE` が空文字になりリクエストが相対パス（`/api/admin/jobs`等）に飛ぶ。Cloudflare Pages はその URL に対してHTMLを返すため、`Unexpected token '<', "<!DOCTYPE "...` エラーになる。
 
@@ -320,13 +322,13 @@ const handleClick = () => {
 
 環境変数：
 
-| 変数名                    | 説明                                                   |
-| ------------------------- | ------------------------------------------------------ |
-| `DATABASE_URL`            | Supabase の接続URL（pgbouncer経由）                     |
-| `DIRECT_URL`               | Supabase の直接接続URL（マイグレーション用）             |
-| `NODE_ENV`                 | `production`                                            |
-| `LINE_CHANNEL_ID`          | 一般職バーティカル用 LINE Login チャネルID               |
-| `JWT_SECRET`               | JWTトークン署名用のシークレットキー                     |
+| 変数名            | 説明                                         |
+| ----------------- | -------------------------------------------- |
+| `DATABASE_URL`    | Supabase の接続URL（pgbouncer経由）          |
+| `DIRECT_URL`      | Supabase の直接接続URL（マイグレーション用） |
+| `NODE_ENV`        | `production`                                 |
+| `LINE_CHANNEL_ID` | 一般職バーティカル用 LINE Login チャネルID   |
+| `JWT_SECRET`      | JWTトークン署名用のシークレットキー          |
 
 > ⚠️ マイグレーションは Render のデプロイ時に自動実行しない。本番マイグレーションは手動で `npx prisma migrate deploy` を実行すること。
 
@@ -336,8 +338,8 @@ const handleClick = () => {
 
 ## ✅ 目安KPI
 
-| 指標                             | 目安値      |
-| -------------------------------- | ----------- |
+| 指標                             | 目安値  |
+| -------------------------------- | ------- |
 | 診断完了率（start→complete）     | 50%以上 |
 | 求人クリック率（complete→click） | 20%以上 |
 

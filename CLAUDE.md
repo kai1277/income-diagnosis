@@ -108,14 +108,14 @@
 
 このプロジェクトは「年収診断×求人マッチング」という同じ型を、異なる職種セグメントに展開できる構造になっている。現在実装されているバーティカルは一般職（`user-web`）のみ。
 
-| 項目 | 一般職（user-web） |
-| --- | --- |
-| 対象職種 | 警備・製造・介護・営業 等の幅広い職種 |
-| UXトンマナ | ライト・シンプル |
-| 診断ロジック | `backend/api/src/features/user/diagnosis` |
-| 求人マッチング | `backend/api/src/features/user/jobs`（スワイプUI） |
-| LINE Loginチャネル | 一般職専用チャネル（`LINE_CHANNEL_ID`） |
-| ユーザーテーブル | `User`（`users`） |
+| 項目               | 一般職（user-web）                                 |
+| ------------------ | -------------------------------------------------- |
+| 対象職種           | 警備・製造・介護・営業 等の幅広い職種              |
+| UXトンマナ         | ライト・シンプル                                   |
+| 診断ロジック       | `backend/api/src/features/user/diagnosis`          |
+| 求人マッチング     | `backend/api/src/features/user/jobs`（スワイプUI） |
+| LINE Loginチャネル | 一般職専用チャネル（`LINE_CHANNEL_ID`）            |
+| ユーザーテーブル   | `User`（`users`）                                  |
 
 **共有してよいもの**：バックエンド（Renderの同一サービス）、DB（同一Supabaseインスタンス）、求人・職種マスタ（`Job` / `OccupationType` / `JobRequirement` / `Prefecture` / `City`）、admin-webによる求人管理画面。
 
@@ -124,6 +124,7 @@
 **なぜユーザーテーブルだけ分離するのか**：LINEの`line_user_id`（sub）はLINE Loginチャネル単位で発行されるため、チャネルを分けた時点で同一人物でも別IDになる。そのため「テーブルを共有する」ことの重複排除メリットは成立しない。一方、求人・職種マスタはadmin-webで一元管理する方が運用コストが低いため、意図的に共有している。境界線は「実態として分離/共有が合理的な単位」で引く。
 
 **新しいバーティカルを追加する場合**：
+
 1. 上記の表と同じ形で「何を共有し、何を分離するか」を最初に決める
 2. フロント: `frontend/<vertical>-web/` を新規作成し、独立したCloudflare Pagesプロジェクトとしてデプロイする
 3. バックエンド: `backend/api/src/features/<vertical>/{diagnosis,jobs,auth}/` を作成し、既存の `user` と同じ3層構造・命名パターンに揃える
@@ -143,6 +144,7 @@ npm run dev
 ```
 
 `.env.local`:
+
 ```
 VITE_GA_ID=G-XXXXXXXXXX
 VITE_LIFF_ID=xxxxxxxxxx-xxxxxxxx
@@ -158,6 +160,7 @@ npm run dev
 ```
 
 `.env.local`:
+
 ```
 VITE_API_URL=https://<render-service>.onrender.com
 ```
@@ -248,21 +251,21 @@ if (働き方志向 === "安定重視") {
 
 Google Analytics 4 を使い、以下のカスタムイベントを計測する：
 
-| イベント名        | 発火タイミング                     |
-| ----------------- | ----------------------------------- |
+| イベント名        | 発火タイミング                                           |
+| ----------------- | -------------------------------------------------------- |
 | `quiz_start`      | 診断開始（職種選択・「無料で診断する」ボタンクリック時） |
-| `quiz_complete`   | 全問回答完了・結果画面表示時       |
-| `job_link_click`  | 結果画面の求人CTAボタンクリック時（`/jobs` への遷移） |
-| `affiliate_click` | 求人一覧内の個別求人（アフィリエイトリンク）クリック時 |
+| `quiz_complete`   | 全問回答完了・結果画面表示時                             |
+| `job_link_click`  | 結果画面の求人CTAボタンクリック時（`/jobs` への遷移）    |
+| `affiliate_click` | 求人一覧内の個別求人（アフィリエイトリンク）クリック時   |
 
 ```typescript
 // features/jobs/components/job-link.tsx での計測例
 const handleClick = () => {
-  window.gtag?.("event", "job_link_click", {
+  window.gtag?.('event', 'job_link_click', {
     job_type: jobType,
     destination_url: url,
   });
-  window.open(url, "_blank");
+  window.open(url, '_blank');
 };
 ```
 
@@ -301,23 +304,23 @@ const handleClick = () => {
 
 **Cloudflare Pages の Build settings（新規プロジェクト作成時）**
 
-| 項目 | 値 |
-| --- | --- |
-| Framework preset | `None`（もしくは `Vite`） |
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-| Root directory (Path) | `frontend/user-web` / `frontend/admin-web`（プロジェクトごとに指定） |
+| 項目                   | 値                                                                   |
+| ---------------------- | -------------------------------------------------------------------- |
+| Framework preset       | `None`（もしくは `Vite`）                                            |
+| Build command          | `npm run build`                                                      |
+| Build output directory | `dist`                                                               |
+| Root directory (Path)  | `frontend/user-web` / `frontend/admin-web`（プロジェクトごとに指定） |
 
 ### Cloudflare Pages の環境変数設定（必須）
 
 Vite の `import.meta.env.VITE_*` 変数は**ビルド時に埋め込まれる**。`.env.local` は `.gitignore` で除外されているため、Cloudflare Pages のビルドには渡されない。必ず Cloudflare Dashboard の Settings → Environment variables で設定し、リデプロイすること。
 
-| プロジェクト | 変数名 | 内容 |
-|---|---|---|
-| `user-web` | `VITE_GA_ID` | GA4 測定ID |
-| `user-web` | `VITE_LIFF_ID` | LINE LIFF アプリID（一般職チャネル） |
-| `user-web` | `VITE_API_URL` | バックエンドAPIのURL |
-| `admin-web` | `VITE_API_URL` | バックエンドAPIのURL |
+| プロジェクト | 変数名         | 内容                                 |
+| ------------ | -------------- | ------------------------------------ |
+| `user-web`   | `VITE_GA_ID`   | GA4 測定ID                           |
+| `user-web`   | `VITE_LIFF_ID` | LINE LIFF アプリID（一般職チャネル） |
+| `user-web`   | `VITE_API_URL` | バックエンドAPIのURL                 |
+| `admin-web`  | `VITE_API_URL` | バックエンドAPIのURL                 |
 
 > ⚠️ `VITE_API_URL` が未設定の場合、`API_BASE` が空文字になりリクエストが相対パス（`/api/admin/jobs`）に飛ぶ。Cloudflare Pages はその URL に対してHTMLを返すため、`Unexpected token '<', "<!DOCTYPE "...` エラーになる。
 
@@ -343,8 +346,8 @@ Vite の `import.meta.env.VITE_*` 変数は**ビルド時に埋め込まれる**
 
 ## ✅ 目安KPI
 
-| 指標                             | 目安値      |
-| -------------------------------- | ----------- |
+| 指標                             | 目安値  |
+| -------------------------------- | ------- |
 | 診断完了率（start→complete）     | 50%以上 |
 | 求人クリック率（complete→click） | 20%以上 |
 
@@ -393,22 +396,22 @@ npx prisma generate
 
 ### Renderの設定値
 
-| 設定項目 | 値 |
-|---|---|
-| Root Directory | `backend/api` |
-| Build Command | `npm install && npm run build && npx prisma generate` |
-| Start Command | `npm run start` |
-| Environment | Node |
+| 設定項目       | 値                                                    |
+| -------------- | ----------------------------------------------------- |
+| Root Directory | `backend/api`                                         |
+| Build Command  | `npm install && npm run build && npx prisma generate` |
+| Start Command  | `npm run start`                                       |
+| Environment    | Node                                                  |
 
 ### Renderで設定する環境変数
 
-| 変数名 | 説明 |
-|---|---|
-| `DATABASE_URL` | Supabase の接続URL（pgbouncer経由） |
-| `DIRECT_URL` | Supabase の直接接続URL（マイグレーション用） |
-| `NODE_ENV` | `production` |
+| 変数名            | 説明                                                             |
+| ----------------- | ---------------------------------------------------------------- |
+| `DATABASE_URL`    | Supabase の接続URL（pgbouncer経由）                              |
+| `DIRECT_URL`      | Supabase の直接接続URL（マイグレーション用）                     |
+| `NODE_ENV`        | `production`                                                     |
 | `LINE_CHANNEL_ID` | 一般職バーティカル用 LINE Login チャネルID（LINEトークン検証用） |
-| `JWT_SECRET` | JWTトークン署名用のシークレットキー |
+| `JWT_SECRET`      | JWTトークン署名用のシークレットキー                              |
 
 ### デプロイ時の注意
 
@@ -432,11 +435,11 @@ npx prisma migrate deploy
 Controller → Service → Repository → Supabase PostgreSQL
 ```
 
-| 層 | ファイル | やること | やらないこと |
-|---|---|---|---|
-| Controller | `*.controller.ts` | HTTPルーティング、DTOでリクエスト受付 | ビジネスロジック・DBアクセス |
-| Service | `*.service.ts` | ビジネスロジック、Repositoryの呼び出し | Prismaクエリを直接書く |
-| Repository | `repositories/*.repository(ies).ts` | Prismaクエリ、DBアクセスの集約 | HTTPの概念を持ち込む |
+| 層         | ファイル                            | やること                               | やらないこと                 |
+| ---------- | ----------------------------------- | -------------------------------------- | ---------------------------- |
+| Controller | `*.controller.ts`                   | HTTPルーティング、DTOでリクエスト受付  | ビジネスロジック・DBアクセス |
+| Service    | `*.service.ts`                      | ビジネスロジック、Repositoryの呼び出し | Prismaクエリを直接書く       |
+| Repository | `repositories/*.repository(ies).ts` | Prismaクエリ、DBアクセスの集約         | HTTPの概念を持ち込む         |
 
 DTOは `*.schema.ts` にclass-validatorデコレーターで定義する。
 NestJSモジュールの定義（providers/controllersの登録）は `*.routes.ts` に書く。
@@ -473,19 +476,19 @@ export class SomeRepository {
 
 ## 実装済みAPIエンドポイント
 
-| メソッド | パス | 説明 |
-|---|---|---|
-| `GET` | `/api/admin/jobs` | 求人一覧取得（job_requirements含む） |
-| `POST` | `/api/admin/jobs` | 求人追加（job_requirements同時作成可） |
-| `GET` | `/api/admin/occupation-types` | 職種コード一覧取得 |
-| `POST` | `/api/admin/occupation-types` | 職種コード追加 |
-| `DELETE` | `/api/admin/occupation-types/:id` | 職種コード削除 |
-| `GET` | `/api/admin/prefectures` | 都道府県一覧取得 |
-| `GET` | `/api/admin/requirement-codes` | 要件コード一覧取得 |
-| `POST` | `/api/auth/line` | 一般職バーティカルのLINEログイン（`User`テーブル） |
-| `GET` | `/api/users/me` | ログイン中の一般職ユーザー情報取得（JWT保護） |
-| `POST` | `/api/user/diagnosis` | 一般職の診断（ルールベーススコアリング） |
-| `GET` | `/api/user/jobs?codes=<code,...>` | 一般職の求人マッチング（occupation_typeコードで絞り込み） |
+| メソッド | パス                              | 説明                                                      |
+| -------- | --------------------------------- | --------------------------------------------------------- |
+| `GET`    | `/api/admin/jobs`                 | 求人一覧取得（job_requirements含む）                      |
+| `POST`   | `/api/admin/jobs`                 | 求人追加（job_requirements同時作成可）                    |
+| `GET`    | `/api/admin/occupation-types`     | 職種コード一覧取得                                        |
+| `POST`   | `/api/admin/occupation-types`     | 職種コード追加                                            |
+| `DELETE` | `/api/admin/occupation-types/:id` | 職種コード削除                                            |
+| `GET`    | `/api/admin/prefectures`          | 都道府県一覧取得                                          |
+| `GET`    | `/api/admin/requirement-codes`    | 要件コード一覧取得                                        |
+| `POST`   | `/api/auth/line`                  | 一般職バーティカルのLINEログイン（`User`テーブル）        |
+| `GET`    | `/api/users/me`                   | ログイン中の一般職ユーザー情報取得（JWT保護）             |
+| `POST`   | `/api/user/diagnosis`             | 一般職の診断（ルールベーススコアリング）                  |
+| `GET`    | `/api/user/jobs?codes=<code,...>` | 一般職の求人マッチング（occupation_typeコードで絞り込み） |
 
 ## Prisma v7 特有の注意点
 
@@ -647,9 +650,9 @@ npx prisma generate
 
 ### 本番マイグレーション前の確認事項
 
-* マイグレーション内容をレビューしてから実行する
-* 破壊的変更（カラム削除・型変更）の場合はデータのバックアップを取ってから実行する
-* `prisma migrate deploy` は適用済みのマイグレーションをスキップするため、冪等に実行できる
+- マイグレーション内容をレビューしてから実行する
+- 破壊的変更（カラム削除・型変更）の場合はデータのバックアップを取ってから実行する
+- `prisma migrate deploy` は適用済みのマイグレーションをスキップするため、冪等に実行できる
 
 ## RLS の方針
 
@@ -682,13 +685,13 @@ Supabase では automatic RLS を有効にしている。
 
 ## セキュリティルール
 
-* フロントエンドから Supabase に直接アクセスしない。
-* フロントエンドで Supabase Client を使わない。
-* `SUPABASE_SERVICE_ROLE_KEY` をブラウザに公開しない。
-* `DATABASE_URL` や `DIRECT_URL` をブラウザに公開しない。
-* `.env` ファイルを GitHubにコミットしない。
-* 管理者操作は必ず `backend/api` 経由で行う。
-* ユーザーの診断回答・診断結果・クリックログの保存も `backend/api` 経由で行う。
-* DBアクセスは Prisma を通して行う。
-* DB操作は Repository / Domain 層に集約し、Single Source of Truth を保つ。
-* バーティカルごとに分離した LINE Login チャネル・ユーザーテーブルを、他バーティカルのコードから直接参照しない。
+- フロントエンドから Supabase に直接アクセスしない。
+- フロントエンドで Supabase Client を使わない。
+- `SUPABASE_SERVICE_ROLE_KEY` をブラウザに公開しない。
+- `DATABASE_URL` や `DIRECT_URL` をブラウザに公開しない。
+- `.env` ファイルを GitHubにコミットしない。
+- 管理者操作は必ず `backend/api` 経由で行う。
+- ユーザーの診断回答・診断結果・クリックログの保存も `backend/api` 経由で行う。
+- DBアクセスは Prisma を通して行う。
+- DB操作は Repository / Domain 層に集約し、Single Source of Truth を保つ。
+- バーティカルごとに分離した LINE Login チャネル・ユーザーテーブルを、他バーティカルのコードから直接参照しない。

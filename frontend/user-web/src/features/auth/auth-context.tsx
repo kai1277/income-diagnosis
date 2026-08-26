@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { initLiffAndLogin, getLastAuthError, type AuthResult } from "@/lib/auth";
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { initLiffAndLogin, getLastAuthError, type AuthResult } from '@/lib/auth';
 
 interface AuthState {
   accessToken: string | null;
@@ -13,7 +13,7 @@ const AuthContext = createContext<AuthState>({
   isLoading: true,
 });
 
-const isDebugMode = new URLSearchParams(window.location.search).get("debug") === "1";
+const isDebugMode = new URLSearchParams(window.location.search).get('debug') === '1';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({
@@ -47,25 +47,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {isDebugMode && (
         <div
           style={{
-            position: "fixed",
+            position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             zIndex: 9999,
-            background: debugError ? "#fee2e2" : state.accessToken ? "#dcfce7" : "#fef9c3",
-            padding: "8px 12px",
-            fontSize: "11px",
-            fontFamily: "monospace",
-            wordBreak: "break-all",
-            borderBottom: "1px solid #ccc",
+            background: debugError ? '#fee2e2' : state.accessToken ? '#dcfce7' : '#fef9c3',
+            padding: '8px 12px',
+            fontSize: '11px',
+            fontFamily: 'monospace',
+            wordBreak: 'break-all',
+            borderBottom: '1px solid #ccc',
           }}
         >
-          <strong>[auth debug]</strong>{" "}
+          <strong>[auth debug]</strong>{' '}
           {state.accessToken
             ? `✅ logged in (userId: ${state.userId})`
             : debugError
-            ? `❌ ${debugError}`
-            : "⚠️ auth skipped (not in LINE app, login redirect, or LIFF_ID unset)"}
+              ? `❌ ${debugError}`
+              : '⚠️ auth skipped (not in LINE app, login redirect, or LIFF_ID unset)'}
         </div>
       )}
       {children}

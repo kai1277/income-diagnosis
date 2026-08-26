@@ -1,7 +1,7 @@
 export type QuizAnswers = Record<string, string>;
 export type { QuizAnswers as Answers };
 
-import type { QuizOption, QuizQuestion } from "./quiz";
+import type { QuizOption, QuizQuestion } from './quiz';
 export type { QuizOption, QuizQuestion };
 
 export type QuizStepProps = {
@@ -22,7 +22,7 @@ export type TierDef = {
   id: string;
   name: string;
   emoji: string;
-  rank: "S" | "A" | "B";
+  rank: 'S' | 'A' | 'B';
   growthType: string;
   tagline: string;
   description: string;
@@ -32,7 +32,7 @@ export type TierDef = {
 export type CharacterResult = {
   id: string;
   name: string;
-  rank: "S" | "A" | "B";
+  rank: 'S' | 'A' | 'B';
   growthType: string;
   tagline: string;
   description: string;

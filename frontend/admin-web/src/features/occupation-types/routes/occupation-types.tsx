@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import type { OccupationType } from "@/features/jobs/types";
-import { useOccupationTypes } from "@/features/occupation-types/lib/occupation-types-store";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { OccupationType } from '@/features/jobs/types';
+import { useOccupationTypes } from '@/features/occupation-types/lib/occupation-types-store';
 
 // ── Shared UI helpers ─────────────────────────────────────────────────────────
 
@@ -20,7 +20,7 @@ function FieldError({ msg }: { msg?: string }) {
 
 function inputCls(hasError: boolean) {
   return `w-full px-3 py-2 text-sm border rounded-lg outline-none transition-colors bg-white ${
-    hasError ? "border-red-400 focus:border-red-500" : "border-gray-200 focus:border-blue-400"
+    hasError ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-400'
   }`;
 }
 
@@ -42,13 +42,13 @@ type FormState = {
 };
 
 const EMPTY: FormState = {
-  code: "",
-  label: "",
-  sort_order: "",
+  code: '',
+  label: '',
+  sort_order: '',
   is_active: true,
 };
 
-type CreatePayload = Omit<OccupationType, "id">;
+type CreatePayload = Omit<OccupationType, 'id'>;
 
 function AddOccupationTypeModal({
   onClose,
@@ -64,8 +64,8 @@ function AddOccupationTypeModal({
 
   const validate = (): boolean => {
     const next: Partial<Record<keyof FormState, string>> = {};
-    if (!form.code.trim()) next.code = "必須です";
-    if (!form.label.trim()) next.label = "必須です";
+    if (!form.code.trim()) next.code = '必須です';
+    if (!form.label.trim()) next.label = '必須です';
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -83,7 +83,7 @@ function AddOccupationTypeModal({
       });
       onClose();
     } catch {
-      setSubmitError("職種カテゴリの追加に失敗しました。もう一度お試しください。");
+      setSubmitError('職種カテゴリの追加に失敗しました。もう一度お試しください。');
     } finally {
       setSubmitting(false);
     }
@@ -92,11 +92,12 @@ function AddOccupationTypeModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-6"
-      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div className="bg-gray-50 rounded-2xl w-full max-w-md flex flex-col shadow-2xl">
-
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-5 bg-white rounded-t-2xl border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-800">職種カテゴリ追加</h2>
@@ -160,18 +161,16 @@ function AddOccupationTypeModal({
                   type="button"
                   onClick={() => setForm((p) => ({ ...p, is_active: !p.is_active }))}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    form.is_active ? "bg-green-500" : "bg-gray-300"
+                    form.is_active ? 'bg-green-500' : 'bg-gray-300'
                   }`}
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
-                      form.is_active ? "translate-x-6" : "translate-x-1"
+                      form.is_active ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />
                 </button>
-                <span className="text-sm text-gray-700">
-                  {form.is_active ? "有効" : "無効"}
-                </span>
+                <span className="text-sm text-gray-700">{form.is_active ? '有効' : '無効'}</span>
               </div>
             </div>
           </div>
@@ -193,9 +192,9 @@ function AddOccupationTypeModal({
             onClick={handleSubmit}
             disabled={submitting}
             className="px-6 py-2.5 rounded-lg text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
-            style={{ backgroundColor: "#0288d1" }}
+            style={{ backgroundColor: '#0288d1' }}
           >
-            {submitting ? "追加中..." : "追加する"}
+            {submitting ? '追加中...' : '追加する'}
           </button>
         </div>
       </div>
@@ -210,24 +209,26 @@ export default function OccupationTypesPage() {
   const { occupationTypes, loading, error, addType, deleteType, retry } = useOccupationTypes();
   const [showModal, setShowModal] = useState(false);
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-screen text-gray-400 text-sm">
-      読み込み中...
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen text-gray-400 text-sm">
+        読み込み中...
+      </div>
+    );
 
-  if (error) return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-red-400 text-sm">
-      <p>{error}</p>
-      <button
-        onClick={retry}
-        className="px-4 py-2 rounded-lg text-sm font-medium text-white"
-        style={{ backgroundColor: "#0288d1" }}
-      >
-        再試行
-      </button>
-    </div>
-  );
+  if (error)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-red-400 text-sm">
+        <p>{error}</p>
+        <button
+          onClick={retry}
+          className="px-4 py-2 rounded-lg text-sm font-medium text-white"
+          style={{ backgroundColor: '#0288d1' }}
+        >
+          再試行
+        </button>
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -235,7 +236,7 @@ export default function OccupationTypesPage() {
       <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate('/')}
             className="text-sm text-gray-500 hover:text-gray-700"
           >
             ← 管理画面
@@ -246,7 +247,7 @@ export default function OccupationTypesPage() {
         <button
           onClick={() => setShowModal(true)}
           className="px-4 py-2 rounded-lg text-sm font-medium text-white"
-          style={{ backgroundColor: "#0288d1" }}
+          style={{ backgroundColor: '#0288d1' }}
         >
           + 職種カテゴリ追加
         </button>
@@ -260,7 +261,7 @@ export default function OccupationTypesPage() {
             <button
               onClick={() => setShowModal(true)}
               className="mt-6 px-4 py-2 rounded-lg text-sm font-medium text-white"
-              style={{ backgroundColor: "#0288d1" }}
+              style={{ backgroundColor: '#0288d1' }}
             >
               最初の職種カテゴリを追加する
             </button>
@@ -282,32 +283,38 @@ export default function OccupationTypesPage() {
                   <tr
                     key={type.id}
                     className={`border-b border-gray-50 last:border-0 ${
-                      !type.is_active ? "opacity-40" : ""
-                    } ${i % 2 === 1 ? "bg-gray-50/50" : ""}`}
+                      !type.is_active ? 'opacity-40' : ''
+                    } ${i % 2 === 1 ? 'bg-gray-50/50' : ''}`}
                   >
                     <td className="px-5 py-3 font-mono text-xs text-gray-500">{type.code}</td>
                     <td className="px-5 py-3 font-medium text-gray-800">{type.label}</td>
                     <td className="px-5 py-3 text-center text-xs text-gray-400">
-                      {type.sort_order ?? "—"}
+                      {type.sort_order ?? '—'}
                     </td>
                     <td className="px-5 py-3 text-center">
                       <span
                         className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
                           type.is_active
-                            ? "bg-green-50 text-green-700"
-                            : "bg-gray-100 text-gray-500"
+                            ? 'bg-green-50 text-green-700'
+                            : 'bg-gray-100 text-gray-500'
                         }`}
                       >
-                        {type.is_active ? "有効" : "無効"}
+                        {type.is_active ? '有効' : '無効'}
                       </span>
                     </td>
                     <td className="px-5 py-3 text-center">
                       <button
                         type="button"
                         onClick={() => {
-                          if (window.confirm(`「${type.label}」を削除しますか？\n※この職種カテゴリを使用している求人がある場合は削除できません。`)) {
+                          if (
+                            window.confirm(
+                              `「${type.label}」を削除しますか？\n※この職種カテゴリを使用している求人がある場合は削除できません。`,
+                            )
+                          ) {
                             deleteType(type.id).catch(() =>
-                              alert("削除に失敗しました。求人に紐づいている職種カテゴリは削除できません。")
+                              alert(
+                                '削除に失敗しました。求人に紐づいている職種カテゴリは削除できません。',
+                              ),
                             );
                           }
                         }}
@@ -324,12 +331,7 @@ export default function OccupationTypesPage() {
         )}
       </div>
 
-      {showModal && (
-        <AddOccupationTypeModal
-          onClose={() => setShowModal(false)}
-          onAdd={addType}
-        />
-      )}
+      {showModal && <AddOccupationTypeModal onClose={() => setShowModal(false)} onAdd={addType} />}
     </div>
   );
 }

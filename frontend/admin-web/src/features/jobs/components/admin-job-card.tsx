@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import type { Job } from "@/features/jobs/types";
+import { useNavigate } from 'react-router-dom';
+import type { Job } from '@/features/jobs/types';
 
 type Props = {
   job: Job;
@@ -34,22 +34,22 @@ export default function AdminJobCard({ job, onDelete }: Props) {
         )}
         <span
           className={`absolute top-3 right-3 text-white text-xs px-2 py-1 rounded-full ${
-            job.is_active ? "bg-green-500" : "bg-gray-400"
+            job.is_active ? 'bg-green-500' : 'bg-gray-400'
           }`}
         >
-          {job.is_active ? "公開中" : "非公開"}
+          {job.is_active ? '公開中' : '非公開'}
         </span>
       </div>
 
       {/* Info */}
       <div className="p-4 space-y-2 flex-1 flex flex-col">
         <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded w-fit">
-          {job.occupation_types?.map((t) => t.label).join("、") || "—"}
+          {job.occupation_types?.map((t) => t.label).join('、') || '—'}
         </span>
 
         <p className="text-sm font-medium text-gray-800 leading-snug line-clamp-2">{job.title}</p>
 
-        <p className="text-lg font-black" style={{ color: "#0288d1" }}>
+        <p className="text-lg font-black" style={{ color: '#0288d1' }}>
           {job.salary_text}
         </p>
 
@@ -59,12 +59,12 @@ export default function AdminJobCard({ job, onDelete }: Props) {
             <span>
               {job.job_location
                 ? job.job_location
-                : [job.prefecture?.name, job.city?.name].filter(Boolean).join("") || "—"}
+                : [job.prefecture?.name, job.city?.name].filter(Boolean).join('') || '—'}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span>🔧</span>
-            <span>{job.job_types.join("、")}</span>
+            <span>{job.job_types.join('、')}</span>
           </div>
           <div className="flex items-center gap-2">
             <span>🔗</span>
@@ -73,7 +73,7 @@ export default function AdminJobCard({ job, onDelete }: Props) {
           {job.expires_at && (
             <div className="flex items-center gap-2">
               <span>📅</span>
-              <span>掲載終了: {new Date(job.expires_at).toLocaleDateString("ja-JP")}</span>
+              <span>掲載終了: {new Date(job.expires_at).toLocaleDateString('ja-JP')}</span>
             </div>
           )}
         </div>
@@ -84,7 +84,7 @@ export default function AdminJobCard({ job, onDelete }: Props) {
           onClick={(e) => {
             e.stopPropagation();
             if (confirm(`「${job.title}」を削除しますか？`)) {
-              onDelete(job.id).catch(() => alert("削除に失敗しました。もう一度お試しください。"));
+              onDelete(job.id).catch(() => alert('削除に失敗しました。もう一度お試しください。'));
             }
           }}
           className="w-full py-2 rounded-lg text-sm font-medium text-red-500 border border-red-200 hover:bg-red-50 transition-colors"

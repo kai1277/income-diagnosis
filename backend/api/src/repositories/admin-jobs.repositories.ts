@@ -28,15 +28,22 @@ export class AdminJobsRepository {
   }
 
   async update(id: string, dto: UpdateJobDto) {
-    const { requirements, expires_at, occupation_type_ids, job_location, prefecture_id, city_id, ...jobFields } = dto;
+    const {
+      requirements,
+      expires_at,
+      occupation_type_ids,
+      job_location,
+      prefecture_id,
+      city_id,
+      ...jobFields
+    } = dto;
 
     return this.prisma.job.update({
       where: { id },
       data: {
         ...jobFields,
-        expires_at: expires_at !== undefined
-          ? (expires_at ? new Date(expires_at) : null)
-          : undefined,
+        expires_at:
+          expires_at !== undefined ? (expires_at ? new Date(expires_at) : null) : undefined,
         ...(job_location !== undefined && { job_location: job_location ?? null }),
         ...(prefecture_id !== undefined && { prefecture_id: prefecture_id ?? null }),
         ...(city_id !== undefined && { city_id: city_id ?? null }),
@@ -69,7 +76,15 @@ export class AdminJobsRepository {
   }
 
   async create(dto: CreateJobDto) {
-    const { requirements, expires_at, occupation_type_ids, job_location, prefecture_id, city_id, ...jobFields } = dto;
+    const {
+      requirements,
+      expires_at,
+      occupation_type_ids,
+      job_location,
+      prefecture_id,
+      city_id,
+      ...jobFields
+    } = dto;
 
     return this.prisma.job.create({
       data: {

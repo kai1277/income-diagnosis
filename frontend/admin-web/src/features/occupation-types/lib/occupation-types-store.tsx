@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import type { OccupationType } from "@/features/jobs/types";
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { OccupationType } from '@/features/jobs/types';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
 type CreatePayload = {
   code: string;
@@ -31,15 +31,15 @@ export function OccupationTypesProvider({ children }: { children: React.ReactNod
     setError(null);
     try {
       const res = await fetch(`${API_BASE}/api/admin/occupation-types`);
-      if (!res.ok) throw new Error("職種カテゴリの取得に失敗しました");
-      const contentType = res.headers.get("content-type") ?? "";
-      if (!contentType.includes("application/json")) {
-        throw new Error("サーバーが起動中です。しばらく待ってから再試行してください。");
+      if (!res.ok) throw new Error('職種カテゴリの取得に失敗しました');
+      const contentType = res.headers.get('content-type') ?? '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('サーバーが起動中です。しばらく待ってから再試行してください。');
       }
       const data: OccupationType[] = await res.json();
       setOccupationTypes(data);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "職種カテゴリの取得に失敗しました";
+      const msg = e instanceof Error ? e.message : '職種カテゴリの取得に失敗しました';
       setError(msg);
     } finally {
       setLoading(false);
@@ -52,11 +52,11 @@ export function OccupationTypesProvider({ children }: { children: React.ReactNod
 
   const addType = async (payload: CreatePayload) => {
     const res = await fetch(`${API_BASE}/api/admin/occupation-types`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    if (!res.ok) throw new Error("職種カテゴリの追加に失敗しました");
+    if (!res.ok) throw new Error('職種カテゴリの追加に失敗しました');
     const created: OccupationType = await res.json();
     setOccupationTypes((prev) =>
       [...prev, created].sort((a, b) => (a.sort_order ?? 9999) - (b.sort_order ?? 9999)),
@@ -64,13 +64,15 @@ export function OccupationTypesProvider({ children }: { children: React.ReactNod
   };
 
   const deleteType = async (id: string) => {
-    const res = await fetch(`${API_BASE}/api/admin/occupation-types/${id}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("職種カテゴリの削除に失敗しました");
+    const res = await fetch(`${API_BASE}/api/admin/occupation-types/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('職種カテゴリの削除に失敗しました');
     setOccupationTypes((prev) => prev.filter((t) => t.id !== id));
   };
 
   return (
-    <Ctx.Provider value={{ occupationTypes, loading, error, addType, deleteType, retry: fetchTypes }}>
+    <Ctx.Provider
+      value={{ occupationTypes, loading, error, addType, deleteType, retry: fetchTypes }}
+    >
       {children}
     </Ctx.Provider>
   );
@@ -78,6 +80,6 @@ export function OccupationTypesProvider({ children }: { children: React.ReactNod
 
 export function useOccupationTypes() {
   const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("useOccupationTypes must be inside OccupationTypesProvider");
+  if (!ctx) throw new Error('useOccupationTypes must be inside OccupationTypesProvider');
   return ctx;
 }

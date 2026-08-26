@@ -1,20 +1,20 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const MENU_ITEMS = [
   {
-    label: "求人一覧",
-    description: "登録済みの求人を確認・管理する",
-    path: "/jobs",
+    label: '求人一覧',
+    description: '登録済みの求人を確認・管理する',
+    path: '/jobs',
   },
   {
-    label: "職種カテゴリ一覧",
-    description: "求人の職種カテゴリ（マスタ）を管理する",
-    path: "/occupation-types",
+    label: '職種カテゴリ一覧',
+    description: '求人の職種カテゴリ（マスタ）を管理する',
+    path: '/occupation-types',
   },
   {
-    label: "条件コード一覧",
-    description: "求人条件の種類（マスタ）を管理する",
-    path: "/requirement-codes",
+    label: '条件コード一覧',
+    description: '求人条件の種類（マスタ）を管理する',
+    path: '/requirement-codes',
   },
 ];
 

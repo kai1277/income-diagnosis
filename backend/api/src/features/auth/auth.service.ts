@@ -28,11 +28,9 @@ export class AuthService {
       });
     }
 
-    const accessToken = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET!,
-      { expiresIn: '30d' },
-    );
+    const accessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
+      expiresIn: '30d',
+    });
 
     return { accessToken, user };
   }
@@ -51,7 +49,9 @@ export class AuthService {
 
     if (!res.ok) {
       const body = await res.text().catch(() => '(unreadable)');
-      this.logger.error(`LINE token verify failed: status=${res.status} body=${body} channel_id=${process.env.LINE_CHANNEL_ID}`);
+      this.logger.error(
+        `LINE token verify failed: status=${res.status} body=${body} channel_id=${process.env.LINE_CHANNEL_ID}`,
+      );
       throw new UnauthorizedException('LINEトークンの検証に失敗しました');
     }
 

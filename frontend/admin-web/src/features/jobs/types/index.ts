@@ -3,7 +3,7 @@ export type RequirementCode = {
   category: string;
   code: string;
   label: string;
-  value_type: "number" | "boolean" | "text" | "text_array";
+  value_type: 'number' | 'boolean' | 'text' | 'text_array';
   allowed_operators: string[];
   is_active: boolean;
   sort_order: number | null;
@@ -11,7 +11,7 @@ export type RequirementCode = {
 
 export type JobRequirementRow = {
   requirement_code_id: string;
-  level: "required" | "preferred";
+  level: 'required' | 'preferred';
   operator: string;
   value: string;
 };
@@ -65,6 +65,6 @@ export type Job = {
   requirements?: JobRequirementRow[];
 };
 
-export const SALARY_TYPES = ["月給", "時給", "日給", "年俸"] as const;
-export const SALARY_RANGE_TYPES = ["固定", "幅あり"] as const;
-export const AFFILIATE_NETWORKS = ["A8.net", "その他"] as const;
+export const SALARY_TYPES = ['月給', '時給', '日給', '年俸'] as const;
+export const SALARY_RANGE_TYPES = ['固定', '幅あり'] as const;
+export const AFFILIATE_NETWORKS = ['A8.net', 'その他'] as const;

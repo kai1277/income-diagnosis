@@ -76,7 +76,10 @@ export class DiagnosisService {
         jobs = isHigh
           ? [
               this.occ('it_engineer', 'スキルを深めることで年収1000万超が視野に入る'),
-              this.occ('venture_startup', 'エンジニアスキルが事業価値に直結し、ストックオプションも狙える'),
+              this.occ(
+                'venture_startup',
+                'エンジニアスキルが事業価値に直結し、ストックオプションも狙える',
+              ),
               hasHighEnglish
                 ? this.occ('foreign_affiliated', '英語力×技術で外資の報酬水準を得られる')
                 : this.occ('consulting', '技術コンサルとして高単価案件にアクセスできる'),
@@ -139,7 +142,10 @@ export class DiagnosisService {
           ? [
               this.occ('back_office_administration', '大手への転職で待遇を大幅に改善できる'),
               this.occ('human_resources', '採用・労務経験が人材業界で高く評価される'),
-              this.occ('certified_tax_accountant', '資格取得で独立も可能。長期的な収入安定につながる'),
+              this.occ(
+                'certified_tax_accountant',
+                '資格取得で独立も可能。長期的な収入安定につながる',
+              ),
             ]
           : [
               this.occ('back_office_administration', '経験を活かして安定した職場に移れる'),

@@ -4,9 +4,12 @@
   "scripts": {
     "build": "cd frontend/user-web && npm install && npm run build",
     "deploy": "wrangler deploy",
-    "preview": "wrangler dev"
+    "preview": "wrangler dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "prettier": "^3.6.2",
     "wrangler": "^4.101.0"
   }
 }

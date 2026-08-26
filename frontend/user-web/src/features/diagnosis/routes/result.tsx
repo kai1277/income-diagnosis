@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import JobLink from "@/features/jobs/components/job-link";
-import { getTracking } from "@/lib/tracking";
-import { trackEvent } from "@/lib/analytics";
-import { STEP_CATEGORIES } from "@/features/diagnosis/constants/step-categories";
-import type { CharacterResult } from "@/features/diagnosis/types";
+import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import JobLink from '@/features/jobs/components/job-link';
+import { getTracking } from '@/lib/tracking';
+import { trackEvent } from '@/lib/analytics';
+import { STEP_CATEGORIES } from '@/features/diagnosis/constants/step-categories';
+import type { CharacterResult } from '@/features/diagnosis/types';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
 const STEP_LABELS = STEP_CATEGORIES;
 
 export default function Result() {
@@ -24,20 +24,20 @@ export default function Result() {
     setError(false);
     try {
       const res = await fetch(`${API_BASE}/api/user/diagnosis`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers }),
       });
       if (!res.ok) throw new Error();
       const data: CharacterResult = await res.json();
       setResult(data);
-      localStorage.setItem("income_diagnosis_result", JSON.stringify(data));
-      localStorage.setItem("income_diagnosis_answers", JSON.stringify(answers));
-      trackEvent("diagnosis_complete", {
+      localStorage.setItem('income_diagnosis_result', JSON.stringify(data));
+      localStorage.setItem('income_diagnosis_answers', JSON.stringify(answers));
+      trackEvent('diagnosis_complete', {
         result_type: data.id,
         estimated_income_range: data.potentialIncome,
       });
-      window.gtag?.("event", "result_view", { ...tracking, result_card_id: data.id });
+      window.gtag?.('event', 'result_view', { ...tracking, result_card_id: data.id });
     } catch {
       setError(true);
     } finally {
@@ -51,7 +51,10 @@ export default function Result() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#f0f2f5" }}>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: '#f0f2f5' }}
+      >
         <p className="text-gray-500 text-sm">診断中...</p>
       </div>
     );
@@ -59,7 +62,10 @@ export default function Result() {
 
   if (error || !result) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ backgroundColor: "#f0f2f5" }}>
+      <div
+        className="min-h-screen flex flex-col items-center justify-center gap-4"
+        style={{ backgroundColor: '#f0f2f5' }}
+      >
         <p className="text-gray-500 text-sm">サーバーが起動中です。少々お待ちください。</p>
         <button
           onClick={fetchResult}
@@ -74,9 +80,9 @@ export default function Result() {
   const total = STEP_LABELS.length;
 
   const handleShare = async () => {
-    window.gtag?.("event", "result_share", { result_card_id: result.id, ...tracking });
+    window.gtag?.('event', 'result_share', { result_card_id: result.id, ...tracking });
     if (navigator.share) {
-      await navigator.share({ text: result.shareText, title: "潜在年収診断" });
+      await navigator.share({ text: result.shareText, title: '潜在年収診断' });
     } else {
       await navigator.clipboard.writeText(result.shareText);
       setCopyDone(true);
@@ -85,30 +91,30 @@ export default function Result() {
   };
 
   return (
-    <div className="min-h-screen pb-44" style={{ backgroundColor: "#f0f2f5" }}>
+    <div className="min-h-screen pb-44" style={{ backgroundColor: '#f0f2f5' }}>
       {/* All steps complete */}
-      <div className="flex" style={{ backgroundColor: "#e0e5ea" }}>
+      <div className="flex" style={{ backgroundColor: '#e0e5ea' }}>
         {STEP_LABELS.map((label, i) => {
           const isFirst = i === 0;
           const isLast = i === total - 1;
 
           const clipPath = isFirst
-            ? "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)"
+            ? 'polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)'
             : isLast
-            ? "polygon(8px 0, 100% 0, 100% 100%, 8px 100%, 0 50%)"
-            : "polygon(8px 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%)";
+              ? 'polygon(8px 0, 100% 0, 100% 100%, 8px 100%, 0 50%)'
+              : 'polygon(8px 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%)';
 
           return (
             <div
               key={i}
               className="flex-1 flex items-center justify-center py-3 text-xs font-medium"
               style={{
-                backgroundColor: "#b2ebf2",
-                color: "#0097a7",
+                backgroundColor: '#b2ebf2',
+                color: '#0097a7',
                 clipPath,
                 zIndex: total - i,
-                position: "relative",
-                marginLeft: i > 0 ? "-8px" : undefined,
+                position: 'relative',
+                marginLeft: i > 0 ? '-8px' : undefined,
               }}
             >
               {label}
@@ -154,7 +160,7 @@ export default function Result() {
               >
                 <span
                   className="font-black text-lg leading-none mt-0.5 shrink-0"
-                  style={{ color: "#4dd0e1" }}
+                  style={{ color: '#4dd0e1' }}
                 >
                   0{i + 1}
                 </span>
@@ -172,7 +178,7 @@ export default function Result() {
           onClick={handleShare}
           className="w-full py-3 rounded-xl border border-gray-200 bg-white text-gray-600 text-sm font-medium shadow-sm active:bg-gray-50 transition-colors"
         >
-          {copyDone ? "✓ コピーしました！" : "結果をシェアする"}
+          {copyDone ? '✓ コピーしました！' : '結果をシェアする'}
         </button>
       </div>
 
@@ -180,9 +186,9 @@ export default function Result() {
       <div
         className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 pt-4 space-y-2.5"
         style={{
-          backgroundColor: "rgba(240, 242, 245, 0.97)",
-          borderTop: "1px solid #dde3ea",
-          paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+          backgroundColor: 'rgba(240, 242, 245, 0.97)',
+          borderTop: '1px solid #dde3ea',
+          paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
         }}
       >
         <JobLink

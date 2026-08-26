@@ -1,6 +1,7 @@
 # 診断ツリー v2.0.0
 
 > **変更点（v1.0.0 → v2.0.0）**
+>
 > - 適職候補を44種の職種マスタから動的に選択するよう変更
 > - 選択ロジック：`jobLevel1 × 潜在年収` をメイン軸に、英語力・勤務先タイプを補正
 > - `SuggestedJob` に `code`（内部識別）と `title`（表示名 = label）を追加
@@ -226,48 +227,48 @@ flowchart TD
 
 ## 職種マスタ一覧（44種）
 
-| code | label |
-|---|---|
-| `apparel_cosmetics` | アパレル・コスメ |
-| `security_guard` | 警備員 |
-| `factory_manufacturing` | 工場・製造業 |
-| `tutor` | 塾講師 |
-| `call_center` | コールセンター |
-| `resort_jobs` | リゾートバイト |
-| `girls_bar_concept_cafe` | ガールズバー・コンカフェ |
-| `caregiving` | 介護 |
-| `chat_hostess` | チャットレディー |
-| `food_beverage` | 飲食 |
-| `taxi_driver` | タクシードライバー |
-| `truck_driver` | トラックドライバー |
-| `remote_work` | 在宅ワーク |
-| `marketing_creative` | マーケティング・クリエイティブ |
-| `housekeeping` | 家事代行 |
-| `consulting` | コンサル |
-| `construction` | 建設 |
-| `real_estate` | 不動産 |
-| `sales_reception` | 販売・受付 |
-| `supermarket_fresh_food` | スーパー・生鮮 |
-| `translation` | 翻訳 |
-| `back_office_administration` | バックオフィス・事務 |
-| `venture_startup` | ベンチャー・スタートアップ |
-| `it_engineer` | ITエンジニア |
-| `ma` | M&A |
-| `foreign_affiliated` | 外資系 |
-| `sales` | 営業 |
-| `human_resources` | 人材 |
-| `doctor` | 医師 |
-| `nurse` | 看護師 |
-| `pharmacist` | 薬剤師 |
-| `physical_therapist` | 理学療法士 |
-| `dentist` | 歯科医師 |
-| `dental_hygienist` | 歯科衛生士 |
-| `hair_stylist` | 美容師 |
-| `seitai_therapist` | 整体師 |
-| `certified_tax_accountant` | 税理士 |
-| `certified_public_accountant` | 公認会計士 |
-| `nail_technician` | ネイリスト |
-| `eyelash_technician` | アイリスト |
-| `eyebrow_technician` | アイブロウリスト |
-| `esthetician` | エステティシャン |
-| `therapist` | セラピスト |
+| code                          | label                          |
+| ----------------------------- | ------------------------------ |
+| `apparel_cosmetics`           | アパレル・コスメ               |
+| `security_guard`              | 警備員                         |
+| `factory_manufacturing`       | 工場・製造業                   |
+| `tutor`                       | 塾講師                         |
+| `call_center`                 | コールセンター                 |
+| `resort_jobs`                 | リゾートバイト                 |
+| `girls_bar_concept_cafe`      | ガールズバー・コンカフェ       |
+| `caregiving`                  | 介護                           |
+| `chat_hostess`                | チャットレディー               |
+| `food_beverage`               | 飲食                           |
+| `taxi_driver`                 | タクシードライバー             |
+| `truck_driver`                | トラックドライバー             |
+| `remote_work`                 | 在宅ワーク                     |
+| `marketing_creative`          | マーケティング・クリエイティブ |
+| `housekeeping`                | 家事代行                       |
+| `consulting`                  | コンサル                       |
+| `construction`                | 建設                           |
+| `real_estate`                 | 不動産                         |
+| `sales_reception`             | 販売・受付                     |
+| `supermarket_fresh_food`      | スーパー・生鮮                 |
+| `translation`                 | 翻訳                           |
+| `back_office_administration`  | バックオフィス・事務           |
+| `venture_startup`             | ベンチャー・スタートアップ     |
+| `it_engineer`                 | ITエンジニア                   |
+| `ma`                          | M&A                            |
+| `foreign_affiliated`          | 外資系                         |
+| `sales`                       | 営業                           |
+| `human_resources`             | 人材                           |
+| `doctor`                      | 医師                           |
+| `nurse`                       | 看護師                         |
+| `pharmacist`                  | 薬剤師                         |
+| `physical_therapist`          | 理学療法士                     |
+| `dentist`                     | 歯科医師                       |
+| `dental_hygienist`            | 歯科衛生士                     |
+| `hair_stylist`                | 美容師                         |
+| `seitai_therapist`            | 整体師                         |
+| `certified_tax_accountant`    | 税理士                         |
+| `certified_public_accountant` | 公認会計士                     |
+| `nail_technician`             | ネイリスト                     |
+| `eyelash_technician`          | アイリスト                     |
+| `eyebrow_technician`          | アイブロウリスト               |
+| `esthetician`                 | エステティシャン               |
+| `therapist`                   | セラピスト                     |

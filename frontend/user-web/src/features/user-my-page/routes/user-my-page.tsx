@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import type { CharacterResult } from "@/features/diagnosis/types";
-import type { SkillItem } from "@/features/user-my-page/types";
-import { buildSkillItems } from "@/features/user-my-page/utils/build-skill-items";
-import { useAuth } from "@/features/auth/auth-context";
-import { apiGet } from "@/lib/api";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { CharacterResult } from '@/features/diagnosis/types';
+import type { SkillItem } from '@/features/user-my-page/types';
+import { buildSkillItems } from '@/features/user-my-page/utils/build-skill-items';
+import { useAuth } from '@/features/auth/auth-context';
+import { apiGet } from '@/lib/api';
 
 interface UserProfile {
   id: string;
@@ -12,9 +12,9 @@ interface UserProfile {
   picture_url: string | null;
 }
 
-const RESULT_KEY = "income_diagnosis_result";
-const ANSWERS_KEY = "income_diagnosis_answers";
-const KEPT_JOBS_KEY = "income_kept_jobs";
+const RESULT_KEY = 'income_diagnosis_result';
+const ANSWERS_KEY = 'income_diagnosis_answers';
+const KEPT_JOBS_KEY = 'income_kept_jobs';
 
 export default function UserHome() {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function UserHome() {
 
   useEffect(() => {
     if (!accessToken) return;
-    apiGet<UserProfile>("/api/users/me", accessToken)
+    apiGet<UserProfile>('/api/users/me', accessToken)
       .then(setProfile)
       .catch(() => {});
   }, [accessToken]);
@@ -55,7 +55,7 @@ export default function UserHome() {
   }, []);
 
   return (
-    <div className="min-h-screen pb-8" style={{ backgroundColor: "#f0f2f5" }}>
+    <div className="min-h-screen pb-8" style={{ backgroundColor: '#f0f2f5' }}>
       {/* Header */}
       <div className="px-5 pt-10 pb-5">
         <p className="text-xs text-gray-400 font-medium tracking-wide uppercase">My Page</p>
@@ -78,7 +78,7 @@ export default function UserHome() {
             )}
             <div>
               <p className="text-base font-bold text-gray-800">
-                {profile.display_name ?? "ゲスト"}
+                {profile.display_name ?? 'ゲスト'}
               </p>
               <p className="text-xs text-gray-400 mt-0.5">LINEアカウント連携済み</p>
             </div>
@@ -98,7 +98,7 @@ export default function UserHome() {
               </div>
             </div>
 
-            <div className="rounded-xl px-4 py-3" style={{ backgroundColor: "#f0fbfc" }}>
+            <div className="rounded-xl px-4 py-3" style={{ backgroundColor: '#f0fbfc' }}>
               <p className="text-xs text-gray-400 mb-1">潜在年収（推定）</p>
               <p className="text-3xl font-black text-gray-800">
                 {result.potentialIncome}
@@ -119,7 +119,7 @@ export default function UserHome() {
                   >
                     <span
                       className="font-black text-sm leading-none mt-0.5 shrink-0"
-                      style={{ color: "#4dd0e1" }}
+                      style={{ color: '#4dd0e1' }}
                     >
                       0{i + 1}
                     </span>
@@ -154,20 +154,20 @@ export default function UserHome() {
 
         {/* Saved jobs */}
         <button
-          onClick={() => navigate("/saved-jobs")}
+          onClick={() => navigate('/saved-jobs')}
           className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center justify-between active:bg-gray-50 transition-colors text-left"
         >
           <div className="flex items-center gap-3">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
-              style={{ backgroundColor: "#e0f7fa" }}
+              style={{ backgroundColor: '#e0f7fa' }}
             >
               💼
             </div>
             <div>
               <p className="text-sm font-bold text-gray-800">保存した求人</p>
               <p className="text-xs text-gray-400 mt-0.5">
-                {keptCount > 0 ? `${keptCount}件キープ中` : "まだ保存した求人はありません"}
+                {keptCount > 0 ? `${keptCount}件キープ中` : 'まだ保存した求人はありません'}
               </p>
             </div>
           </div>
@@ -176,13 +176,13 @@ export default function UserHome() {
 
         {/* Saved agents */}
         <button
-          onClick={() => navigate("/saved-agents")}
+          onClick={() => navigate('/saved-agents')}
           className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center justify-between active:bg-gray-50 transition-colors text-left"
         >
           <div className="flex items-center gap-3">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
-              style={{ backgroundColor: "#fce4ec" }}
+              style={{ backgroundColor: '#fce4ec' }}
             >
               🤝
             </div>
@@ -196,7 +196,7 @@ export default function UserHome() {
 
         {/* Re-diagnose */}
         <button
-          onClick={() => navigate("/quiz")}
+          onClick={() => navigate('/quiz')}
           className="w-full py-3 rounded-2xl border border-gray-200 bg-white text-gray-500 text-sm font-medium shadow-sm active:bg-gray-50 transition-colors"
         >
           もう一度診断する
